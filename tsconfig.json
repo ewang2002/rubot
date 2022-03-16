@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
+    "sourceMap": false,
+    "outDir": "./out",
+    "rootDir": "./src",
+    "strict": true,
+    "noUnusedParameters": false,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "keyofStringsOnly": true,
+    // Discord.js has a bunch of issues for some reason
+    "skipLibCheck": true,
+    "removeComments": true,
+    "incremental": true,
+  },
+  "exclude": [
+    "test/",
+    "archive/"
+  ]
+}

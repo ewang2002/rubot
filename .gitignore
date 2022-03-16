@@ -1,0 +1,21 @@
+# Modules.
+/node_modules/
+
+# Compiled files.
+/out/
+
+# Configuration.
+config.json
+config.production.json
+
+# Notes
+/notes/*
+
+# Profiling
+*.cpuprofile
+*.tsbuildinfo
+
+# Others
+.idea/*
+.vscode/*
+cape.tsv

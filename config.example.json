@@ -1,0 +1,13 @@
+{
+  "token": {
+    "botToken": "",
+    "githubAuthToken": ""
+  },
+  "clientId": "",
+  "botOwnerIds": [],
+  "enrollData": {
+    "repoOwner": "",
+    "repoName": "",
+    "terms": []
+  }
+}
