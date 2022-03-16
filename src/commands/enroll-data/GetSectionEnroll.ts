@@ -5,7 +5,7 @@ import {GetOverallEnroll} from "./GetOverallEnroll";
 import {ArrayUtilities} from "../../utilities/ArrayUtilities";
 import {MessageButton, MessageSelectMenu} from "discord.js";
 import {AdvancedCollector} from "../../utilities/AdvancedCollector";
-import {EmojiConstants} from "../constants/EmojiConstants";
+import {EmojiConstants} from "../../constants/EmojiConstants";
 
 export class GetSectionEnroll extends BaseCommand {
     public constructor() {
@@ -16,7 +16,7 @@ export class GetSectionEnroll extends BaseCommand {
             description: "Gets the enrollment chart for a specific section for a particular course.",
             generalPermissions: [],
             botPermissions: [],
-            commandCooldown: 3 * 1000,
+            commandCooldown: 5 * 1000,
             argumentInfo: [
                 {
                     displayName: "Term",

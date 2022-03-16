@@ -11,7 +11,7 @@ export class GetOverallEnroll extends BaseCommand {
             description: "Gets the enrollment chart for all sections for a particular course.",
             generalPermissions: [],
             botPermissions: [],
-            commandCooldown: 3 * 1000,
+            commandCooldown: 5 * 1000,
             argumentInfo: [
                 {
                     displayName: "Term",
@@ -70,7 +70,8 @@ export class GetOverallEnroll extends BaseCommand {
             return -1;
         }
 
-        await ctx.interaction.reply({
+        await ctx.interaction.deferReply();
+        await ctx.interaction.editReply({
             files: [res.download_url],
             content: `Course **\`${parsedCode}\`** (Term **\`${term}\`**)`
         });

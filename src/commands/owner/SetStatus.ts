@@ -8,7 +8,7 @@ export class SetStatus extends BaseCommand {
             formalCommandName: "Set Status Command",
             botCommandName: "setstatus",
             description: "Sets the bot's status.",
-            commandCooldown: 3,
+            commandCooldown: 30 * 1000,
             generalPermissions: [],
             argumentInfo: [
                 {
@@ -55,7 +55,7 @@ export class SetStatus extends BaseCommand {
             ],
             botPermissions: [],
             guildOnly: false,
-            botOwnerOnly: true
+            botOwnerOnly: false
         };
 
         super(cmi);

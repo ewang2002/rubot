@@ -1,7 +1,7 @@
 import {Bot} from "./Bot";
 import {StringBuilder} from "./utilities/StringBuilder";
 import {Collection} from "discord.js";
-import {IGitContent} from "./definitions/GitContents";
+import {IGitContent} from "./definitions";
 import {GeneralUtilities} from "./utilities/GeneralUtilities";
 
 export namespace Constants {
