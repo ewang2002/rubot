@@ -33,8 +33,8 @@ export class SetStatus extends BaseCommand {
                     desc: "The bot's activity (game).",
                     type: ArgumentType.String,
                     prettyType: "String",
-                    required: false,
-                    example: ["Realm of the Mad God"]
+                    required: true,
+                    example: ["All of the clowns"]
                 },
                 {
                     displayName: "Activity Type",
@@ -49,7 +49,7 @@ export class SetStatus extends BaseCommand {
                         ]
                     },
                     prettyType: "String",
-                    required: false,
+                    required: true,
                     example: ["Watching"]
                 }
             ],
