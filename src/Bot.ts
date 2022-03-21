@@ -81,7 +81,9 @@ export class Bot {
 
         Bot.Commands.set("Enrollment Data", [
             new Cmds.GetOverallEnroll(),
-            new Cmds.GetSectionEnroll()
+            new Cmds.GetSectionEnroll(),
+            new Cmds.LookupCourse(),
+            new Cmds.GetCape()
         ]);
 
         Bot.Commands.set("Bot Owner", [

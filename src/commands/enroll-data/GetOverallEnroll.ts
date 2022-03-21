@@ -1,6 +1,7 @@
 import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
 import {Bot} from "../../Bot";
 import {Constants} from "../../Constants";
+import {parseCourseSubjCode} from "./helpers/Helper";
 
 export class GetOverallEnroll extends BaseCommand {
     public constructor() {
@@ -59,7 +60,7 @@ export class GetOverallEnroll extends BaseCommand {
             return -1;
         }
 
-        const parsedCode = GetOverallEnroll.parseCourseSubjCode(code);
+        const parsedCode = parseCourseSubjCode(code);
         const res = arr.find(x => x.name.replace(".png", "") === parsedCode);
         if (!res) {
             await ctx.interaction.reply({
@@ -77,35 +78,5 @@ export class GetOverallEnroll extends BaseCommand {
         });
 
         return 0;
-    }
-
-    /**
-     * Parses the course subject code from a given string.
-     * @param {string} code The raw course subject code.
-     * @returns {string} The parsed course subject code.
-     */
-    public static parseCourseSubjCode(code: string): string {
-        let s = "";
-        let i = 0;
-        for (; i < code.length; i++) {
-            // Regex to see if it's a number
-            if (/^\d+$/.test(code[i])) {
-                break;
-            }
-
-            if (code[i] === " ") {
-                continue;
-            }
-
-            s += code[i];
-        }
-
-        s += " ";
-
-        for (; i < code.length; i++) {
-            s += code[i];
-        }
-
-        return s.toUpperCase().trim();
     }
 }

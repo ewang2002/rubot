@@ -1,2 +1,2 @@
 export * from "./ConfigInterfaces";
-export * from "./GitContents";
+export * from "./MiscInterfaces";

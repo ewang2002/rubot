@@ -1,11 +1,11 @@
 import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
 import {Bot} from "../../Bot";
 import {Constants} from "../../Constants";
-import {GetOverallEnroll} from "./GetOverallEnroll";
 import {ArrayUtilities} from "../../utilities/ArrayUtilities";
 import {MessageButton, MessageSelectMenu} from "discord.js";
 import {AdvancedCollector} from "../../utilities/AdvancedCollector";
-import {EmojiConstants} from "../../constants/EmojiConstants";
+import {EmojiConstants} from "../../constants/GeneralConstants";
+import {parseCourseSubjCode} from "./helpers/Helper";
 
 export class GetSectionEnroll extends BaseCommand {
     public constructor() {
@@ -63,7 +63,7 @@ export class GetSectionEnroll extends BaseCommand {
             return -1;
         }
 
-        const parsedCode = GetOverallEnroll.parseCourseSubjCode(code);
+        const parsedCode = parseCourseSubjCode(code);
         const res = arr.filter(x => {
             if (!x.name.includes("_")) {
                 return false;

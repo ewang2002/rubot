@@ -1,12 +1,68 @@
 import {Bot} from "./Bot";
 import {StringBuilder} from "./utilities/StringBuilder";
 import {Collection} from "discord.js";
-import {IGitContent} from "./definitions";
+import {ICapeRow, IGitContent} from "./definitions";
 import {GeneralUtilities} from "./utilities/GeneralUtilities";
+import {createReadStream} from "fs";
+import {createInterface} from "readline";
+import * as path from "path";
 
 export namespace Constants {
     export const OVERALL_ENROLL: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
     export const SECTION_ENROLL: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
+    export const CAPE_DATA: ICapeRow[] = [];
+
+    export function initCapeData(pathToFile?: string): void {
+        const pathToRead = pathToFile ?? path.join(__dirname, "..", "cape.tsv");
+        const readStream = createReadStream(pathToRead);
+        const rl = createInterface(readStream);
+
+        let firstLinePassed = false;
+        rl.on("line", line => {
+            if (!firstLinePassed) {
+                firstLinePassed = true;
+                return;
+            }
+
+            const rawData = line.split("\t");
+            if (rawData.length !== 11) {
+                console.error("Bad line read.");
+                return;
+            }
+
+            const [
+                instructor,
+                subCourse,
+                course,
+                term,
+                enroll,
+                evalsMade,
+                rcmdClass,
+                rcmdInstr,
+                studyHrWk,
+                avgGradeExp,
+                avgGradeRec
+            ] = rawData;
+
+            CAPE_DATA.push({
+                instructor,
+                subjectCourse: subCourse,
+                courseName: course,
+                term,
+                enrollmentCount: Number.parseFloat(enroll),
+                evaluationsMade: Number.parseFloat(evalsMade),
+                recommendedClass: Number.parseFloat(rcmdClass),
+                recommendedInstructor: Number.parseFloat(rcmdInstr),
+                studyHourWeek: Number.parseFloat(studyHrWk),
+                averageGradeExp: Number.parseFloat(avgGradeExp),
+                averageGradeRec: Number.parseFloat(avgGradeRec)
+            });
+        });
+
+        rl.on("close", () => {
+            console.info(`Done reading. Data length: ${CAPE_DATA.length}`);
+        });
+    }
 
     /**
      * Adds the enrollment graph data to the above collections.

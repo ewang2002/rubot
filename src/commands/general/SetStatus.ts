@@ -27,15 +27,7 @@ export class SetStatus extends BaseCommand {
                     required: false,
                     example: ["Online"]
                 },
-                {
-                    displayName: "Activity",
-                    argName: "activity",
-                    desc: "The bot's activity (game).",
-                    type: ArgumentType.String,
-                    prettyType: "String",
-                    required: true,
-                    example: ["All of the clowns"]
-                },
+
                 {
                     displayName: "Activity Type",
                     argName: "activity_type",
@@ -51,6 +43,15 @@ export class SetStatus extends BaseCommand {
                     prettyType: "String",
                     required: true,
                     example: ["Watching"]
+                },
+                {
+                    displayName: "Activity",
+                    argName: "activity",
+                    desc: "The bot's activity (game).",
+                    type: ArgumentType.String,
+                    prettyType: "String",
+                    required: true,
+                    example: ["All of the clowns"]
                 }
             ],
             botPermissions: [],

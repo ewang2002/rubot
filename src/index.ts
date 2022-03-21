@@ -12,6 +12,7 @@ import {Constants} from "./Constants";
     const bot = new Bot(config);
     bot.startAllEvents();
     await bot.login();
+    Constants.initCapeData();
     await Constants.initEnrollmentData();
     console.info("All data received.");
 })();
