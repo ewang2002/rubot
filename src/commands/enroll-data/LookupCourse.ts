@@ -109,9 +109,7 @@ export class LookupCourse extends BaseCommand {
                     : x.available_seats;
             }
             else {
-                displayAvailability = x.waitlist_ct > 0
-                    ? x.total_seats
-                    : x.enrolled_ct;
+                displayAvailability = x.enrolled_ct; 
             }
 
             return displayAvailability;

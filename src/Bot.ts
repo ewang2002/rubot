@@ -76,7 +76,9 @@ export class Bot {
         Bot.Commands = new Collection<string, Cmds.BaseCommand[]>();
         Bot.Commands.set("General", [
             new Cmds.Help(),
-            new Cmds.Ping()
+            new Cmds.Ping(),
+            new Cmds.Spam(),
+            new Cmds.SetStatus()
         ]);
 
         Bot.Commands.set("Enrollment Data", [
@@ -84,10 +86,6 @@ export class Bot {
             new Cmds.GetSectionEnroll(),
             new Cmds.LookupCourse(),
             new Cmds.GetCape()
-        ]);
-
-        Bot.Commands.set("Bot Owner", [
-            new Cmds.SetStatus()
         ]);
 
         Bot.JsonCommands = [];
