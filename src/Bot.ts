@@ -89,6 +89,10 @@ export class Bot {
             new Cmds.LookupCached()
         ]);
 
+        Bot.Commands.set("UCSD", [
+            new Cmds.ViewClassrooms()
+        ]);
+
         Bot.JsonCommands = [];
         Bot.NameCommands = new Collection<string, Cmds.BaseCommand>();
         Bot.Rest = new REST({version: "9"}).setToken(config.token.botToken);

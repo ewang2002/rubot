@@ -9,6 +9,9 @@ import {GeneralUtilities} from "../../../utilities/GeneralUtilities";
 import {EmojiConstants} from "../../../constants/GeneralConstants";
 import {AdvancedCollector} from "../../../utilities/AdvancedCollector";
 import CAPE_DATA = Constants.CAPE_DATA;
+import {TimeUtilities} from "../../../utilities/TimeUtilities";
+import padTimeDigit = TimeUtilities.padTimeDigit;
+import getTimeStr = TimeUtilities.getTimeStr;
 
 export const FOOTER_EMBED: string = "Showing available seats only (e.g. 17/35 means 17 seats are available in this" +
     " section.";
@@ -56,13 +59,6 @@ export async function displayInteractiveWebregData(ctx: ICommandContext, section
             map.get(entry.section_code[0])!.push(entry);
         }
     }
-
-    const padTimeDigit = (n: number): string => n >= 10 ? "" + n : "0" + n;
-    const getTimeStr = (hr: number, min: number): string => {
-        const hrFixed = padTimeDigit(hr <= 12 ? hr : hr % 12);
-        const minFixed = padTimeDigit(min);
-        return `${hrFixed}:${minFixed} ${hr < 12 ? "AM" : "PM"}`;
-    };
 
     // Create an embed for each page
     const embeds: MessageEmbed[] = [];
@@ -137,6 +133,15 @@ export async function displayInteractiveWebregData(ctx: ICommandContext, section
         embeds.push(embed);
     }
 
+    await manageMultipageEmbed(ctx, embeds);
+}
+
+/**
+ * Displays multiple embeds by using interactions to "turn the page."
+ * @param {ICommandContext} ctx The command context.
+ * @param {MessageEmbed[]} embeds The embeds.
+ */
+export async function manageMultipageEmbed(ctx: ICommandContext, embeds: MessageEmbed[]): Promise<void> {
     const uniqueId = `${Date.now()}_${ctx.user.id}_${Math.random()}`;
     const nextId = uniqueId + "_next";
     const stopId = uniqueId + "_stop";
@@ -166,8 +171,12 @@ export async function displayInteractiveWebregData(ctx: ICommandContext, section
 
     await ctx.interaction.editReply({
         embeds: [embeds[0]],
-        components: AdvancedCollector.getActionRowsFromComponents(components)
+        components: embeds.length === 1 ? [] : AdvancedCollector.getActionRowsFromComponents(components)
     });
+
+    if (embeds.length === 1) {
+        return;
+    }
 
     const collector = ctx.channel.createMessageComponentCollector({
         filter: i => i.customId.startsWith(uniqueId) && i.user.id === ctx.user.id,

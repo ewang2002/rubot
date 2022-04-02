@@ -10,3 +10,5 @@ export * from "./enroll-data/GetSectionEnroll";
 export * from "./enroll-data/LookupLive";
 export * from "./enroll-data/GetCape";
 export * from "./enroll-data/LookupCached";
+
+export * from "./ucsd/ViewClassrooms";

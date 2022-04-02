@@ -1,4 +1,25 @@
 export namespace TimeUtilities {
+
+    /**
+     * Pads a digit between [0, 9] with a 0 in front.
+     * @param {number} n The number.
+     * @returns {string} The padded string.
+     */
+    export const padTimeDigit = (n: number): string => n >= 10 ? "" + n : "0" + n;
+
+    /**
+     * Converts the hour and minute values to a time string.
+     * @param {number} hr The hour.
+     * @param {number} min The minute.
+     * @returns {string} The time string.
+     */
+    export const getTimeStr = (hr: number, min: number): string => {
+        const hrFixedNum = hr <= 12 ? hr : hr % 12;
+        const hrFixed = padTimeDigit(hrFixedNum === 0 ? 12 : hrFixedNum);
+        const minFixed = padTimeDigit(min);
+        return `${hrFixed}:${minFixed} ${hr < 12 ? "AM" : "PM"}`;
+    };
+
     /**
      * Gets all days from a raw day of week string. For example, if the input string is
      * ```
