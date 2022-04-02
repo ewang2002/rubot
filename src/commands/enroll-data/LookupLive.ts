@@ -1,7 +1,7 @@
 import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
 import {GeneralUtilities} from "../../utilities/GeneralUtilities";
 import {Bot} from "../../Bot";
-import {displayInteractiveWebregData, FOOTER_EMBED, parseCourseSubjCode} from "./helpers/Helper";
+import {displayInteractiveWebregData, FOOTER_EMBED, getColorByPercent, parseCourseSubjCode} from "./helpers/Helper";
 import {WebRegSection} from "../../definitions";
 import {StringBuilder} from "../../utilities/StringBuilder";
 import {EmojiConstants, GeneralConstants} from "../../constants/GeneralConstants";
@@ -90,8 +90,11 @@ export class LookupLive extends BaseCommand {
         }
 
         if (!showAll) {
+            const numEnrolled = json.map(x => x.enrolled_ct).reduce((p, c) => p + c, 0);
+            const total = json.map(x => x.total_seats).reduce((p, c) => p + c, 0);
+
             const embed = new MessageEmbed()
-                .setColor("RANDOM")
+                .setColor(getColorByPercent(numEnrolled / total))
                 .setTitle(`WebReg Info: **${parsedCode}** (Term: ${LookupLive.TERM})`)
                 .setDescription(`Found ${json.length} section(s) of **\`${parsedCode}\`**.`)
                 .setFooter({

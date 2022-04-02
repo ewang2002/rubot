@@ -14,6 +14,20 @@ export const FOOTER_EMBED: string = "Showing available seats only (e.g. 17/35 me
     " section.";
 
 /**
+ * Gets the embed color based on the percent.
+ * @param {number} percent The percent, as a decimal. i.e. must be in range [0, 1]
+ * @returns {[number, number, number]} The RGB values for the embed color.
+ */
+export function getColorByPercent(percent: number): [number, number, number] {
+    const percentToUse = Math.min(Math.abs(percent), 1);
+    return [
+        Math.floor(26 + 175 * percentToUse),
+        Math.floor(201 - (175 * percentToUse)),
+        26
+    ];
+}
+
+/**
  * Displays WebReg data, allowing the user to use interactions to navigate between different pages, where each page
  * represents a section family and each page displays data about that section.
  *
@@ -54,9 +68,12 @@ export async function displayInteractiveWebregData(ctx: ICommandContext, section
     const embeds: MessageEmbed[] = [];
     let pageNum = 1;
     for (const [sectionFamily, entries] of map) {
+        const numEnrolled = entries.map(x => x.enrolled_ct).reduce((p, c) => p + c, 0);
+        const total = entries.map(x => x.total_seats).reduce((p, c) => p + c, 0);
+
         const capeUrl = `https://cape.ucsd.edu/responses/Results.aspx?courseNumber=${subj}+${num}`;
         const embed = new MessageEmbed()
-            .setColor("RANDOM")
+            .setColor(live ? getColorByPercent(numEnrolled / total) : "RANDOM")
             .setTitle(`**${parsedCode}** Section **${sectionFamily}** (Term: ${term})`)
             .setDescription(
                 new StringBuilder()
