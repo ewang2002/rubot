@@ -1,10 +1,204 @@
-import {Collection, MessageEmbed} from "discord.js";
+import {BaseMessageComponent, Collection, MessageButton, MessageEmbed} from "discord.js";
 import {Constants} from "../../../Constants";
-import {ICapeRow} from "../../../definitions";
+import {ICapeRow, WebRegSection} from "../../../definitions";
 import {ArrayUtilities} from "../../../utilities/ArrayUtilities";
 import {StringBuilder} from "../../../utilities/StringBuilder";
-import CAPE_DATA = Constants.CAPE_DATA;
 import {StringUtil} from "../../../utilities/StringUtilities";
+import {ICommandContext} from "../../BaseCommand";
+import {GeneralUtilities} from "../../../utilities/GeneralUtilities";
+import {EmojiConstants} from "../../../constants/GeneralConstants";
+import {AdvancedCollector} from "../../../utilities/AdvancedCollector";
+import CAPE_DATA = Constants.CAPE_DATA;
+
+export const FOOTER_EMBED: string = "Showing available seats only (e.g. 17/35 means 17 seats are available in this" +
+    " section.";
+
+/**
+ * Displays WebReg data, allowing the user to use interactions to navigate between different pages, where each page
+ * represents a section family and each page displays data about that section.
+ *
+ * @param {ICommandContext} ctx The command context.
+ * @param {WebRegSection[]} sections The sections to display.
+ * @param {string} term The term for which the above sections apply for.
+ * @param {string} parsedCode The parsed section code, e.g. CSE 100.
+ * @param {boolean} live Whether this data was fetched from WebReg recently.
+ */
+export async function displayInteractiveWebregData(ctx: ICommandContext, sections: WebRegSection[],
+                                                   term: string, parsedCode: string, live: boolean): Promise<void> {
+    const [subj, num] = parsedCode.split(" ");
+    const map: Collection<string, WebRegSection[]> = new Collection<string, WebRegSection[]>();
+    // /^\d+$/ is a regex to test if the string contains only digits.
+    // Some sections have numerical section codes, e.g. instead of A01, you have 001. These sections generally
+    // only have lectures (no discussion, no final).
+    if (sections[0].section_code.length > 0 && /^\d+$/.test(sections[0].section_code[0])) {
+        map.set("0", sections);
+    }
+    else {
+        for (const entry of sections) {
+            if (!map.has(entry.section_code[0])) {
+                map.set(entry.section_code[0], []);
+            }
+
+            map.get(entry.section_code[0])!.push(entry);
+        }
+    }
+
+    const padTimeDigit = (n: number): string => n >= 10 ? "" + n : "0" + n;
+    const getTimeStr = (hr: number, min: number): string => {
+        const hrFixed = padTimeDigit(hr <= 12 ? hr : hr % 12);
+        const minFixed = padTimeDigit(min);
+        return `${hrFixed}:${minFixed} ${hr < 12 ? "AM" : "PM"}`;
+    };
+
+    // Create an embed for each page
+    const embeds: MessageEmbed[] = [];
+    let pageNum = 1;
+    for (const [sectionFamily, entries] of map) {
+        const capeUrl = `https://cape.ucsd.edu/responses/Results.aspx?courseNumber=${subj}+${num}`;
+        const embed = new MessageEmbed()
+            .setColor("RANDOM")
+            .setTitle(`**${parsedCode}** Section **${sectionFamily}** (Term: ${term})`)
+            .setDescription(
+                new StringBuilder()
+                    .append(`Instructor: **\`${entries[0].instructor}\`**`).appendLine()
+                    .append(`Sections: **\`${entries.length}\`**`).appendLine()
+                    .append(`Evaluations: Click [Here](${capeUrl})`).appendLine()
+                    .append(live ? `*${FOOTER_EMBED}*` : "")
+                    .toString()
+            )
+            .setFooter({
+                text: (live
+                    ? `Data Fetched from WebReg. `
+                    : "Cached Data. ") + `Page ${pageNum++}/${map.size}.`
+            })
+            .setTimestamp();
+
+        for (const entry of entries) {
+            let fieldTitle: string;
+            if (live) {
+                fieldTitle = new StringBuilder()
+                    .append(
+                        entry.available_seats === 0 || entry.waitlist_ct > 0
+                            ? EmojiConstants.RED_SQUARE_EMOJI
+                            : EmojiConstants.GREEN_SQUARE_EMOJI
+                    )
+                    .append(` [${entry.section_id}] ${entry.section_code}`)
+                    .append(` ${entry.enrolled_ct}/${entry.total_seats}`)
+                    .append(` (${entry.waitlist_ct} WL)`)
+                    .toString();
+            }
+            else {
+                fieldTitle = `[${entry.section_id}] Section ${entry.section_code}`;
+            }
+
+            embed.addField(
+                // Field title
+                fieldTitle,
+                // Field entry
+                StringUtil.codifyString(
+                    entry.meetings.map(x => {
+                        let meetingDay: string;
+                        if (Array.isArray(x.meeting_days)) {
+                            meetingDay = x.meeting_days.join("");
+                        }
+                        else {
+                            const [year, month, day] = x.meeting_days.split("-")
+                                .map(x => Number.parseInt(x, 10));
+                            meetingDay = `${padTimeDigit(month)}/${padTimeDigit(day)}/${padTimeDigit(year)}`;
+                        }
+
+                        return new StringBuilder()
+                            .append(`[${x.meeting_type}] ${meetingDay} ${getTimeStr(x.start_hr, x.start_min)}`)
+                            .append(` - ${getTimeStr(x.end_hr, x.end_min)}`).appendLine()
+                            .append(`     ${x.building} ${x.room}`)
+                            .toString();
+                    }).join("\n")
+                )
+            );
+        }
+
+        embeds.push(embed);
+    }
+
+    const uniqueId = `${Date.now()}_${ctx.user.id}_${Math.random()}`;
+    const nextId = uniqueId + "_next";
+    const stopId = uniqueId + "_stop";
+    const backId = uniqueId + "_back";
+    const components: BaseMessageComponent[] = [
+        new MessageButton()
+            .setLabel("Previous Page")
+            .setCustomId(backId)
+            .setEmoji(EmojiConstants.LONG_LEFT_ARROW_EMOJI)
+            .setStyle("PRIMARY"),
+        new MessageButton()
+            .setLabel("Stop")
+            .setCustomId(stopId)
+            .setEmoji(EmojiConstants.STOP_SIGN_EMOJI)
+            .setStyle("DANGER"),
+        new MessageButton()
+            .setLabel("Next Page")
+            .setCustomId(nextId)
+            .setEmoji(EmojiConstants.LONG_RIGHT_TRIANGLE_EMOJI)
+            .setStyle("PRIMARY")
+    ];
+
+    if (embeds.length === 1) {
+        components.shift();
+        components.pop();
+    }
+
+    await ctx.interaction.editReply({
+        embeds: [embeds[0]],
+        components: AdvancedCollector.getActionRowsFromComponents(components)
+    });
+
+    const collector = ctx.channel.createMessageComponentCollector({
+        filter: i => i.customId.startsWith(uniqueId) && i.user.id === ctx.user.id,
+        time: 3 * 60 * 1000
+    });
+
+    // Don't exit until they're done
+    await new Promise<void>(async resolve => {
+        let currPage = 0;
+        collector.on("collect", async i => {
+            await i.deferUpdate();
+
+            switch (i.customId) {
+                case nextId: {
+                    currPage++;
+                    currPage %= embeds.length;
+                    break;
+                }
+                case backId: {
+                    currPage--;
+                    currPage = (currPage + embeds.length) % embeds.length;
+                    break;
+                }
+                case stopId: {
+                    collector.stop("stopped");
+                    return;
+                }
+            }
+
+            await ctx.interaction.editReply({
+                embeds: [embeds[currPage]],
+                components: AdvancedCollector.getActionRowsFromComponents(components)
+            });
+        });
+
+        collector.on("end", async () => {
+            // Possible that someone might delete the message before this triggers.
+            await GeneralUtilities.tryExecuteAsync(async () => {
+                await ctx.interaction.editReply({
+                    components: []
+                });
+            });
+
+            resolve();
+        });
+    });
+}
+
 
 /**
  * Parses the course subject code from a given string.

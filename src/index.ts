@@ -11,10 +11,11 @@ import {Constants} from "./Constants";
     const config: IConfiguration = JSON.parse(content.toString());
     const bot = new Bot(config);
     bot.startAllEvents();
-    await bot.login();
     Constants.initCapeData();
+    Constants.initSectionData("SP22");
     await Constants.initEnrollmentData();
     console.info("All data received.");
+    await bot.login();
 })();
 
 process.on("unhandledRejection", e => {

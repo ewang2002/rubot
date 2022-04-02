@@ -1,5 +1,37 @@
 export namespace TimeUtilities {
     /**
+     * Gets all days from a raw day of week string. For example, if the input string is
+     * ```
+     * MTuWF
+     * ```
+     * then the output array would be
+     * ```
+     * ["M", "Tu", "W", "F"]
+     * ```
+     *
+     * @param {string} s The string containing the raw day of week.
+     * @returns {string[]} The parsed array.
+     */
+    export function getAllDays(s: string): string[] {
+        const allDays = [];
+        let day = "";
+        for (let i = 0; i < s.length; i++) {
+            if (s[i] === s[i].toUpperCase() && day) {
+                allDays.push(day);
+                day = s[i];
+                continue;
+            }
+
+            day += s[i];
+        }
+
+        allDays.push(day);
+
+        return allDays;
+    }
+
+
+    /**
      * Gets the current time in a nice string format.
      * @param {string} [timezone] The timezone, if applicable. Otherwise, GMT is used.
      * @param {boolean} [removeAmPm] Whether to remove the AM/PM ending.

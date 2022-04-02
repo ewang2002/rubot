@@ -84,8 +84,9 @@ export class Bot {
         Bot.Commands.set("Enrollment Data", [
             new Cmds.GetOverallEnroll(),
             new Cmds.GetSectionEnroll(),
-            new Cmds.LookupCourse(),
-            new Cmds.GetCape()
+            new Cmds.LookupLive(),
+            new Cmds.GetCape(),
+            new Cmds.LookupCached()
         ]);
 
         Bot.JsonCommands = [];
