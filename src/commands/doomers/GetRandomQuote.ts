@@ -44,10 +44,14 @@ export class GetRandomQuote extends BaseCommand {
 
         await ctx.interaction.reply({
             content: new StringBuilder()
-                .append(randomQuote.text.split("\n").map(x => "> " + x))
+                .append(randomQuote.text.split("\n").map(x => "> " + x).join("\n"))
                 .appendLine()
                 .append(`- ${author}`)
-                .toString()
+                .toString(),
+            allowedMentions: {
+                users: [],
+                parse: []
+            }
         });
 
         return 0;

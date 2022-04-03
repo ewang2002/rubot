@@ -16,3 +16,4 @@ export * from "./doomers/Spam";
 export * from "./doomers/AddQuoteMessageLink";
 export * from "./doomers/AddQuoteText";
 export * from "./doomers/GetRandomQuote";
+export * from "./doomers/AddStrangerQuote";
