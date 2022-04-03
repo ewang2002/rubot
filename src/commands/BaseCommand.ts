@@ -267,7 +267,8 @@ export abstract class BaseCommand {
             canRun: false,
             hasAdmin: false,
             missingBotPerms: [],
-            missingUserPerms: []
+            missingUserPerms: [],
+            reason: ""
         };
 
         // If the command is bot owner only and the person isn't a bot owner, then this person can't run this command.
@@ -289,6 +290,11 @@ export abstract class BaseCommand {
         // So userToTest better be a GuildMember.
         if (userToTest instanceof User)
             return results;
+
+        if (this.commandInfo.allowOnServers && !this.commandInfo.allowOnServers.includes(guild.id)) {
+            results.reason = "Your server is not allowed to run this command.";
+            return results;
+        }
 
         // Command was executed in the server. We need to check permissions.
         const bot = guild.me;
@@ -344,6 +350,7 @@ interface ICanRunResult {
     hasAdmin: boolean;
     missingUserPerms: string[];
     missingBotPerms: string[];
+    reason: string;
 }
 
 export interface ICommandInfo {
@@ -382,6 +389,16 @@ export interface ICommandInfo {
      * @type {number}
      */
     commandCooldown: number;
+
+    /**
+     * An array of server IDs for which this command should be allowed to run on. In other words, if a command is
+     * executed in a server whose ID doesn't appear in this array, then the command will not run.
+     *
+     * Set this to undefined if the command should be allowed to run on all servers.
+     *
+     * @type {string[]}
+     */
+    allowOnServers?: string[];
 
     /**
      * The general permissions that the user must have to execute the command.

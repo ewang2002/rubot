@@ -1,5 +1,6 @@
 import {ArgumentType, BaseCommand, ICommandContext, ICommandInfo} from "../BaseCommand";
 import {ActivitiesOptions, ClientPresenceStatus, PresenceData} from "discord.js";
+import {GeneralConstants} from "../../constants/GeneralConstants";
 
 export class SetStatus extends BaseCommand {
     public constructor() {
@@ -56,7 +57,8 @@ export class SetStatus extends BaseCommand {
             ],
             botPermissions: [],
             guildOnly: false,
-            botOwnerOnly: false
+            botOwnerOnly: false,
+            allowOnServers: [GeneralConstants.DOOMERS_SERVER_ID]
         };
 
         super(cmi);

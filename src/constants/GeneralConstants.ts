@@ -1,5 +1,7 @@
 export namespace GeneralConstants {
     export const ZERO_WIDTH_SPACE: string = "\u200b";
+
+    export const DOOMERS_SERVER_ID: string = "778738941443440640";
 }
 
 export namespace EmojiConstants {

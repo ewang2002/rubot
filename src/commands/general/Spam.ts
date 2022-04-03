@@ -1,5 +1,6 @@
 import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
 import {GeneralUtilities} from "../../utilities/GeneralUtilities";
+import {GeneralConstants} from "../../constants/GeneralConstants";
 
 export class Spam extends BaseCommand {
     public constructor() {
@@ -28,8 +29,8 @@ export class Spam extends BaseCommand {
                     prettyType: "Integer",
                     desc: "The number of times to ping this person.",
                     restrictions: {
-                        integerMin: 5,
-                        integerMax: 20
+                        integerMin: 1,
+                        integerMax: 100
                     },
                     required: true,
                     example: ["15"]
@@ -37,7 +38,8 @@ export class Spam extends BaseCommand {
 
             ],
             guildOnly: true,
-            botOwnerOnly: false
+            botOwnerOnly: false,
+            allowOnServers: [GeneralConstants.DOOMERS_SERVER_ID]
         });
     }
 
@@ -48,7 +50,8 @@ export class Spam extends BaseCommand {
         const mention = ctx.interaction.options.getMentionable("member", true);
         const amt = ctx.interaction.options.getInteger("amount", true);
         await ctx.interaction.reply({
-            content: "Ok."
+            content: "Ok.",
+            ephemeral: true
         });
 
         for (let i = 0; i < amt; ++i) {

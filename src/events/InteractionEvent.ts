@@ -51,6 +51,13 @@ async function slashCommandHandler(interaction: CommandInteraction): Promise<voi
         return;
     }
 
+    if (canRunInfo.reason) {
+        return interaction.reply({
+            content: canRunInfo.reason,
+            ephemeral: true
+        });
+    }
+
     // Acknowledge any permission issues.
     const noPermSb = new StringBuilder()
         .append("You, or the bot, are missing permissions needed to run the command.");
