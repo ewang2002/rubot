@@ -37,7 +37,7 @@ export class LookupLive extends BaseCommand {
                     argName: "show_all",
                     type: ArgumentType.Boolean,
                     prettyType: "Boolean",
-                    desc: "Whether to show more detailed data.",
+                    desc: "Whether to show more detailed data. By default, this is true.",
                     required: false,
                     example: ["True"]
                 }
@@ -52,7 +52,7 @@ export class LookupLive extends BaseCommand {
      */
     public async run(ctx: ICommandContext): Promise<number> {
         const code = ctx.interaction.options.getString("course_subj_num", true);
-        const showAll = ctx.interaction.options.getBoolean("show_all", false) ?? false;
+        const showAll = ctx.interaction.options.getBoolean("show_all", false) ?? true;
         const parsedCode = parseCourseSubjCode(code);
         if (parsedCode.indexOf(" ") === -1) {
             await ctx.interaction.reply({

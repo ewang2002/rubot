@@ -35,7 +35,7 @@ export namespace ArrayUtilities {
      *
      * @typedef {T} The element type.
      * @param {T[]} array The array to remove duplicates from.
-     * @returns {T[]} The shuffled array.
+     * @returns {T[]} The new array with no duplicates.
      */
     export function removeDuplicates<T>(array: T[]): T[] {
         return array.filter((item, index) => array.indexOf(item) === index);

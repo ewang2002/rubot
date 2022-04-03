@@ -81,7 +81,7 @@ export async function displayInteractiveWebregData(ctx: ICommandContext, section
             )
             .setFooter({
                 text: (live
-                    ? `Data Fetched from WebReg. `
+                    ? `Data Fetched from WebReg. Powered by waffle being a clown. `
                     : "Cached Data. ") + `Page ${pageNum++}/${map.size}.`
             })
             .setTimestamp();
@@ -95,7 +95,7 @@ export async function displayInteractiveWebregData(ctx: ICommandContext, section
                             ? EmojiConstants.RED_SQUARE_EMOJI
                             : EmojiConstants.GREEN_SQUARE_EMOJI
                     )
-                    .append(` [${entry.section_id}] ${entry.section_code}`)
+                    .append(` [${entry.section_id}] ${entry.section_code} -`)
                     .append(` ${entry.enrolled_ct}/${entry.total_seats}`)
                     .append(` (${entry.waitlist_ct} WL)`)
                     .toString();

@@ -10,6 +10,8 @@ import padTimeDigit = TimeUtilities.padTimeDigit;
 import getTimeStr = TimeUtilities.getTimeStr;
 
 export class ViewClassrooms extends BaseCommand {
+    private static FINAL_DURATION_TO_MS: number = 179 * 60 * 1000;
+
     private static DAY_OF_WEEK: string[] = [
         "Su",
         "M",
@@ -225,7 +227,7 @@ export class ViewClassrooms extends BaseCommand {
                 `01/01/20 ${x.endHr}:${padTimeDigit(x.endMin)}`
             ).getTime() - new Date(
                 `01/01/20 ${x.startHr}:${padTimeDigit(x.startMin)}`
-            ).getTime() > 170);
+            ).getTime() === ViewClassrooms.FINAL_DURATION_TO_MS);
 
         // The key here is that we only want to consider each classroom *once*. We don't care
         // if there are duplicate courses (it's not like there's a class which has two lectures
@@ -242,7 +244,7 @@ export class ViewClassrooms extends BaseCommand {
                         && currTimeNum <= c.endTime
                         && (isFinalTime
                             ? c.day[0] === currDateStr
-                            : c.day.includes(currDayOfWk))) {
+                            : c.day.includes(currDayOfWk) || c.day[0] === currDateStr)) {
                         // Then this means that this classroom is in use during this
                         // time. So, we move to the next classroom.
                         continue main;
@@ -262,7 +264,7 @@ export class ViewClassrooms extends BaseCommand {
                     && currTimeNum <= c.endTime
                     && (isFinalTime
                         ? c.day[0] === currDateStr
-                        : c.day.includes(currDayOfWk))) {
+                        : c.day.includes(currDayOfWk) || c.day[0] === currDateStr)) {
                     // Then we found the class so we can add it to the array
                     courses.push(c);
                     continue main;
