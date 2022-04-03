@@ -80,6 +80,13 @@ export class AddQuoteMessageLink extends BaseCommand {
             return -1;
         }
 
+        if (messageObj.author.bot) {
+            await ctx.interaction.editReply({
+                content: "Sorry, you can't quote bots :( Unless you're a bot?"
+            });
+            return -1;
+        }
+
         if (messageObj.content.length === 0 || messageObj.content.length > 1500) {
             await ctx.interaction.editReply({
                 content: "The message you linked does not have any content, or it is too long."

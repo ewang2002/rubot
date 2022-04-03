@@ -53,6 +53,13 @@ export class AddQuoteText extends BaseCommand {
             return -1;
         }
 
+        if (mention.bot) {
+            await ctx.interaction.editReply({
+                content: "Sorry, you can't quote bots :( Unless you're a bot?"
+            });
+            return -1;
+        }
+
         await ctx.interaction.deferReply();
         await QuoteHelpers.writeToQuoteJson({
             text,
