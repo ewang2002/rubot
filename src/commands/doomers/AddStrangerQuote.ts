@@ -32,7 +32,6 @@ export class AddStrangerQuote extends BaseCommand {
                     required: true,
                     example: ["user"]
                 },
-
             ],
             guildOnly: true,
             botOwnerOnly: false,

@@ -11,7 +11,7 @@ export class AddQuoteText extends BaseCommand {
             description: "Saves a quote by text. This should be used if you don't have a URL to the original message.",
             generalPermissions: [],
             botPermissions: [],
-            commandCooldown: 10 * 1000,
+            commandCooldown: 3 * 1000,
             argumentInfo: [
                 {
                     displayName: "Quote Text",
@@ -31,7 +31,6 @@ export class AddQuoteText extends BaseCommand {
                     required: true,
                     example: ["@User#0001"]
                 },
-
             ],
             guildOnly: true,
             botOwnerOnly: false,

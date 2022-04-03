@@ -86,7 +86,8 @@ export class Bot {
             new Cmds.AddQuoteMessageLink(),
             new Cmds.AddQuoteText(),
             new Cmds.GetRandomQuote(),
-            new Cmds.AddStrangerQuote()
+            new Cmds.AddStrangerQuote(),
+            new Cmds.BadnessLevel()
         ]);
 
         Bot.Commands.set("Enrollment Data", [

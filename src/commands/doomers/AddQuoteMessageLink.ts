@@ -12,7 +12,7 @@ export class AddQuoteMessageLink extends BaseCommand {
             description: "Saves a quote by link. This should be used if you have a URL to the original message.",
             generalPermissions: [],
             botPermissions: [],
-            commandCooldown: 10 * 1000,
+            commandCooldown: 3 * 1000,
             argumentInfo: [
                 {
                     displayName: "Link to Message",
