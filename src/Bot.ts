@@ -5,6 +5,7 @@ import * as Cmds from "./commands";
 import {onErrorEvent, onInteractionEvent, onReadyEvent,} from "./events";
 import {REST} from "@discordjs/rest";
 import {RESTPostAPIApplicationCommandsJSONBody, Routes} from "discord-api-types/v10";
+import {QuoteHelpers} from "./QuoteHelpers";
 
 export class Bot {
     /**
@@ -76,9 +77,15 @@ export class Bot {
         Bot.Commands = new Collection<string, Cmds.BaseCommand[]>();
         Bot.Commands.set("General", [
             new Cmds.Help(),
-            new Cmds.Ping(),
+            new Cmds.Ping()
+        ]);
+
+        Bot.Commands.set("Doomers Only", [
             new Cmds.Spam(),
-            new Cmds.SetStatus()
+            new Cmds.SetStatus(),
+            new Cmds.AddQuoteMessageLink(),
+            new Cmds.AddQuoteText(),
+            new Cmds.GetRandomQuote()
         ]);
 
         Bot.Commands.set("Enrollment Data", [
@@ -139,6 +146,8 @@ export class Bot {
         this._bot.on("interactionCreate", async (i: Interaction) => onInteractionEvent(i));
         this._bot.on("error", async (e: Error) => onErrorEvent(e));
         this._eventsIsStarted = true;
+
+        QuoteHelpers.start();
     }
 
     /**

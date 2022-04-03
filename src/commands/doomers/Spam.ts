@@ -14,11 +14,11 @@ export class Spam extends BaseCommand {
             commandCooldown: 20 * 1000,
             argumentInfo: [
                 {
-                    displayName: "Person to Spam",
+                    displayName: "Person or Role to Spam",
                     argName: "member",
                     type: ArgumentType.Mention,
                     prettyType: "Mention",
-                    desc: "The person to spam.",
+                    desc: "The person, or role, to spam.",
                     required: true,
                     example: ["@a waffle"]
                 },
