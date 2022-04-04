@@ -1,8 +1,9 @@
-import {BaseCommand, ICommandContext} from "../BaseCommand";
+import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
 import {GeneralUtilities} from "../../utilities/GeneralUtilities";
 import {GeneralConstants} from "../../constants/GeneralConstants";
-import {QuoteHelpers} from "../../QuoteHelpers";
 import {StringBuilder} from "../../utilities/StringBuilder";
+import {ArrayUtilities} from "../../utilities/ArrayUtilities";
+import {QuoteHelpers} from "../../QuoteHelpers";
 
 export class GetRandomQuote extends BaseCommand {
     public constructor() {
@@ -14,7 +15,17 @@ export class GetRandomQuote extends BaseCommand {
             generalPermissions: [],
             botPermissions: [],
             commandCooldown: 5 * 1000,
-            argumentInfo: [],
+            argumentInfo: [
+                {
+                    displayName: "Filter By User",
+                    argName: "filter_by_author",
+                    type: ArgumentType.User,
+                    prettyType: "User",
+                    desc: "Lets you get a random quote made by the specified user.",
+                    required: false,
+                    example: ["@User#0001"]
+                }
+            ],
             guildOnly: true,
             botOwnerOnly: false,
             allowOnServers: [GeneralConstants.DOOMERS_SERVER_ID]
@@ -25,10 +36,30 @@ export class GetRandomQuote extends BaseCommand {
      * @inheritDoc
      */
     public async run(ctx: ICommandContext): Promise<number> {
-        const randomQuote = QuoteHelpers.getRandomQuote();
+        const filterByUser = ctx.interaction.options.getUser("filter_by_author");
+        // Motivated by CSE 130:
+        //         const randomQuote = (quotes => (filteredQuotes => filteredQuotes.length === 0
+        //                ? null
+        //                : ArrayUtilities.getRandomElement(filteredQuotes)
+        //        )(
+        //            filterByUser
+        //                ? quotes.filter(x => x.author.name === filterByUser.id)
+        //                : quotes
+        //        ))(await QuoteHelpers.getAllQuotes());
+
+        const filteredQuotes = filterByUser
+            ? QuoteHelpers.ALL_ACTIVE_QUOTES.filter(x => x.author.name === filterByUser.id)
+            : QuoteHelpers.ALL_ACTIVE_QUOTES;
+
+        const randomQuote = filteredQuotes.length === 0
+            ? null
+            : ArrayUtilities.getRandomElement(filteredQuotes);
+
         if (!randomQuote) {
             await ctx.interaction.reply({
-                content: "There are no saved quotes. Why not add one?",
+                content: filterByUser
+                    ? "There are no saved quotes by that user. Why not add one?"
+                    : "There are no saved quotes. Why not add one?",
                 ephemeral: true
             });
 

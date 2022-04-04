@@ -1,6 +1,5 @@
 import * as fs from "fs";
 import * as path from "path";
-import {ArrayUtilities} from "./utilities/ArrayUtilities";
 import {TimeUtilities} from "./utilities/TimeUtilities";
 
 /**
@@ -8,6 +7,7 @@ import {TimeUtilities} from "./utilities/TimeUtilities";
  */
 export namespace QuoteHelpers {
     const QUOTE_PATH: string = path.join(__dirname, "..", "quote.json");
+    export const ALL_ACTIVE_QUOTES: IQuote[] = [];
 
     // A potential issue here is that two users could request to add a quote at the same exact time. When
     // the program tries to write both quotes to the same file at the same time, due to potential data race
@@ -31,38 +31,31 @@ export namespace QuoteHelpers {
     /**
      * Starts the quote queue checker.
      */
-    export function start(): void {
+    export async function start(): Promise<void> {
         if (!fs.existsSync(QUOTE_PATH)) {
-            fs.writeFileSync(QUOTE_PATH, JSON.stringify([]));
+            await fs.promises.writeFile(QUOTE_PATH, JSON.stringify([]));
         }
 
-        setInterval(() => {
+        const quoteFile = await fs.promises.readFile(QUOTE_PATH);
+        ALL_ACTIVE_QUOTES.push(...JSON.parse(quoteFile.toString()));
+
+        setInterval(async () => {
             if (QUOTE_QUEUE.length === 0) {
                 return;
             }
 
             const {quote, resolver} = QUOTE_QUEUE.shift()!;
-            const allQuotes = getAllQuotes();
-            allQuotes.push(quote);
-            fs.writeFileSync(QUOTE_PATH, JSON.stringify(allQuotes));
+            ALL_ACTIVE_QUOTES.push(quote);
+            await fs.promises.writeFile(QUOTE_PATH, JSON.stringify(ALL_ACTIVE_QUOTES));
             resolver(true);
             console.info(`[${TimeUtilities.getDateTime()}] Saved quote.`);
         }, 1000);
     }
 
     /**
-     * Gets all quotes.
-     * @returns {IQuote[]} All quotes.
-     */
-    export function getAllQuotes(): IQuote[] {
-        const quoteFile = fs.readFileSync(QUOTE_PATH);
-        return JSON.parse(quoteFile.toString());
-    }
-
-    /**
      * Writes a single quote to the JSON file.
      * @param {QuoteHelpers.IQuote} quote The quote.
-     * @returns {Promise<boolean>>} Whether this was successful.
+     * @returns {Promise<boolean>} Whether this was successful.
      */
     export async function writeToQuoteJson(quote: IQuote): Promise<boolean> {
         return new Promise<boolean>((resolve) => {
@@ -71,16 +64,5 @@ export namespace QuoteHelpers {
                 resolver: resolve
             });
         });
-    }
-
-    /**
-     * Gets a random quote from the quote file.
-     * @returns {IQuote | null} The random quote, if any. `null` if the file is empty.
-     */
-    export function getRandomQuote(): IQuote | null {
-        const json = getAllQuotes();
-        return json.length === 0
-            ? null
-            : ArrayUtilities.getRandomElement(json);
     }
 }
