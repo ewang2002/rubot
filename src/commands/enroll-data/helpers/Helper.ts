@@ -4,7 +4,7 @@ import {ICapeRow, WebRegSection} from "../../../definitions";
 import {ArrayUtilities} from "../../../utilities/ArrayUtilities";
 import {StringBuilder} from "../../../utilities/StringBuilder";
 import {StringUtil} from "../../../utilities/StringUtilities";
-import {ICommandContext} from "../../BaseCommand";
+import {ArgumentType, IArgumentInfo, ICommandContext} from "../../BaseCommand";
 import {GeneralUtilities} from "../../../utilities/GeneralUtilities";
 import {EmojiConstants} from "../../../constants/GeneralConstants";
 import {AdvancedCollector} from "../../../utilities/AdvancedCollector";
@@ -15,6 +15,48 @@ import getTimeStr = TimeUtilities.getTimeStr;
 
 export const FOOTER_EMBED: string = "Showing available seats only (e.g. 17/35 means 17 seats are available in this" +
     " section.";
+
+export const ARGUMENTS: IArgumentInfo[] = [
+    {
+        displayName: "Term",
+        argName: "term",
+        type: ArgumentType.String,
+        restrictions: {
+            stringChoices: Constants.TERMS.map(x => {
+                return [x, x];
+            })
+        },
+        prettyType: "String",
+        desc: "The term to get the graph for.",
+        required: true,
+        example: ["SP22"]
+    },
+    {
+        displayName: "Course & Subject Code",
+        argName: "course_subj_num",
+        type: ArgumentType.String,
+        prettyType: "String",
+        desc: "The course subject code.",
+        required: true,
+        example: ["CSE 100", "MATH100A"]
+    },
+    {
+        displayName: "Search Type",
+        argName: "search_type",
+        type: ArgumentType.String,
+        prettyType: "String",
+        restrictions: {
+            stringChoices: [
+                ["Normal (1500 x 700)", "norm"],
+                ["Wide (5000 x 1000)", "wide"],
+                ["First/Second Pass Only (1500 x 700)", "fsp"]
+            ]
+        },
+        desc: "The plot type to get.",
+        required: false,
+        example: ["Wide"]
+    }
+];
 
 /**
  * Gets the embed color based on the percent.

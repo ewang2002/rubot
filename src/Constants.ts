@@ -7,14 +7,24 @@ import {createReadStream} from "fs";
 import {createInterface} from "readline";
 import * as path from "path";
 import {TimeUtilities} from "./utilities/TimeUtilities";
+import {AxiosRequestConfig} from "axios";
 
 export namespace Constants {
+    // Terms that we have github data for.
+    export const TERMS: string[] = ["SP22"];
+
     export const OVERALL_ENROLL: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
+    export const OVERALL_ENROLL_WIDE: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
+    export const OVERALL_ENROLL_FSP: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
     export const SECTION_ENROLL: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
+    export const SECTION_ENROLL_WIDE: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
+    export const SECTION_ENROLL_FSP: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
     export const CAPE_DATA: ICapeRow[] = [];
 
     export const SECTION_TERM_DATA: WebRegSection[] = [];
-    export let TERM: string = "";
+
+    // Term that we have section (cached) data for. We should only have one active term at any point.
+    export let CACHED_DATA_TERM: string = "";
 
     /**
      * Adds the section data to the above array.
@@ -22,9 +32,9 @@ export namespace Constants {
      * @param {string} [pathToFile] The path to the CAPE file, if any.
      */
     export function initSectionData(term: string, pathToFile?: string): void {
-        TERM = term;
+        CACHED_DATA_TERM = term;
 
-        const pathToRead = pathToFile ?? path.join(__dirname, "..", `${TERM}.tsv`);
+        const pathToRead = pathToFile ?? path.join(__dirname, "..", `${CACHED_DATA_TERM}.tsv`);
         const readStream = createReadStream(pathToRead);
         const rl = createInterface(readStream);
         let firstLinePassed = false;
@@ -194,16 +204,19 @@ export namespace Constants {
             .append("/contents")
             .toString();
 
-        for await (const term of Bot.BotInstance.config.enrollData.terms) {
+        const requestHeader: AxiosRequestConfig = {
+            headers: {
+                "User-Agent": "rubot (ewang2002)"
+            }
+        };
+
+        for await (const term of TERMS) {
             const overall = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
-                const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_overall`, {
-                    headers: {
-                        "User-Agent": "rubot (ewang2002)"
-                    }
-                });
+                const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_overall`, requestHeader);
                 return res.data;
             });
 
+            // OVERALL
             if (overall) {
                 OVERALL_ENROLL.set(term, overall.filter(x => x.name.endsWith(".png")));
             }
@@ -211,12 +224,30 @@ export namespace Constants {
                 console.error(`Could not get overall data for ${term}.`);
             }
 
+            // Overall (first/second pass)
+            const overallFsp = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
+                const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_overall_fsp`, requestHeader);
+                return res.data;
+            });
+
+            if (overallFsp) {
+                OVERALL_ENROLL_FSP.set(term, overallFsp.filter(x => x.name.endsWith(".png")));
+            }
+
+            // Overall (wide)
+            const overallWide = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
+                const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_overall_wide`, requestHeader);
+                return res.data;
+            });
+
+            if (overallWide) {
+                OVERALL_ENROLL_WIDE.set(term, overallWide.filter(x => x.name.endsWith(".png")));
+            }
+
+
+            // SECTION
             const section = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
-                const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_section`, {
-                    headers: {
-                        "User-Agent": "rubot (ewang2002)"
-                    }
-                });
+                const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_section`, requestHeader);
                 return res.data;
             });
 
@@ -225,6 +256,26 @@ export namespace Constants {
             }
             else {
                 console.error(`Could not get section data for ${term}.`);
+            }
+
+            // Section (first/second pass)
+            const sectionFsp = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
+                const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_section_fsp`, requestHeader);
+                return res.data;
+            });
+
+            if (sectionFsp) {
+                SECTION_ENROLL_FSP.set(term, sectionFsp.filter(x => x.name.endsWith(".png")));
+            }
+
+            // Section (wide)
+            const sectionWide = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
+                const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_section_wide`, requestHeader);
+                return res.data;
+            });
+
+            if (sectionWide) {
+                SECTION_ENROLL_WIDE.set(term, sectionWide.filter(x => x.name.endsWith(".png")));
             }
         }
     }

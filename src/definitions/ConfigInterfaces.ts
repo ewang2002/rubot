@@ -63,12 +63,5 @@ export interface IConfiguration {
          * @type {string}
          */
         repoName: string;
-
-        /**
-         * All terms, e.g. [SP22]
-         *
-         * @type {string[]}
-         */
-        terms: string[];
     }
 }

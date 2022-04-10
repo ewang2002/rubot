@@ -1,7 +1,8 @@
-import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
-import {Bot} from "../../Bot";
+import {BaseCommand, ICommandContext} from "../BaseCommand";
 import {Constants} from "../../Constants";
-import {parseCourseSubjCode} from "./helpers/Helper";
+import {ARGUMENTS, parseCourseSubjCode} from "./helpers/Helper";
+import {Collection} from "discord.js";
+import {IGitContent} from "../../definitions";
 
 export class GetOverallEnroll extends BaseCommand {
     public constructor() {
@@ -13,31 +14,7 @@ export class GetOverallEnroll extends BaseCommand {
             generalPermissions: [],
             botPermissions: [],
             commandCooldown: 5 * 1000,
-            argumentInfo: [
-                {
-                    displayName: "Term",
-                    argName: "term",
-                    type: ArgumentType.String,
-                    restrictions: {
-                        stringChoices: Bot.BotInstance.config.enrollData.terms.map(x => {
-                            return [x, x];
-                        })
-                    },
-                    prettyType: "String",
-                    desc: "The term to get the graph for.",
-                    required: true,
-                    example: ["SP22"]
-                },
-                {
-                    displayName: "Course & Subject Code",
-                    argName: "course_subj_num",
-                    type: ArgumentType.String,
-                    prettyType: "String",
-                    desc: "The course subject code.",
-                    required: true,
-                    example: ["CSE 100", "MATH100A"]
-                }
-            ],
+            argumentInfo: ARGUMENTS,
             guildOnly: false,
             botOwnerOnly: false
         });
@@ -49,11 +26,30 @@ export class GetOverallEnroll extends BaseCommand {
     public async run(ctx: ICommandContext): Promise<number> {
         const term = ctx.interaction.options.getString("term", true);
         const code = ctx.interaction.options.getString("course_subj_num", true);
+        const searchType = ctx.interaction.options.getString("search_type", false) ?? "norm";
 
-        const arr = Constants.OVERALL_ENROLL.get(term);
+        let coll: Readonly<Collection<string, IGitContent[]>>;
+        let display: string;
+        switch (searchType) {
+            case "wide":
+                coll = Constants.OVERALL_ENROLL_WIDE;
+                display = "Wide";
+                break;
+            case "fsp":
+                coll = Constants.OVERALL_ENROLL_FSP;
+                display = "First/Second Pass";
+                break;
+            default:
+                // "norm" is the default
+                coll = Constants.OVERALL_ENROLL;
+                display = "Normal";
+                break;
+        }
+
+        const arr = coll.get(term);
         if (!arr) {
             await ctx.interaction.reply({
-                content: `The term, **\`${term}\`**, could not be found. Try again.`,
+                content: `The term, **\`${term}\`** (Display \`${display}\`), could not be found. Try again.`,
                 ephemeral: true
             });
 
@@ -64,7 +60,8 @@ export class GetOverallEnroll extends BaseCommand {
         const res = arr.find(x => x.name.replace(".png", "") === parsedCode);
         if (!res) {
             await ctx.interaction.reply({
-                content: `The course, **\`${parsedCode}\`**, (term **\`${term}\`**) could not be found. Try again.`,
+                content: `The course, **\`${parsedCode}\`**, (term **\`${term}\`** & display \`${display}\`) could not`
+                    + " be found. Try again.",
                 ephemeral: true
             });
 
@@ -74,7 +71,7 @@ export class GetOverallEnroll extends BaseCommand {
         await ctx.interaction.deferReply();
         await ctx.interaction.editReply({
             files: [res.download_url],
-            content: `Course **\`${parsedCode}\`** (Term **\`${term}\`**)`
+            content: `Course **\`${parsedCode}\`** (Term **\`${term}\`**, Display \`${display}\`)`
         });
 
         return 0;

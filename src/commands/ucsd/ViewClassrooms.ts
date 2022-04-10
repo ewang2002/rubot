@@ -321,7 +321,7 @@ export class ViewClassrooms extends BaseCommand {
         while (fields.length > 0) {
             const embed = new MessageEmbed()
                 .setColor("DARK_GREEN")
-                .setTitle((showInactive ? "Classrooms Not In Use" : "Classrooms In Use") + ` (${Constants.TERM})`)
+                .setTitle((showInactive ? "Classrooms Not In Use" : "Classrooms In Use") + ` (${Constants.CACHED_DATA_TERM})`)
                 .setDescription(
                     `It is currently **\`${getTimeStr(cDateTime.getHours(), cDateTime.getMinutes())}\`**.`
                     + ` Below are a list of classrooms that are ${(showInactive ? "not in use" : "in use")}.`
@@ -355,7 +355,7 @@ export class ViewClassrooms extends BaseCommand {
             embeds.push(
                 new MessageEmbed()
                     .setColor("DARK_RED")
-                    .setTitle((showInactive ? "Classrooms Not In Use" : "Classrooms In Use") + ` (${Constants.TERM})`)
+                    .setTitle((showInactive ? "Classrooms Not In Use" : "Classrooms In Use") + ` (${Constants.CACHED_DATA_TERM})`)
                     .setDescription(
                         `Right now, it is **\`${getTimeStr(cDateTime.getHours(), cDateTime.getMinutes())}\`**.`
                         + " There are no classrooms that are " + (showInactive ? "not in use." : "in use.")

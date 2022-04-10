@@ -61,6 +61,7 @@ export class Bot {
             throw new Error("No config file given.");
         }
 
+        Bot.BotInstance = this;
         this._instanceStarted = new Date();
         this._config = config;
         this._bot = new Client({
@@ -73,7 +74,6 @@ export class Bot {
                 "GUILDS"
             ]
         });
-        Bot.BotInstance = this;
         Bot.Commands = new Collection<string, Cmds.BaseCommand[]>();
         Bot.Commands.set("General", [
             new Cmds.Help(),

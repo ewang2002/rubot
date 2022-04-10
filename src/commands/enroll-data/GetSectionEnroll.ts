@@ -1,11 +1,11 @@
-import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
-import {Bot} from "../../Bot";
+import {BaseCommand, ICommandContext} from "../BaseCommand";
 import {Constants} from "../../Constants";
 import {ArrayUtilities} from "../../utilities/ArrayUtilities";
-import {MessageButton, MessageSelectMenu} from "discord.js";
+import {Collection, MessageButton, MessageSelectMenu} from "discord.js";
 import {AdvancedCollector} from "../../utilities/AdvancedCollector";
 import {EmojiConstants} from "../../constants/GeneralConstants";
-import {parseCourseSubjCode} from "./helpers/Helper";
+import {ARGUMENTS, parseCourseSubjCode} from "./helpers/Helper";
+import {IGitContent} from "../../definitions";
 
 export class GetSectionEnroll extends BaseCommand {
     public constructor() {
@@ -17,31 +17,7 @@ export class GetSectionEnroll extends BaseCommand {
             generalPermissions: [],
             botPermissions: [],
             commandCooldown: 5 * 1000,
-            argumentInfo: [
-                {
-                    displayName: "Term",
-                    argName: "term",
-                    type: ArgumentType.String,
-                    restrictions: {
-                        stringChoices: Bot.BotInstance.config.enrollData.terms.map(x => {
-                            return [x, x];
-                        })
-                    },
-                    prettyType: "String",
-                    desc: "The term to get the graph for.",
-                    required: true,
-                    example: ["SP22"]
-                },
-                {
-                    displayName: "Course & Subject Code",
-                    argName: "course_subj_num",
-                    type: ArgumentType.String,
-                    prettyType: "String",
-                    desc: "The course subject code.",
-                    required: true,
-                    example: ["CSE 100", "MATH100A"]
-                }
-            ],
+            argumentInfo: ARGUMENTS,
             guildOnly: false,
             botOwnerOnly: false
         });
@@ -53,10 +29,30 @@ export class GetSectionEnroll extends BaseCommand {
     public async run(ctx: ICommandContext): Promise<number> {
         const code = ctx.interaction.options.getString("course_subj_num", true);
         const term = ctx.interaction.options.getString("term", true);
-        const arr = Constants.SECTION_ENROLL.get(term);
+        const searchType = ctx.interaction.options.getString("search_type", false) ?? "norm";
+
+        let coll: Readonly<Collection<string, IGitContent[]>>;
+        let display: string;
+        switch (searchType) {
+            case "wide":
+                coll = Constants.SECTION_ENROLL_WIDE;
+                display = "Wide";
+                break;
+            case "fsp":
+                coll = Constants.SECTION_ENROLL_FSP;
+                display = "First/Second Pass";
+                break;
+            default:
+                // "norm" is the default
+                coll = Constants.SECTION_ENROLL;
+                display = "Normal";
+                break;
+        }
+
+        const arr = coll.get(term);
         if (!arr) {
             await ctx.interaction.reply({
-                content: `The term, **\`${term}\`**, could not be found. Try again.`,
+                content: `The term, **\`${term}\`** (Display \`${display}\`), could not be found. Try again.`,
                 ephemeral: true
             });
 
@@ -75,8 +71,8 @@ export class GetSectionEnroll extends BaseCommand {
         });
         if (res.length === 0) {
             await ctx.interaction.reply({
-                content: `The course, **\`${parsedCode}\`**, (term **\`${term}\`**) could not be found. It's possible`
-                    + " that there is only one section (e.g. section A) for this course.",
+                content: `The course, **\`${parsedCode}\`**, (term **\`${term}\`** & display \`${display}\`) could not`
+                    + " be found. It's possible that there is only one section (e.g. section A) for this course.",
                 ephemeral: true
             });
 
@@ -120,7 +116,7 @@ export class GetSectionEnroll extends BaseCommand {
 
         const selected = await AdvancedCollector.startInteractionEphemeralCollector({
             targetAuthor: ctx.user,
-            acknowledgeImmediately: false,
+            acknowledgeImmediately: true,
             targetChannel: ctx.channel,
             duration: 30 * 1000
         }, uIdentifier);
@@ -134,11 +130,16 @@ export class GetSectionEnroll extends BaseCommand {
             return -1;
         }
 
+        await ctx.interaction.editReply({
+            content: "Requesting plot. This may take a few seconds.",
+            components: []
+        });
+
         const data = res.find(x => x.name === selected.values[0])!;
         const sec = data.name.split("_")[1].replaceAll(".png", "");
         await ctx.interaction.editReply({
             files: [data.download_url],
-            content: `Course **\`${parsedCode}\`**, Section **\`${sec}\`** (Term **\`${term}\`**)`,
+            content: `Course **\`${parsedCode}\`**, Section **\`${sec}\`** (Term **\`${term}\`**, Display \`${display}\`)`,
             components: []
         });
 

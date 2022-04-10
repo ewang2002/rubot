@@ -48,13 +48,13 @@ export class LookupCached extends BaseCommand {
         const data = Constants.SECTION_TERM_DATA.filter(x => x.subj_course_id === parsedCode);
         if (data.length === 0) {
             await ctx.interaction.editReply({
-                content: `No data was found for **\`${parsedCode}\`** (Term: \`${Constants.TERM}\`).`
+                content: `No data was found for **\`${parsedCode}\`** (Term: \`${Constants.CACHED_DATA_TERM}\`).`
             });
 
             return 0;
         }
 
-        await displayInteractiveWebregData(ctx, data, Constants.TERM, parsedCode, false);
+        await displayInteractiveWebregData(ctx, data, Constants.CACHED_DATA_TERM, parsedCode, false);
         return 0;
     }
 }
