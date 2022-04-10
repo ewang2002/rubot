@@ -10,8 +10,6 @@ import {StringUtil} from "../../utilities/StringUtilities";
 import {MessageEmbed} from "discord.js";
 
 export class LookupLive extends BaseCommand {
-    private static readonly TERM: string = "SP22";
-
     public constructor() {
         super({
             cmdCode: "LOOKUP_COURSE",
@@ -23,6 +21,23 @@ export class LookupLive extends BaseCommand {
             botPermissions: [],
             commandCooldown: 5 * 1000,
             argumentInfo: [
+                {
+                    displayName: "Term",
+                    argName: "term",
+                    type: ArgumentType.String,
+                    prettyType: "String",
+                    desc: "The term to check.",
+                    restrictions: {
+                        stringChoices: [
+                            ["Spring 2022", "SP22"],
+                            ["Summer Session I 2022", "S122"],
+                            ["Summer Session II 2022", "S222"],
+                            ["Summer Session III 2022", "S322"]
+                        ]
+                    },
+                    required: true,
+                    example: ["SP22"]
+                },
                 {
                     displayName: "Course & Subject Code",
                     argName: "course_subj_num",
@@ -51,6 +66,7 @@ export class LookupLive extends BaseCommand {
      * @inheritDoc
      */
     public async run(ctx: ICommandContext): Promise<number> {
+        const term = ctx.interaction.options.getString("term", true);
         const code = ctx.interaction.options.getString("course_subj_num", true);
         const showAll = ctx.interaction.options.getBoolean("show_all", false) ?? true;
         const parsedCode = parseCourseSubjCode(code);
@@ -67,7 +83,7 @@ export class LookupLive extends BaseCommand {
         await ctx.interaction.deferReply();
         const json: WebRegSection[] | { "error": string } | null = await GeneralUtilities.tryExecuteAsync(async () => {
             // You will need the ucsd_webreg_rs app available
-            const d = await Bot.AxiosClient.get(`http://localhost:8000/course/${subj}/${num}`);
+            const d = await Bot.AxiosClient.get(`http://localhost:8000/course/${term}/${subj}/${num}`);
             return d.data;
         });
 
@@ -83,7 +99,7 @@ export class LookupLive extends BaseCommand {
 
         if (json.length === 0) {
             await ctx.interaction.editReply({
-                content: `No data was found for **\`${parsedCode}\`** (Term: \`${LookupLive.TERM}\`).`
+                content: `No data was found for **\`${parsedCode}\`** (Term: \`${term}\`).`
             });
 
             return 0;
@@ -95,7 +111,7 @@ export class LookupLive extends BaseCommand {
 
             const embed = new MessageEmbed()
                 .setColor(getColorByPercent(numEnrolled / total))
-                .setTitle(`WebReg Info: **${parsedCode}** (Term: ${LookupLive.TERM})`)
+                .setTitle(`WebReg Info: **${parsedCode}** (Term: ${term})`)
                 .setDescription(`Found ${json.length} section(s) of **\`${parsedCode}\`**.`)
                 .setFooter({
                     text: "Data Fetched from WebReg." + FOOTER_EMBED + " If you want to see details, set the" +
@@ -130,7 +146,7 @@ export class LookupLive extends BaseCommand {
             return 0;
         }
 
-        await displayInteractiveWebregData(ctx, json, LookupLive.TERM, parsedCode, true);
+        await displayInteractiveWebregData(ctx, json, term, parsedCode, true);
         return 0;
     }
 }
