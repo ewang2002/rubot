@@ -1,5 +1,4 @@
 import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
-import {GeneralUtilities} from "../../utilities/GeneralUtilities";
 import {GeneralConstants} from "../../constants/GeneralConstants";
 
 export class Spam extends BaseCommand {
@@ -47,13 +46,13 @@ export class Spam extends BaseCommand {
      * @inheritDoc
      */
     public async run(ctx: ICommandContext): Promise<number> {
-        const mention = ctx.interaction.options.getMentionable("member", true);
-        const amt = ctx.interaction.options.getInteger("amount", true);
+        //const mention = ctx.interaction.options.getMentionable("member", true);
+        //const amt = ctx.interaction.options.getInteger("amount", true);
         await ctx.interaction.reply({
-            content: "Ok.",
-            ephemeral: true
+            content: "> i will stab someone\n> \n> someone is going to die.\n- ruby"
         });
 
+        /*
         for (let i = 0; i < amt; ++i) {
             await GeneralUtilities.tryExecuteAsync(async () => {
                 const m = await GeneralUtilities.tryExecuteAsync(async () => {
@@ -64,7 +63,7 @@ export class Spam extends BaseCommand {
                     await GeneralUtilities.tryExecuteAsync(async () => await m.delete());
                 }
             });
-        }
+        }*/
 
         return 0;
     }
