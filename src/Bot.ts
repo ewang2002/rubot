@@ -99,7 +99,8 @@ export class Bot {
         ]);
 
         Bot.Commands.set("UCSD", [
-            new Cmds.ViewClassrooms()
+            new Cmds.ViewAllClassrooms(),
+            new Cmds.ViewClassroomsOld()
         ]);
 
         Bot.JsonCommands = [];

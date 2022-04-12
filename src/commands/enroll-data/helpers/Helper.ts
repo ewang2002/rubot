@@ -13,9 +13,6 @@ import {TimeUtilities} from "../../../utilities/TimeUtilities";
 import padTimeDigit = TimeUtilities.padTimeDigit;
 import getTimeStr = TimeUtilities.getTimeStr;
 
-export const FOOTER_EMBED: string = "Showing available seats only (e.g. 17/35 means 17 seats are available in this" +
-    " section.";
-
 export const ARGUMENTS: IArgumentInfo[] = [
     {
         displayName: "Term",
@@ -118,7 +115,6 @@ export async function displayInteractiveWebregData(ctx: ICommandContext, section
                     .append(`Instructor: **\`${entries[0].instructor}\`**`).appendLine()
                     .append(`Sections: **\`${entries.length}\`**`).appendLine()
                     .append(`Evaluations: Click [Here](${capeUrl})`).appendLine()
-                    .append(live ? `*${FOOTER_EMBED}*` : "")
                     .toString()
             )
             .setFooter({

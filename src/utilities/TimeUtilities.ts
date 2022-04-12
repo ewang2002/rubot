@@ -144,11 +144,11 @@ export namespace TimeUtilities {
 
         const finalArr: string[] = [];
         if (days > 0) finalArr.push(`${days} Days`);
-        if (hours > 0) finalArr.push(`${hours} Hours`);
-        if (minutes > 0) finalArr.push(`${minutes} Minutes`);
-        if (seconds > 0 && includeSeconds) finalArr.push(`${seconds} Seconds`);
-        if (dur > 0 && includeMs) finalArr.push(`${dur} Milliseconds`);
-        return finalArr.length > 0 ? finalArr.join(", ") : "0 Seconds";
+        if (hours > 0) finalArr.push(`${hours}H`);
+        if (minutes > 0) finalArr.push(`${minutes}M`);
+        if (seconds > 0 && includeSeconds) finalArr.push(`${seconds}S`);
+        if (dur > 0 && includeMs) finalArr.push(`${dur}MS`);
+        return finalArr.length > 0 ? finalArr.join(" ") : "0 Seconds";
     }
 
     /**

@@ -1,7 +1,7 @@
 import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
 import {GeneralUtilities} from "../../utilities/GeneralUtilities";
 import {Bot} from "../../Bot";
-import {displayInteractiveWebregData, FOOTER_EMBED, getColorByPercent, parseCourseSubjCode} from "./helpers/Helper";
+import {displayInteractiveWebregData, getColorByPercent, parseCourseSubjCode} from "./helpers/Helper";
 import {WebRegSection} from "../../definitions";
 import {StringBuilder} from "../../utilities/StringBuilder";
 import {EmojiConstants, GeneralConstants} from "../../constants/GeneralConstants";
@@ -114,9 +114,7 @@ export class LookupLive extends BaseCommand {
                 .setTitle(`WebReg Info: **${parsedCode}** (Term: ${term})`)
                 .setDescription(`Found ${json.length} section(s) of **\`${parsedCode}\`**.`)
                 .setFooter({
-                    text: "Data Fetched from WebReg." + FOOTER_EMBED + " If you want to see details, set the" +
-                        " \"show_all\" argument to" +
-                        " true."
+                    text: "Data Fetched from WebReg."
                 })
                 .setTimestamp();
 

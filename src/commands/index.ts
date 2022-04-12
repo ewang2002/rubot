@@ -9,7 +9,8 @@ export * from "./enroll-data/LookupLive";
 export * from "./enroll-data/GetCape";
 export * from "./enroll-data/LookupCached";
 
-export * from "./ucsd/ViewClassrooms";
+export * from "./ucsd/ViewAllClassrooms";
+export * from "./ucsd/ViewClassroomsOld";
 
 export * from "./doomers/SetStatus";
 export * from "./doomers/Spam";
