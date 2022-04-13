@@ -1,5 +1,6 @@
 import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
 import {GeneralConstants} from "../../constants/GeneralConstants";
+import {GeneralUtilities} from "../../utilities/GeneralUtilities";
 
 export class Spam extends BaseCommand {
     public constructor() {
@@ -46,13 +47,27 @@ export class Spam extends BaseCommand {
      * @inheritDoc
      */
     public async run(ctx: ICommandContext): Promise<number> {
-        //const mention = ctx.interaction.options.getMentionable("member", true);
-        //const amt = ctx.interaction.options.getInteger("amount", true);
-        await ctx.interaction.reply({
-            content: "> i will stab someone\n> \n> someone is going to die.\n- ruby"
-        });
+        const mention = ctx.interaction.options.getMentionable("member", true);
+        const amt = ctx.interaction.options.getInteger("amount", true);
 
-        /*
+        // Don't let the AYU's use this command
+        if (["198818611865845761", "214561673502130176"].some(x => x === ctx.user.id)) {
+            await ctx.interaction.reply({
+                content: "Sorry, but clowns don't have permission to use this command."
+            });
+
+            return -1;
+        }
+
+        // So I don't get murdered by ruby
+        if ("id" in mention && mention.id === "224653570044067843") {
+            await ctx.interaction.reply({
+                content: "> i will stab someone\n> \n> someone is going to die.\n- ruby"
+            });
+
+            return -1;
+        }
+
         for (let i = 0; i < amt; ++i) {
             await GeneralUtilities.tryExecuteAsync(async () => {
                 const m = await GeneralUtilities.tryExecuteAsync(async () => {
@@ -63,7 +78,7 @@ export class Spam extends BaseCommand {
                     await GeneralUtilities.tryExecuteAsync(async () => await m.delete());
                 }
             });
-        }*/
+        }
 
         return 0;
     }
