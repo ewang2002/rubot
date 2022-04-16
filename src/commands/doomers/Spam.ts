@@ -68,6 +68,10 @@ export class Spam extends BaseCommand {
             return -1;
         }
 
+        await ctx.interaction.reply({
+            content: `Ok, ${ctx.user.toString()} executed the spam command on ${mention.toString()}.`
+        });
+
         for (let i = 0; i < amt; ++i) {
             await GeneralUtilities.tryExecuteAsync(async () => {
                 const m = await GeneralUtilities.tryExecuteAsync(async () => {

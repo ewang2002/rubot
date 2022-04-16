@@ -20,7 +20,7 @@ export const ARGUMENTS: IArgumentInfo[] = [
         type: ArgumentType.String,
         restrictions: {
             stringChoices: Constants.TERMS.map(x => {
-                return [x, x];
+                return [x.termName, x.term];
             })
         },
         prettyType: "String",
@@ -49,7 +49,7 @@ export const ARGUMENTS: IArgumentInfo[] = [
                 ["First/Second Pass Only (1500 x 700)", "fsp"]
             ]
         },
-        desc: "The plot type to get.",
+        desc: "The plot type to get. Note that some plots may not be available for some terms.",
         required: false,
         example: ["Wide"]
     }

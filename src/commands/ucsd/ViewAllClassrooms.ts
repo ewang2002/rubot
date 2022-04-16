@@ -337,6 +337,7 @@ export class ViewAllClassrooms extends BaseCommand {
                 break;
             }
 
+
             seenCourses.clear();
             for (; i < sharedClasses.length; i++) {
                 const classToCheck = sharedClasses[i];
@@ -346,8 +347,7 @@ export class ViewAllClassrooms extends BaseCommand {
                     continue;
                 }
 
-                if (sharedClasses.length > 1
-                    && getTimeFromObj(classToCheck, true).getTime() - cDateTime.getTime() <= nextTime) {
+                if (getTimeFromObj(classToCheck, true).getTime() - cDateTime.getTime() <= nextTime) {
                     coll[classroom].upcomingSession.push(classToCheck);
                     seenCourses.add(identifier);
                     continue;

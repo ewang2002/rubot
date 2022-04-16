@@ -11,7 +11,77 @@ import {AxiosRequestConfig} from "axios";
 
 export namespace Constants {
     // Terms that we have github data for.
-    export const TERMS: string[] = ["SP22"];
+    export const TERMS: {
+        term: string;
+        termName: string;
+        overall: {
+            reg: boolean;
+            fsp: boolean;
+            wide: boolean;
+        };
+        section: {
+            reg: boolean;
+            fsp: boolean;
+            wide: boolean;
+        };
+    }[] = [
+        {
+            term: "SP22",
+            termName: "Spring 2022",
+            overall: {
+                reg: true,
+                fsp: true,
+                wide: true
+            },
+            section: {
+                reg: true,
+                fsp: true,
+                wide: true
+            }
+        },
+        {
+            term: "SP22D",
+            termName: "Spring 2022 (Post-Enrollment)",
+            overall: {
+                reg: true,
+                fsp: false,
+                wide: false
+            },
+            section: {
+                reg: false,
+                fsp: false,
+                wide: false
+            }
+        },
+        {
+            term: "S122",
+            termName: "Summer Session I 2022",
+            overall: {
+                reg: true,
+                fsp: false,
+                wide: false
+            },
+            section: {
+                reg: true,
+                fsp: false,
+                wide: false
+            }
+        },
+        {
+            term: "S222",
+            termName: "Summer Session II 2022",
+            overall: {
+                reg: true,
+                fsp: false,
+                wide: false
+            },
+            section: {
+                reg: true,
+                fsp: false,
+                wide: false
+            }
+        },
+    ];
 
     export const OVERALL_ENROLL: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
     export const OVERALL_ENROLL_WIDE: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
@@ -210,72 +280,93 @@ export namespace Constants {
             }
         };
 
-        for await (const term of TERMS) {
-            const overall = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
-                const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_overall`, requestHeader);
-                return res.data;
-            });
+        for await (const {term, ...o} of TERMS) {
+            if (o.overall.reg) {
+                const overall = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
+                    const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_overall`, requestHeader);
+                    return res.data;
+                });
 
-            // OVERALL
-            if (overall) {
-                OVERALL_ENROLL.set(term, overall.filter(x => x.name.endsWith(".png")));
-            }
-            else {
-                console.error(`Could not get overall data for ${term}.`);
-            }
-
-            // Overall (first/second pass)
-            const overallFsp = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
-                const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_overall_fsp`, requestHeader);
-                return res.data;
-            });
-
-            if (overallFsp) {
-                OVERALL_ENROLL_FSP.set(term, overallFsp.filter(x => x.name.endsWith(".png")));
-            }
-
-            // Overall (wide)
-            const overallWide = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
-                const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_overall_wide`, requestHeader);
-                return res.data;
-            });
-
-            if (overallWide) {
-                OVERALL_ENROLL_WIDE.set(term, overallWide.filter(x => x.name.endsWith(".png")));
+                // OVERALL
+                if (overall) {
+                    OVERALL_ENROLL.set(term, overall.filter(x => x.name.endsWith(".png")));
+                }
+                else {
+                    console.error(`Could not get overall data for ${term}.`);
+                }
             }
 
 
-            // SECTION
-            const section = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
-                const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_section`, requestHeader);
-                return res.data;
-            });
+            if (o.overall.fsp) {
+                // Overall (first/second pass)
+                const overallFsp = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
+                    const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_overall_fsp`, requestHeader);
+                    return res.data;
+                });
 
-            if (section) {
-                SECTION_ENROLL.set(term, section.filter(x => x.name.endsWith(".png")));
-            }
-            else {
-                console.error(`Could not get section data for ${term}.`);
-            }
-
-            // Section (first/second pass)
-            const sectionFsp = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
-                const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_section_fsp`, requestHeader);
-                return res.data;
-            });
-
-            if (sectionFsp) {
-                SECTION_ENROLL_FSP.set(term, sectionFsp.filter(x => x.name.endsWith(".png")));
+                if (overallFsp) {
+                    OVERALL_ENROLL_FSP.set(term, overallFsp.filter(x => x.name.endsWith(".png")));
+                }
             }
 
-            // Section (wide)
-            const sectionWide = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
-                const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_section_wide`, requestHeader);
-                return res.data;
-            });
 
-            if (sectionWide) {
-                SECTION_ENROLL_WIDE.set(term, sectionWide.filter(x => x.name.endsWith(".png")));
+
+            if (o.overall.wide) {
+                // Overall (wide)
+                const overallWide = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
+                    const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_overall_wide`, requestHeader);
+                    return res.data;
+                });
+
+                if (overallWide) {
+                    OVERALL_ENROLL_WIDE.set(term, overallWide.filter(x => x.name.endsWith(".png")));
+                }
+            }
+
+
+
+            if (o.section.reg) {
+                // SECTION
+                const section = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
+                    const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_section`, requestHeader);
+                    return res.data;
+                });
+
+                if (section) {
+                    SECTION_ENROLL.set(term, section.filter(x => x.name.endsWith(".png")));
+                }
+                else {
+                    console.error(`Could not get section data for ${term}.`);
+                }
+            }
+
+
+
+            if (o.section.fsp) {
+                // Section (first/second pass)
+                const sectionFsp = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
+                    const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_section_fsp`, requestHeader);
+                    return res.data;
+                });
+
+                if (sectionFsp) {
+                    SECTION_ENROLL_FSP.set(term, sectionFsp.filter(x => x.name.endsWith(".png")));
+                }
+            }
+
+
+
+
+            if (o.section.wide) {
+                // Section (wide)
+                const sectionWide = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
+                    const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_section_wide`, requestHeader);
+                    return res.data;
+                });
+
+                if (sectionWide) {
+                    SECTION_ENROLL_WIDE.set(term, sectionWide.filter(x => x.name.endsWith(".png")));
+                }
             }
         }
     }
