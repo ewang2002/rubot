@@ -1,13 +1,9 @@
-import {Bot} from "./Bot";
-import {StringBuilder} from "./utilities/StringBuilder";
 import {Collection} from "discord.js";
 import {ICapeRow, IGitContent, Meeting, WebRegSection} from "./definitions";
-import {GeneralUtilities} from "./utilities/GeneralUtilities";
 import {createReadStream} from "fs";
 import {createInterface} from "readline";
 import * as path from "path";
 import {TimeUtilities} from "./utilities/TimeUtilities";
-import {AxiosRequestConfig} from "axios";
 
 export namespace Constants {
     // Terms that we have github data for.
@@ -266,6 +262,7 @@ export namespace Constants {
      * Adds the enrollment graph data to the above collections.
      */
     export async function initEnrollmentData(): Promise<void> {
+        /*
         const baseUrl = new StringBuilder()
             .append("https://api.github.com/repos/")
             .append(Bot.BotInstance.config.enrollData.repoOwner)
@@ -368,6 +365,6 @@ export namespace Constants {
                     SECTION_ENROLL_WIDE.set(term, sectionWide.filter(x => x.name.endsWith(".png")));
                 }
             }
-        }
+        }*/
     }
 }

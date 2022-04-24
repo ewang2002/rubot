@@ -2,10 +2,11 @@ import {IConfiguration} from "./definitions";
 import {Client, Collection, Interaction,} from "discord.js";
 import axios, {AxiosInstance} from "axios";
 import * as Cmds from "./commands";
-import {onErrorEvent, onInteractionEvent, onReadyEvent,} from "./events";
+import {onErrorEvent, onInteractionEvent, onMessage, onReadyEvent} from "./events";
 import {REST} from "@discordjs/rest";
 import {RESTPostAPIApplicationCommandsJSONBody, Routes} from "discord-api-types/v10";
 import {QuoteHelpers} from "./QuoteHelpers";
+import {DadHelper} from "./DadHelper";
 
 export class Bot {
     /**
@@ -71,7 +72,8 @@ export class Bot {
                 "GUILD_MEMBER",
             ],
             intents: [
-                "GUILDS"
+                "GUILDS",
+                "GUILD_MESSAGES"
             ]
         });
         Bot.Commands = new Collection<string, Cmds.BaseCommand[]>();
@@ -87,7 +89,8 @@ export class Bot {
             new Cmds.AddQuoteText(),
             new Cmds.GetRandomQuote(),
             new Cmds.AddStrangerQuote(),
-            new Cmds.BadnessLevel()
+            new Cmds.BadnessLevel(),
+            new Cmds.SetDadPercent()
         ]);
 
         Bot.Commands.set("Enrollment Data", [
@@ -146,12 +149,14 @@ export class Bot {
             return;
         }
 
+        this._bot.on("messageCreate", async (m) => onMessage(m));
         this._bot.on("ready", async () => onReadyEvent());
         this._bot.on("interactionCreate", async (i: Interaction) => onInteractionEvent(i));
         this._bot.on("error", async (e: Error) => onErrorEvent(e));
         this._eventsIsStarted = true;
 
-        QuoteHelpers.start();
+        QuoteHelpers.start().then();
+        DadHelper.start().then()
     }
 
     /**

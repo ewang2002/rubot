@@ -2,6 +2,11 @@ export namespace GeneralConstants {
     export const ZERO_WIDTH_SPACE: string = "\u200b";
 
     export const DOOMERS_SERVER_ID: string = "778738941443440640";
+
+    // Looking for any of: i'm, im, i am (case insensitive) that:
+    // - is at the start of the string or starts with at least one space
+    // - ends with at least one space
+    export const IM_REGEX: RegExp = /(^|\s+)(i'm|im|i\s+am)\s+/ig;
 }
 
 export namespace EmojiConstants {
