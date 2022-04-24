@@ -11,6 +11,7 @@ export * from "./enroll-data/LookupCached";
 
 export * from "./ucsd/ViewAllClassrooms";
 export * from "./ucsd/ViewClassroomsOld";
+export * from "./ucsd/CheckRoom";
 
 export * from "./doomers/SetStatus";
 export * from "./doomers/Spam";

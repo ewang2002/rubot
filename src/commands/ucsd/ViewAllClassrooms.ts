@@ -11,12 +11,13 @@ import {StringBuilder} from "../../utilities/StringBuilder";
 import SECTION_TERM_DATA = Constants.SECTION_TERM_DATA;
 import padTimeDigit = TimeUtilities.padTimeDigit;
 import getTimeStr = TimeUtilities.getTimeStr;
+import getDateTime = TimeUtilities.getDateTime;
 
 export interface IInternalCourseData {
     location: string;
     startTime: number;
     endTime: number;
-    day: string | string[];
+    day: string[];
     subjCourseId: string;
     meetingType: string;
     startHr: number;
@@ -24,6 +25,7 @@ export interface IInternalCourseData {
     startMin: number;
     endHr: number;
     endMin: number;
+    instructor: string[];
 }
 
 export class ViewAllClassrooms extends BaseCommand {
@@ -201,7 +203,8 @@ export class ViewAllClassrooms extends BaseCommand {
                     : x.section_code[0],
                 startMin: m.start_min,
                 endHr: m.end_hr,
-                endMin: m.end_min
+                endMin: m.end_min,
+                instructor: x.instructor
             };
         })).filter(x => {
             if (x.location.trim() === "") {
@@ -495,9 +498,13 @@ export class ViewAllClassrooms extends BaseCommand {
                         : `**${key}** (Term: ${Constants.CACHED_DATA_TERM})`
                 )
                 .setDescription(
-                    `It is currently **\`${getTimeStr(cDateTime.getHours(), cDateTime.getMinutes())}\`**. Here are all`
-                    + ` the classrooms seen on WebReg for this building. Looking ahead **\`${numMinsAhead}\`**`
-                    + " minutes as well."
+                    time
+                        ? `👀 You are currently viewing classrooms for the time **\`${getDateTime(cDateTime)}\`**.`
+                        + ` Here are all the classrooms seen on WebReg for this building during the specified time.`
+                        + ` Also looking ahead **\`${numMinsAhead}\`** minutes as well.`
+                        : `🟣 It is currently **\`${getTimeStr(cDateTime.getHours(), cDateTime.getMinutes())}\`**.`
+                        + ` Here are all the classrooms seen on WebReg for this building at this time. Also looking`
+                        + ` ahead **\`${numMinsAhead}\`** minutes as well.`
                 )
                 .setFooter({text: `Page ${i + 1}`})
                 .setTimestamp(cDateTime);

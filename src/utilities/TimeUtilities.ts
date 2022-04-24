@@ -84,7 +84,7 @@ export namespace TimeUtilities {
      * https://en.wikipedia.org/wiki/List_of_tz_database_time_zones for a full list.
      * @returns {string} The current formatter date & time.
      */
-    export function getDateTime(date: Date | number = new Date(), timezone: string = "Atlantic/Reykjavik"): string {
+    export function getDateTime(date: Date | number = new Date(), timezone: string = "America/Los_Angeles"): string {
         if (!isValidTimeZone(timezone)) {
             return new Intl.DateTimeFormat([], {
                 year: "numeric",
