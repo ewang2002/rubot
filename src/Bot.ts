@@ -104,7 +104,8 @@ export class Bot {
         Bot.Commands.set("UCSD", [
             new Cmds.ViewAllClassrooms(),
             new Cmds.ViewClassroomsOld(),
-            new Cmds.CheckRoom()
+            new Cmds.CheckRoom(),
+            new Cmds.Waitz()
         ]);
 
         Bot.JsonCommands = [];

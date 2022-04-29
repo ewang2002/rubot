@@ -2,8 +2,13 @@ import {Message} from "discord.js";
 import {GeneralConstants} from "../constants/GeneralConstants";
 import {DadHelper} from "../DadHelper";
 import {GeneralUtilities} from "../utilities/GeneralUtilities";
+import {Bot} from "../Bot";
 
 export async function onMessage(msg: Message): Promise<void> {
+    if (!Bot.BotInstance.config.isProd) {
+        return;
+    }
+
     if (msg.author.bot || !msg.guild || msg.guild.id !== GeneralConstants.DOOMERS_SERVER_ID) {
         return;
     }

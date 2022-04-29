@@ -8,5 +8,6 @@ export async function onReadyEvent(): Promise<void> {
         process.exit(1);
     }
 
-    console.info(`${botUser.tag} events have started successfully.`);
+    console.info(`${botUser.tag} has started successfully.`);
+    console.info("\tMode: " + (Bot.BotInstance.config.isProd ? "Production" : "Testing"));
 }

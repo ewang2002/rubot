@@ -3,6 +3,13 @@
  */
 export interface IConfiguration {
     /**
+     * Whether the configuration file is for production.
+     *
+     * @type {boolean}
+     */
+    isProd: boolean;
+
+    /**
      * Relevanat tokens.
      *
      * @type {object}
@@ -29,13 +36,6 @@ export interface IConfiguration {
      * @type {string}
      */
     clientId: string;
-
-    /**
-     * Whether this is production.
-     *
-     * @type {boolean}
-     */
-    isProd: boolean;
 
     /**
      * The bot owners.

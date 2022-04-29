@@ -534,10 +534,10 @@ export class ViewAllClassrooms extends BaseCommand {
                 (i, elem) => elem.display + "\n"
             );
 
-            for (let i = 0; i < busyFields.length; i++) {
+            for (let j = 0; j < busyFields.length; j++) {
                 embed.addField(
-                    i === 0 ? "In Use" : GeneralConstants.ZERO_WIDTH_SPACE,
-                    StringUtil.codifyString(busyFields[i])
+                    j === 0 ? "In Use" : GeneralConstants.ZERO_WIDTH_SPACE,
+                    StringUtil.codifyString(busyFields[j])
                 );
             }
 

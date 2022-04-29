@@ -1,3 +1,5 @@
+import {EmojiConstants} from "../constants/GeneralConstants";
+
 export namespace StringUtil {
     /**
      * Adds three backticks (`) to the front and end of the string.
@@ -26,39 +28,29 @@ export namespace StringUtil {
     }
 
     /**
-     * Parses a string containing numbers separated by a comma or space.
-     * @param {string} str The string.
-     * @returns {number[]} The numbers.
+     * Gets a progress bar in the form of square emojis.
+     * @param {number} numSquares The number of squares.
+     * @param {number} percent The percent of squares to fill as green, yellow, or red. Green for <50%, yellow for
+     * 50-80%, and red for >80%.
+     * @return {string} The formatted string.
      */
-    export function parseNumbers(str: string): number[] {
-        const finalArr = new Set<number>();
-        const initStr = str.split(/, |,| /);
-        for (const elem of initStr) {
-            if (elem.includes("-") && elem.substring(elem.indexOf("-") + 1).length > 0) {
-                const [a, b] = elem.split("-");
-                const aNum = Number.parseInt(a, 10);
-                const bNum = Number.parseInt(b, 10);
-                if (Number.isNaN(aNum) || Number.isNaN(bNum))
-                    continue;
-
-                if (aNum >= bNum) {
-                    finalArr.add(aNum);
-                    continue;
-                }
-
-                for (let i = aNum; i <= bNum; i++)
-                    finalArr.add(i);
-
-                continue;
-            }
-
-            const num = Number.parseInt(elem, 10);
-            if (Number.isNaN(num))
-                continue;
-
-            finalArr.add(num);
+    export function getEmojiProgressBar(numSquares: number, percent: number): string {
+        let numPut = 0;
+        let returnStr = "";
+        const compEmojiUsed = percent < 0.50
+            ? EmojiConstants.GREEN_SQUARE_EMOJI
+            : percent < 0.80
+                ? EmojiConstants.YELLOW_SQUARE_EMOJI
+                : EmojiConstants.RED_SQUARE_EMOJI;
+        for (let i = 0; i < Math.min(Math.floor(percent * numSquares), numSquares); i++) {
+            returnStr += compEmojiUsed;
+            numPut++;
         }
 
-        return Array.from(finalArr);
+        for (let i = 0; i < numSquares - numPut; i++) {
+            returnStr += EmojiConstants.BLACK_SQUARE_EMOJI;
+        }
+
+        return returnStr;
     }
 }

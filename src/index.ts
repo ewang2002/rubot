@@ -7,13 +7,15 @@ import {TimeUtilities} from "./utilities/TimeUtilities";
 import {Constants} from "./Constants";
 
 (async () => {
-    const content = fs.readFileSync(path.join(__dirname, "..", "config.production.json"));
+    const content = fs.readFileSync(path.join(__dirname, "..", "config.json"));
     const config: IConfiguration = JSON.parse(content.toString());
     const bot = new Bot(config);
     bot.startAllEvents();
     Constants.initCapeData();
     Constants.initSectionData("SP22");
-    await Constants.initEnrollmentData();
+    if (config.isProd) {
+        await Constants.initEnrollmentData();
+    }
     console.info("All data received.");
     await bot.login();
 })();

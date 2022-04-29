@@ -11,6 +11,14 @@ import {GeneralUtilities} from "../utilities/GeneralUtilities";
  * @param {CommandInteraction} interaction The interaction.
  */
 async function slashCommandHandler(interaction: CommandInteraction): Promise<void> {
+    if (!Bot.BotInstance.config.isProd && !Bot.BotInstance.config.botOwnerIds.includes(interaction.user.id)) {
+        await interaction.reply({
+            content: "The bot is currently in development mode, and cannot be used right now."
+        });
+
+        return;
+    }
+
     const foundCommand = Bot.NameCommands.get(interaction.commandName);
     if (!foundCommand)
         return;
