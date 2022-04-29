@@ -50,6 +50,28 @@ export class Waitz extends BaseCommand {
     }
 
     /**
+     * Checks if a location is currently open.
+     * @param {object} data The (partial) location information.
+     * @returns {boolean} `true` if the location is open and `false` otherwise.
+     * @private
+     */
+    private static isOpen(data: {people: number; capacity: number; isOpen: boolean}): boolean {
+        // If it's reported as open, then trust it
+        if (data.isOpen) {
+            return true;
+        }
+
+        // Otherwise, if the location has >15% people (thanks Nish),
+        // then pretend it's "open"
+        if (data.people / data.capacity > 0.15) {
+            return true;
+        }
+
+        // Otherwise, it's probably closed
+        return false;
+    }
+
+    /**
      * @inheritDoc
      */
     public async run(ctx: ICommandContext): Promise<number> {
@@ -80,7 +102,7 @@ export class Waitz extends BaseCommand {
         for (const entry of locations) {
             const compareData = compInfo.find(x => x.name === entry.name);
             const embed = new MessageEmbed()
-                .setTitle(`Real-Time Crowd Level @ **${entry.name}** (${entry.isOpen ? "Open" : "Closed"})`)
+                .setTitle(`Real-Time Crowd Level @ **${entry.name}** (${Waitz.isOpen(entry) ? "Open" : "Closed"})`)
                 .setFooter({text: "Powered by Waitz (https://waitz.io/ucsd)."})
                 .setColor(Waitz.getColor(entry.people / entry.capacity))
                 .setTimestamp();
@@ -117,7 +139,7 @@ export class Waitz extends BaseCommand {
             if (entry.subLocs) {
                 for (const subLoc of entry.subLocs) {
                     embed.addField(
-                        `${subLoc.name} (${subLoc.isOpen ? "Open" : "Closed"})`,
+                        `${subLoc.name} (${Waitz.isOpen(subLoc) ? "Open" : "Closed"})`,
                         new StringBuilder()
                             .append(StringUtil.getEmojiProgressBar(
                                 15,
