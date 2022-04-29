@@ -12,7 +12,7 @@ export class GetSectionEnroll extends BaseCommand {
         super({
             cmdCode: "GET_SECTION_ENROLL",
             formalCommandName: "Get Section Enrollment Graph",
-            botCommandName: "getsection",
+            botCommandName: "sectionplot",
             description: "Gets the enrollment chart for a specific section for a particular course.",
             generalPermissions: [],
             botPermissions: [],

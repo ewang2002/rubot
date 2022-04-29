@@ -27,7 +27,7 @@ export class CheckRoom extends BaseCommand {
             cmdCode: "CHECK_ROOM",
             formalCommandName: "Check Room",
             botCommandName: "checkroom",
-            description: "Checks a specific classroom",
+            description: "Checks a specific classroom's schedule for the day.",
             generalPermissions: [],
             botPermissions: [],
             commandCooldown: 5 * 1000,

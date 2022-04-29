@@ -9,7 +9,7 @@ export class GetOverallEnroll extends BaseCommand {
         super({
             cmdCode: "GET_OVERALL_ENROLL",
             formalCommandName: "Get Overall Enrollment Graph",
-            botCommandName: "getoverall",
+            botCommandName: "overallplot",
             description: "Gets the enrollment chart for all sections for a particular course.",
             generalPermissions: [],
             botPermissions: [],
