@@ -87,8 +87,8 @@ export class Bot {
             new Cmds.SetStatus(),
             new Cmds.AddQuoteMessageLink(),
             new Cmds.AddQuoteText(),
-            new Cmds.GetRandomQuote(),
             new Cmds.AddStrangerQuote(),
+            new Cmds.GetRandomQuote(),
             new Cmds.BadnessLevel(),
             new Cmds.SetDadPercent()
         ]);

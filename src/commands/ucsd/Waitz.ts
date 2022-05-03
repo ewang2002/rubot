@@ -108,7 +108,7 @@ export class Waitz extends BaseCommand {
                 .setTimestamp();
 
             const desc = new StringBuilder()
-                .append(StringUtil.getEmojiProgressBar(15, entry.people / entry.capacity))
+                .append(StringUtil.getEmojiProgressBar(10, entry.people / entry.capacity))
                 .append(" ")
                 .append(`**\`${entry.people} / ${entry.capacity}\`**`)
                 .appendLine();
@@ -142,7 +142,7 @@ export class Waitz extends BaseCommand {
                         `${subLoc.name} (${Waitz.isOpen(subLoc) ? "Open" : "Closed"})`,
                         new StringBuilder()
                             .append(StringUtil.getEmojiProgressBar(
-                                15,
+                                10,
                                 subLoc.people / subLoc.capacity)
                             )
                             .append(" ")

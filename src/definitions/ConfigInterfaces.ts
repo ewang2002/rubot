@@ -63,5 +63,19 @@ export interface IConfiguration {
          * @type {string}
          */
         repoName: string;
+    };
+
+    /**
+     * Various channel IDs to keep note of.
+     *
+     * @type {object}
+     */
+    channels: {
+        /**
+         * A channel where the bot should be keeping track of potential images to be used as the bot's profile picture.
+         *
+         * @type {string}
+         */
+        galleryChannel: string;
     }
 }

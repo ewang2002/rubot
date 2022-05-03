@@ -9,5 +9,8 @@
   "enrollData": {
     "repoOwner": "",
     "repoName": ""
+  },
+  "channels": {
+    "galleryChannel": ""
   }
 }
