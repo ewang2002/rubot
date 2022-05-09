@@ -10,6 +10,8 @@ import {ArrayUtilities} from "../../utilities/ArrayUtilities";
 import {AdvancedCollector} from "../../utilities/AdvancedCollector";
 
 export class Waitz extends BaseCommand {
+    private static NUM_SQUARES: number = 12;
+
     public constructor() {
         super({
             cmdCode: "WAITZ",
@@ -108,7 +110,7 @@ export class Waitz extends BaseCommand {
                 .setTimestamp();
 
             const desc = new StringBuilder()
-                .append(StringUtil.getEmojiProgressBar(10, entry.people / entry.capacity))
+                .append(StringUtil.getEmojiProgressBar(Waitz.NUM_SQUARES, entry.people / entry.capacity))
                 .append(" ")
                 .append(`**\`${entry.people} / ${entry.capacity}\`**`)
                 .appendLine();
@@ -119,13 +121,13 @@ export class Waitz extends BaseCommand {
                 const best = compareData.comparison?.find(x => x.trend === "best");
 
                 if (peak && peak.valid && Array.isArray(peak.value)) {
-                    desc.append(`- Best Times: \`${peak.value.join(", ")}\``)
+                    desc.append(`- Best Times: \`${peak.value.length > 0 ? peak.value.join(", ") : "N/A"}\``)
                         .appendLine();
                     hasCompData = true;
                 }
 
                 if (best && best.valid && typeof best.value === "string") {
-                    desc.append(`- Best Location: \`${best.value}\``);
+                    desc.append(`- Best Location: \`${best.value ? best.value : "N/A"}\``);
                     hasCompData = true;
                 }
             }
@@ -142,7 +144,7 @@ export class Waitz extends BaseCommand {
                         `${subLoc.name} (${Waitz.isOpen(subLoc) ? "Open" : "Closed"})`,
                         new StringBuilder()
                             .append(StringUtil.getEmojiProgressBar(
-                                10,
+                                Waitz.NUM_SQUARES,
                                 subLoc.people / subLoc.capacity)
                             )
                             .append(" ")

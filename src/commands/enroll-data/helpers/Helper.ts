@@ -13,13 +13,48 @@ import {TimeUtilities} from "../../../utilities/TimeUtilities";
 import padTimeDigit = TimeUtilities.padTimeDigit;
 import getTimeStr = TimeUtilities.getTimeStr;
 
-export const ARGUMENTS: IArgumentInfo[] = [
+export const LOOKUP_ARGUMENTS: IArgumentInfo[] = [
+    {
+        displayName: "Term",
+        argName: "term",
+        type: ArgumentType.String,
+        prettyType: "String",
+        desc: "The term to check.",
+        restrictions: {
+            stringChoices: Constants.WEBREG_TERMS.map(x => {
+                return [x.termName, x.term];
+            })
+        },
+        required: true,
+        example: ["S322"]
+    },
+    {
+        displayName: "Course & Subject Code",
+        argName: "course_subj_num",
+        type: ArgumentType.String,
+        prettyType: "String",
+        desc: "The course subject code.",
+        required: true,
+        example: ["CSE 100", "MATH100A"]
+    },
+    {
+        displayName: "Show All",
+        argName: "show_all",
+        type: ArgumentType.Boolean,
+        prettyType: "Boolean",
+        desc: "Whether to show more detailed data. By default, this is true.",
+        required: false,
+        example: ["True"]
+    }
+];
+
+export const PLOT_ARGUMENTS: IArgumentInfo[] = [
     {
         displayName: "Term",
         argName: "term",
         type: ArgumentType.String,
         restrictions: {
-            stringChoices: Constants.TERMS.map(x => {
+            stringChoices: Constants.GH_TERMS.map(x => {
                 return [x.termName, x.term];
             })
         },

@@ -1,7 +1,7 @@
-import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
+import {BaseCommand, ICommandContext} from "../BaseCommand";
 import {GeneralUtilities} from "../../utilities/GeneralUtilities";
 import {Bot} from "../../Bot";
-import {displayInteractiveWebregData, getColorByPercent, parseCourseSubjCode} from "./helpers/Helper";
+import {displayInteractiveWebregData, getColorByPercent, LOOKUP_ARGUMENTS, parseCourseSubjCode} from "./helpers/Helper";
 import {WebRegSection} from "../../definitions";
 import {StringBuilder} from "../../utilities/StringBuilder";
 import {EmojiConstants, GeneralConstants} from "../../constants/GeneralConstants";
@@ -20,42 +20,7 @@ export class LookupLive extends BaseCommand {
             generalPermissions: [],
             botPermissions: [],
             commandCooldown: 5 * 1000,
-            argumentInfo: [
-                {
-                    displayName: "Term",
-                    argName: "term",
-                    type: ArgumentType.String,
-                    prettyType: "String",
-                    desc: "The term to check.",
-                    restrictions: {
-                        stringChoices: [
-                            ["Summer Session I 2022", "S122"],
-                            ["Summer Session II 2022", "S222"],
-                            ["Summer Session III 2022", "S322"]
-                        ]
-                    },
-                    required: true,
-                    example: ["S322"]
-                },
-                {
-                    displayName: "Course & Subject Code",
-                    argName: "course_subj_num",
-                    type: ArgumentType.String,
-                    prettyType: "String",
-                    desc: "The course subject code.",
-                    required: true,
-                    example: ["CSE 100", "MATH100A"]
-                },
-                {
-                    displayName: "Show All",
-                    argName: "show_all",
-                    type: ArgumentType.Boolean,
-                    prettyType: "Boolean",
-                    desc: "Whether to show more detailed data. By default, this is true.",
-                    required: false,
-                    example: ["True"]
-                }
-            ],
+            argumentInfo: LOOKUP_ARGUMENTS,
             guildOnly: false,
             botOwnerOnly: false
         });

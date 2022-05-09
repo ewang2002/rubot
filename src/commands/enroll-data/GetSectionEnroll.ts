@@ -4,7 +4,7 @@ import {ArrayUtilities} from "../../utilities/ArrayUtilities";
 import {Collection, MessageButton, MessageSelectMenu} from "discord.js";
 import {AdvancedCollector} from "../../utilities/AdvancedCollector";
 import {EmojiConstants} from "../../constants/GeneralConstants";
-import {ARGUMENTS, parseCourseSubjCode} from "./helpers/Helper";
+import {PLOT_ARGUMENTS, parseCourseSubjCode} from "./helpers/Helper";
 import {IGitContent} from "../../definitions";
 
 export class GetSectionEnroll extends BaseCommand {
@@ -17,7 +17,7 @@ export class GetSectionEnroll extends BaseCommand {
             generalPermissions: [],
             botPermissions: [],
             commandCooldown: 5 * 1000,
-            argumentInfo: ARGUMENTS,
+            argumentInfo: PLOT_ARGUMENTS,
             guildOnly: false,
             botOwnerOnly: false
         });

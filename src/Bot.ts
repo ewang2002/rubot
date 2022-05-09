@@ -47,7 +47,7 @@ export class Bot {
     private readonly _config: IConfiguration;
     private readonly _bot: Client;
     private _eventsIsStarted: boolean = false;
-    private readonly _instanceStarted: Date;
+    public readonly instanceStarted: Date;
 
     /**
      * Constructs a new Discord bot.
@@ -61,7 +61,7 @@ export class Bot {
         }
 
         Bot.BotInstance = this;
-        this._instanceStarted = new Date();
+        this.instanceStarted = new Date();
         this._config = config;
         this._bot = new Client({
             partials: [
@@ -77,7 +77,8 @@ export class Bot {
         Bot.Commands = new Collection<string, Cmds.BaseCommand[]>();
         Bot.Commands.set("General", [
             new Cmds.Help(),
-            new Cmds.Ping()
+            new Cmds.Ping(),
+            new Cmds.Status()
         ]);
 
         Bot.Commands.set("Doomers Only", [

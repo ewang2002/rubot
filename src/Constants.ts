@@ -10,8 +10,35 @@ import {GeneralUtilities} from "./utilities/GeneralUtilities";
 import {StringBuilder} from "./utilities/StringBuilder";
 
 export namespace Constants {
+    export const WEBREG_TERMS: {
+        term: string;
+        termName: string;
+        paddedName: string;
+    }[] = [
+        {
+            term: "SP22",
+            termName: "Spring 2022",
+            paddedName: "Spring 2022            "
+        },
+        {
+            term: "S122",
+            termName: "Summer Session I 2022",
+            paddedName: "Summer Session I 2022  "
+        },
+        {
+            term: "S222",
+            termName: "Summer Session II 2022",
+            paddedName: "Summer Session II 2022 "
+        },
+        {
+            term: "S322",
+            termName: "Summer Session III 2022",
+            paddedName: "Summer Session III 2022"
+        }
+    ];
+
     // Terms that we have github data for.
-    export const TERMS: {
+    export const GH_TERMS: {
         term: string;
         termName: string;
         overall: {
@@ -280,7 +307,7 @@ export namespace Constants {
             }
         };
 
-        for await (const {term, ...o} of TERMS) {
+        for await (const {term, ...o} of GH_TERMS) {
             if (o.overall.reg) {
                 const overall = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
                     const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_overall`, requestHeader);

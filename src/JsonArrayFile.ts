@@ -18,6 +18,7 @@ export type Operation<T> = (data: T[]) => T[];
 export class JsonArrayFile<T> {
     private readonly _jsonPath: string;
     private _cached: T[];
+    private _lastChecked: number;
 
     // The queue for which write operations are controlled.
     private _queue: {
@@ -40,8 +41,10 @@ export class JsonArrayFile<T> {
 
         this._cached = JSON.parse(fs.readFileSync(path).toString());
         this._queue = [];
+        this._lastChecked = Date.now();
 
         setInterval(async () => {
+            this._lastChecked = Date.now();
             if (this._queue.length === 0) {
                 return;
             }

@@ -1,6 +1,6 @@
 import {BaseCommand, ICommandContext} from "../BaseCommand";
 import {Constants} from "../../Constants";
-import {ARGUMENTS, parseCourseSubjCode} from "./helpers/Helper";
+import {PLOT_ARGUMENTS, parseCourseSubjCode} from "./helpers/Helper";
 import {Collection} from "discord.js";
 import {IGitContent} from "../../definitions";
 
@@ -14,7 +14,7 @@ export class GetOverallEnroll extends BaseCommand {
             generalPermissions: [],
             botPermissions: [],
             commandCooldown: 5 * 1000,
-            argumentInfo: ARGUMENTS,
+            argumentInfo: PLOT_ARGUMENTS,
             guildOnly: false,
             botOwnerOnly: false
         });
