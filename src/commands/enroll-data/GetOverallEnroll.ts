@@ -1,7 +1,7 @@
 import {BaseCommand, ICommandContext} from "../BaseCommand";
 import {Constants} from "../../Constants";
 import {PLOT_ARGUMENTS, parseCourseSubjCode} from "./helpers/Helper";
-import {Collection} from "discord.js";
+import {Collection, MessageEmbed} from "discord.js";
 import {IGitContent} from "../../definitions";
 
 export class GetOverallEnroll extends BaseCommand {
@@ -70,8 +70,15 @@ export class GetOverallEnroll extends BaseCommand {
 
         await ctx.interaction.deferReply();
         await ctx.interaction.editReply({
-            files: [res.download_url],
-            content: `Course **\`${parsedCode}\`** (Term **\`${term}\`**, Display \`${display}\`)`
+            embeds: [
+                new MessageEmbed()
+                    .setTitle(`Course **${parsedCode}** All Sections (Term **${term}**)`)
+                    .setFooter({text: `Display: ${display}`})
+                    .setDescription(`[Source](${Constants.ENROLL_DATA_GH})`)
+                    .setColor("RANDOM")
+                    .setTimestamp()
+                    .setImage(res.download_url)
+            ]
         });
 
         return 0;

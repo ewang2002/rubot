@@ -1,7 +1,7 @@
 import {BaseCommand, ICommandContext} from "../BaseCommand";
 import {Constants} from "../../Constants";
 import {ArrayUtilities} from "../../utilities/ArrayUtilities";
-import {Collection, MessageButton, MessageSelectMenu} from "discord.js";
+import {Collection, MessageButton, MessageEmbed, MessageSelectMenu} from "discord.js";
 import {AdvancedCollector} from "../../utilities/AdvancedCollector";
 import {EmojiConstants} from "../../constants/GeneralConstants";
 import {PLOT_ARGUMENTS, parseCourseSubjCode} from "./helpers/Helper";
@@ -138,8 +138,15 @@ export class GetSectionEnroll extends BaseCommand {
         const data = res.find(x => x.name === selected.values[0])!;
         const sec = data.name.split("_")[1].replaceAll(".png", "");
         await ctx.interaction.editReply({
-            files: [data.download_url],
-            content: `Course **\`${parsedCode}\`**, Section **\`${sec}\`** (Term **\`${term}\`**, Display \`${display}\`)`,
+            embeds: [
+                new MessageEmbed()
+                    .setTitle(`Course **${parsedCode}** Section **${sec}** (Term **${term}**)`)
+                    .setFooter({text: `Display: ${display}`})
+                    .setDescription(`[Source](${Constants.ENROLL_DATA_GH})`)
+                    .setColor("RANDOM")
+                    .setTimestamp()
+                    .setImage(data.download_url)
+            ],
             components: []
         });
 

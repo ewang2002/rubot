@@ -10,6 +10,7 @@ import {GeneralUtilities} from "./utilities/GeneralUtilities";
 import {StringBuilder} from "./utilities/StringBuilder";
 
 export namespace Constants {
+    export const ENROLL_DATA_GH: string = "https://github.com/ewang2002/UCSDHistEnrollData";
     export const WEBREG_TERMS: {
         term: string;
         termName: string;

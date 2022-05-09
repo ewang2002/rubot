@@ -15,7 +15,7 @@ export * from "./ucsd/ViewClassroomsOld";
 export * from "./ucsd/CheckRoom";
 export * from "./ucsd/Waitz";
 
-export * from "./doomers/SetStatus";
+export * from "./doomers/SetActivity";
 export * from "./doomers/Spam";
 export * from "./doomers/AddQuoteMessageLink";
 export * from "./doomers/AddQuoteText";

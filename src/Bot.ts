@@ -72,7 +72,12 @@ export class Bot {
             intents: [
                 "GUILDS",
                 "GUILD_MESSAGES"
-            ]
+            ],
+            ws: {
+                properties: {
+                    $browser: "Discord iOS"
+                }
+            }
         });
         Bot.Commands = new Collection<string, Cmds.BaseCommand[]>();
         Bot.Commands.set("General", [
@@ -83,7 +88,7 @@ export class Bot {
 
         Bot.Commands.set("Doomers Only", [
             new Cmds.Spam(),
-            new Cmds.SetStatus(),
+            new Cmds.SetActivity(),
             new Cmds.AddQuoteMessageLink(),
             new Cmds.AddQuoteText(),
             new Cmds.AddStrangerQuote(),
