@@ -1,5 +1,5 @@
 import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
-import {Constants} from "../../Constants";
+import {MutableConstants} from "../../constants/MutableConstants";
 import {Collection, EmbedFieldData, MessageEmbed} from "discord.js";
 import {TimeUtilities} from "../../utilities/TimeUtilities";
 import {StringUtil} from "../../utilities/StringUtilities";
@@ -177,7 +177,7 @@ export class ViewClassroomsOld extends BaseCommand {
         while (fields.length > 0) {
             const embed = new MessageEmbed()
                 .setColor("DARK_GREEN")
-                .setTitle((showInactive ? "Classrooms Not In Use" : "Classrooms In Use") + ` (${Constants.CACHED_DATA_TERM})`)
+                .setTitle((showInactive ? "Classrooms Not In Use" : "Classrooms In Use") + ` (${MutableConstants.CACHED_DATA_TERM})`)
                 .setDescription(
                     `It is currently **\`${getTimeStr(cDateTime.getHours(), cDateTime.getMinutes())}\`**.`
                     + ` Below are a list of classrooms that are ${(showInactive ? "not in use" : "in use")}.`
@@ -213,7 +213,7 @@ export class ViewClassroomsOld extends BaseCommand {
             embeds.push(
                 new MessageEmbed()
                     .setColor("DARK_RED")
-                    .setTitle((showInactive ? "Classrooms Not In Use" : "Classrooms In Use") + ` (${Constants.CACHED_DATA_TERM})`)
+                    .setTitle((showInactive ? "Classrooms Not In Use" : "Classrooms In Use") + ` (${MutableConstants.CACHED_DATA_TERM})`)
                     .setDescription(
                         `Right now, it is **\`${getTimeStr(cDateTime.getHours(), cDateTime.getMinutes())}\`**.`
                         + " There are no classrooms that are " + (showInactive ? "not in use." : "in use.")

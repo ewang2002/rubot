@@ -1,15 +1,15 @@
 import {Collection} from "discord.js";
-import {ICapeRow, IGitContent, Meeting, WebRegSection} from "./definitions";
+import {ICapeRow, IGitContent, Meeting, WebRegSection} from "../definitions";
 import {createReadStream} from "fs";
 import {createInterface} from "readline";
 import * as path from "path";
-import {TimeUtilities} from "./utilities/TimeUtilities";
+import {TimeUtilities} from "../utilities/TimeUtilities";
 import {AxiosRequestConfig} from "axios";
-import {Bot} from "./Bot";
-import {GeneralUtilities} from "./utilities/GeneralUtilities";
-import {StringBuilder} from "./utilities/StringBuilder";
+import {Bot} from "../Bot";
+import {GeneralUtilities} from "../utilities/GeneralUtilities";
+import {StringBuilder} from "../utilities/StringBuilder";
 
-export namespace Constants {
+export namespace MutableConstants {
     export const ENROLL_DATA_GH: string = "https://github.com/ewang2002/UCSDHistEnrollData";
     export const WEBREG_TERMS: {
         term: string;
@@ -132,7 +132,7 @@ export namespace Constants {
     export function initSectionData(term: string, pathToFile?: string): void {
         CACHED_DATA_TERM = term;
 
-        const pathToRead = pathToFile ?? path.join(__dirname, "..", `${CACHED_DATA_TERM}.tsv`);
+        const pathToRead = pathToFile ?? path.join(__dirname, "..", "..", `${CACHED_DATA_TERM}.tsv`);
         const readStream = createReadStream(pathToRead);
         const rl = createInterface(readStream);
         let firstLinePassed = false;
@@ -194,16 +194,18 @@ export namespace Constants {
                     if (splitLocation.length === 2) {
                         building = splitLocation[0];
                         room = splitLocation[1];
-                    } else if (splitLocation.length < 2) {
+                    }
+                    else if (splitLocation.length < 2) {
                         building = splitLocation[0];
                         console.warn(`Weird location - ${sectionId}`);
-                    } else {
+                    }
+                    else {
                         building = splitLocation.shift()!;
                         room = splitLocation.join(" ");
                     }
 
 
-                   return {
+                    return {
                         meeting_type: meetingType,
                         meeting_days: meetingDays,
                         start_hr: startHr,
@@ -239,7 +241,7 @@ export namespace Constants {
      * @param {string} [pathToFile] The path to the CAPE file, if any.
      */
     export function initCapeData(pathToFile?: string): void {
-        const pathToRead = pathToFile ?? path.join(__dirname, "..", "cape.tsv");
+        const pathToRead = pathToFile ?? path.join(__dirname, "..", "..", "cape.tsv");
         const readStream = createReadStream(pathToRead);
         const rl = createInterface(readStream);
 
@@ -338,7 +340,6 @@ export namespace Constants {
             }
 
 
-
             if (o.overall.wide) {
                 // Overall (wide)
                 const overallWide = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
@@ -350,7 +351,6 @@ export namespace Constants {
                     OVERALL_ENROLL_WIDE.set(term, overallWide.filter(x => x.name.endsWith(".png")));
                 }
             }
-
 
 
             if (o.section.reg) {
@@ -369,7 +369,6 @@ export namespace Constants {
             }
 
 
-
             if (o.section.fsp) {
                 // Section (first/second pass)
                 const sectionFsp = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
@@ -381,8 +380,6 @@ export namespace Constants {
                     SECTION_ENROLL_FSP.set(term, sectionFsp.filter(x => x.name.endsWith(".png")));
                 }
             }
-
-
 
 
             if (o.section.wide) {

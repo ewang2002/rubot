@@ -1,6 +1,6 @@
 // "If it works, don't question it."
 import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
-import {Constants} from "../../Constants";
+import {MutableConstants} from "../../constants/MutableConstants";
 import {TimeUtilities} from "../../utilities/TimeUtilities";
 import {Collection, MessageEmbed, MessageSelectMenu, MessageSelectOptionData} from "discord.js";
 import {EmojiConstants, GeneralConstants} from "../../constants/GeneralConstants";
@@ -8,7 +8,7 @@ import {ArrayUtilities} from "../../utilities/ArrayUtilities";
 import {StringUtil} from "../../utilities/StringUtilities";
 import {AdvancedCollector} from "../../utilities/AdvancedCollector";
 import {StringBuilder} from "../../utilities/StringBuilder";
-import SECTION_TERM_DATA = Constants.SECTION_TERM_DATA;
+import SECTION_TERM_DATA = MutableConstants.SECTION_TERM_DATA;
 import padTimeDigit = TimeUtilities.padTimeDigit;
 import getTimeStr = TimeUtilities.getTimeStr;
 import getDateTime = TimeUtilities.getDateTime;
@@ -494,8 +494,8 @@ export class ViewAllClassrooms extends BaseCommand {
                 .setColor("GOLD")
                 .setTitle(
                     buildingName
-                        ? `**${key}** - ${buildingName} (Term: ${Constants.CACHED_DATA_TERM})`
-                        : `**${key}** (Term: ${Constants.CACHED_DATA_TERM})`
+                        ? `**${key}** - ${buildingName} (Term: ${MutableConstants.CACHED_DATA_TERM})`
+                        : `**${key}** (Term: ${MutableConstants.CACHED_DATA_TERM})`
                 )
                 .setDescription(
                     time

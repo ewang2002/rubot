@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import {StringBuilder} from "./utilities/StringBuilder";
 import {TimeUtilities} from "./utilities/TimeUtilities";
-import {Constants} from "./Constants";
+import {MutableConstants} from "./constants/MutableConstants";
 import {JsonManager} from "./JsonManager";
 
 (async () => {
@@ -12,11 +12,11 @@ import {JsonManager} from "./JsonManager";
     const config: IConfiguration = JSON.parse(content.toString());
     const bot = new Bot(config);
     bot.startAllEvents();
-    Constants.initCapeData();
-    Constants.initSectionData("SP22");
+    MutableConstants.initCapeData();
+    MutableConstants.initSectionData("SP22");
     JsonManager.startAll();
     if (config.isProd) {
-        await Constants.initEnrollmentData();
+        await MutableConstants.initEnrollmentData();
     }
     console.info("All data received.");
     await bot.login();

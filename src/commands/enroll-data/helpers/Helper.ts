@@ -1,5 +1,5 @@
 import {BaseMessageComponent, Collection, MessageButton, MessageEmbed} from "discord.js";
-import {Constants} from "../../../Constants";
+import {MutableConstants} from "../../../constants/MutableConstants";
 import {ICapeRow, WebRegSection} from "../../../definitions";
 import {ArrayUtilities} from "../../../utilities/ArrayUtilities";
 import {StringBuilder} from "../../../utilities/StringBuilder";
@@ -8,7 +8,7 @@ import {ArgumentType, IArgumentInfo, ICommandContext} from "../../BaseCommand";
 import {GeneralUtilities} from "../../../utilities/GeneralUtilities";
 import {EmojiConstants} from "../../../constants/GeneralConstants";
 import {AdvancedCollector} from "../../../utilities/AdvancedCollector";
-import CAPE_DATA = Constants.CAPE_DATA;
+import CAPE_DATA = MutableConstants.CAPE_DATA;
 import {TimeUtilities} from "../../../utilities/TimeUtilities";
 import padTimeDigit = TimeUtilities.padTimeDigit;
 import getTimeStr = TimeUtilities.getTimeStr;
@@ -21,7 +21,7 @@ export const LOOKUP_ARGUMENTS: IArgumentInfo[] = [
         prettyType: "String",
         desc: "The term to check.",
         restrictions: {
-            stringChoices: Constants.WEBREG_TERMS.map(x => {
+            stringChoices: MutableConstants.WEBREG_TERMS.map(x => {
                 return [x.termName, x.term];
             })
         },
@@ -54,7 +54,7 @@ export const PLOT_ARGUMENTS: IArgumentInfo[] = [
         argName: "term",
         type: ArgumentType.String,
         restrictions: {
-            stringChoices: Constants.GH_TERMS.map(x => {
+            stringChoices: MutableConstants.GH_TERMS.map(x => {
                 return [x.termName, x.term];
             })
         },

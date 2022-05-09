@@ -5,9 +5,9 @@ import {Bot} from "../../Bot";
 import {WebRegSection} from "../../definitions";
 import {GeneralUtilities} from "../../utilities/GeneralUtilities";
 import {StringBuilder} from "../../utilities/StringBuilder";
-import {Constants} from "../../Constants";
+import {MutableConstants} from "../../constants/MutableConstants";
 import {EmojiConstants} from "../../constants/GeneralConstants";
-import WEBREG_TERMS = Constants.WEBREG_TERMS;
+import WEBREG_TERMS = MutableConstants.WEBREG_TERMS;
 import {StringUtil} from "../../utilities/StringUtilities";
 import * as table from "text-table";
 
@@ -68,20 +68,20 @@ export class Status extends BaseCommand {
         }
 
         statusEmbed.addField("WebReg", StringUtil.codifyString(webregStatus.toString()));
-        statusEmbed.addField("CAPE", StringUtil.codifyString(`${Constants.CAPE_DATA.length} Entries Loaded.`));
+        statusEmbed.addField("CAPE", StringUtil.codifyString(`${MutableConstants.CAPE_DATA.length} Entries Loaded.`));
         statusEmbed.addField(
-            `Cached Sections (${Constants.CACHED_DATA_TERM})`,
-            StringUtil.codifyString(`${Constants.SECTION_TERM_DATA.length} Sections Loaded.`)
+            `Cached Sections (${MutableConstants.CACHED_DATA_TERM})`,
+            StringUtil.codifyString(`${MutableConstants.SECTION_TERM_DATA.length} Sections Loaded.`)
         );
         statusEmbed.addField(
             "Enrollment Graphs: Overall",
             StringUtil.codifyString(
                 table([
                     ["Term", "General", "Wide", "FSP"],
-                    ...Constants.GH_TERMS.map(x => {
-                        let general = Constants.OVERALL_ENROLL.get(x.term)?.length ?? 0;
-                        let wide = Constants.OVERALL_ENROLL_WIDE.get(x.term)?.length ?? 0;
-                        let fsp = Constants.OVERALL_ENROLL_FSP.get(x.term)?.length ?? 0;
+                    ...MutableConstants.GH_TERMS.map(x => {
+                        let general = MutableConstants.OVERALL_ENROLL.get(x.term)?.length ?? 0;
+                        let wide = MutableConstants.OVERALL_ENROLL_WIDE.get(x.term)?.length ?? 0;
+                        let fsp = MutableConstants.OVERALL_ENROLL_FSP.get(x.term)?.length ?? 0;
 
                         return [x.term, general, wide, fsp]
                     })
@@ -93,10 +93,10 @@ export class Status extends BaseCommand {
             StringUtil.codifyString(
                 table([
                     ["Term", "General", "Wide", "FSP"],
-                    ...Constants.GH_TERMS.map(x => {
-                        let general = Constants.SECTION_ENROLL.get(x.term)?.length ?? 0;
-                        let wide = Constants.SECTION_ENROLL_WIDE.get(x.term)?.length ?? 0;
-                        let fsp = Constants.SECTION_ENROLL_FSP.get(x.term)?.length ?? 0;
+                    ...MutableConstants.GH_TERMS.map(x => {
+                        let general = MutableConstants.SECTION_ENROLL.get(x.term)?.length ?? 0;
+                        let wide = MutableConstants.SECTION_ENROLL_WIDE.get(x.term)?.length ?? 0;
+                        let fsp = MutableConstants.SECTION_ENROLL_FSP.get(x.term)?.length ?? 0;
 
                         return [x.term, general, wide, fsp]
                     })

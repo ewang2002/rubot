@@ -7,7 +7,7 @@ import {AdvancedCollector} from "../../utilities/AdvancedCollector";
 import {TimeUtilities} from "../../utilities/TimeUtilities";
 import {StringBuilder} from "../../utilities/StringBuilder";
 import {StringUtil} from "../../utilities/StringUtilities";
-import {Constants} from "../../Constants";
+import {MutableConstants} from "../../constants/MutableConstants";
 import padTimeDigit = TimeUtilities.padTimeDigit;
 import getTimeStr = TimeUtilities.getTimeStr;
 
@@ -191,7 +191,7 @@ export class CheckRoom extends BaseCommand {
             keys.sort((a, b) => a.startTime - b.startTime);
             const embed = new MessageEmbed()
                 .setTitle(`**${classroomToUse}**: ${CheckRoom.LONG_DAY_OF_WEEK[i]} Schedule `
-                    + `(Term: ${Constants.CACHED_DATA_TERM})`)
+                    + `(Term: ${MutableConstants.CACHED_DATA_TERM})`)
                 .setDescription(`Current Time: **\`${TimeUtilities.getDateTime(currDate)}\`**`)
                 .setColor("GOLD");
 

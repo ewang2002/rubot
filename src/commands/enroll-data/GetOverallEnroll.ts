@@ -1,5 +1,5 @@
 import {BaseCommand, ICommandContext} from "../BaseCommand";
-import {Constants} from "../../Constants";
+import {MutableConstants} from "../../constants/MutableConstants";
 import {PLOT_ARGUMENTS, parseCourseSubjCode} from "./helpers/Helper";
 import {Collection, MessageEmbed} from "discord.js";
 import {IGitContent} from "../../definitions";
@@ -32,16 +32,16 @@ export class GetOverallEnroll extends BaseCommand {
         let display: string;
         switch (searchType) {
             case "wide":
-                coll = Constants.OVERALL_ENROLL_WIDE;
+                coll = MutableConstants.OVERALL_ENROLL_WIDE;
                 display = "Wide";
                 break;
             case "fsp":
-                coll = Constants.OVERALL_ENROLL_FSP;
+                coll = MutableConstants.OVERALL_ENROLL_FSP;
                 display = "First/Second Pass";
                 break;
             default:
                 // "norm" is the default
-                coll = Constants.OVERALL_ENROLL;
+                coll = MutableConstants.OVERALL_ENROLL;
                 display = "Normal";
                 break;
         }
@@ -74,7 +74,7 @@ export class GetOverallEnroll extends BaseCommand {
                 new MessageEmbed()
                     .setTitle(`Course **${parsedCode}** All Sections (Term **${term}**)`)
                     .setFooter({text: `Display: ${display}`})
-                    .setDescription(`[Source](${Constants.ENROLL_DATA_GH})`)
+                    .setDescription(`[Source](${MutableConstants.ENROLL_DATA_GH})`)
                     .setColor("RANDOM")
                     .setTimestamp()
                     .setImage(res.download_url)

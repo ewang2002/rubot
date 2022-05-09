@@ -1,6 +1,6 @@
 import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
 import {displayInteractiveWebregData, parseCourseSubjCode} from "./helpers/Helper";
-import {Constants} from "../../Constants";
+import {MutableConstants} from "../../constants/MutableConstants";
 
 export class LookupCached extends BaseCommand {
     public constructor() {
@@ -45,16 +45,16 @@ export class LookupCached extends BaseCommand {
         }
 
         await ctx.interaction.deferReply();
-        const data = Constants.SECTION_TERM_DATA.filter(x => x.subj_course_id === parsedCode);
+        const data = MutableConstants.SECTION_TERM_DATA.filter(x => x.subj_course_id === parsedCode);
         if (data.length === 0) {
             await ctx.interaction.editReply({
-                content: `No data was found for **\`${parsedCode}\`** (Term: \`${Constants.CACHED_DATA_TERM}\`).`
+                content: `No data was found for **\`${parsedCode}\`** (Term: \`${MutableConstants.CACHED_DATA_TERM}\`).`
             });
 
             return 0;
         }
 
-        await displayInteractiveWebregData(ctx, data, Constants.CACHED_DATA_TERM, parsedCode, false);
+        await displayInteractiveWebregData(ctx, data, MutableConstants.CACHED_DATA_TERM, parsedCode, false);
         return 0;
     }
 }

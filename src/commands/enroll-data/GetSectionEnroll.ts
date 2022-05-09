@@ -1,5 +1,5 @@
 import {BaseCommand, ICommandContext} from "../BaseCommand";
-import {Constants} from "../../Constants";
+import {MutableConstants} from "../../constants/MutableConstants";
 import {ArrayUtilities} from "../../utilities/ArrayUtilities";
 import {Collection, MessageButton, MessageEmbed, MessageSelectMenu} from "discord.js";
 import {AdvancedCollector} from "../../utilities/AdvancedCollector";
@@ -35,16 +35,16 @@ export class GetSectionEnroll extends BaseCommand {
         let display: string;
         switch (searchType) {
             case "wide":
-                coll = Constants.SECTION_ENROLL_WIDE;
+                coll = MutableConstants.SECTION_ENROLL_WIDE;
                 display = "Wide";
                 break;
             case "fsp":
-                coll = Constants.SECTION_ENROLL_FSP;
+                coll = MutableConstants.SECTION_ENROLL_FSP;
                 display = "First/Second Pass";
                 break;
             default:
                 // "norm" is the default
-                coll = Constants.SECTION_ENROLL;
+                coll = MutableConstants.SECTION_ENROLL;
                 display = "Normal";
                 break;
         }
@@ -142,7 +142,7 @@ export class GetSectionEnroll extends BaseCommand {
                 new MessageEmbed()
                     .setTitle(`Course **${parsedCode}** Section **${sec}** (Term **${term}**)`)
                     .setFooter({text: `Display: ${display}`})
-                    .setDescription(`[Source](${Constants.ENROLL_DATA_GH})`)
+                    .setDescription(`[Source](${MutableConstants.ENROLL_DATA_GH})`)
                     .setColor("RANDOM")
                     .setTimestamp()
                     .setImage(data.download_url)

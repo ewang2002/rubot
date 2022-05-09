@@ -3,8 +3,8 @@ import {EmojiConstants} from "../../constants/GeneralConstants";
 import {ArrayUtilities} from "../../utilities/ArrayUtilities";
 import {MessageButton, MessageSelectMenu} from "discord.js";
 import {AdvancedCollector} from "../../utilities/AdvancedCollector";
-import {Constants} from "../../Constants";
-import CAPE_DATA = Constants.CAPE_DATA;
+import {MutableConstants} from "../../constants/MutableConstants";
+import CAPE_DATA = MutableConstants.CAPE_DATA;
 import {getCapeSummary, parseCourseSubjCode} from "./helpers/Helper";
 
 export class GetCape extends BaseCommand {
