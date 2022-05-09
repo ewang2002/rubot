@@ -1,6 +1,6 @@
 import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
 import {GeneralConstants} from "../../constants/GeneralConstants";
-import {QuoteHelpers} from "../../QuoteHelpers";
+import {JsonManager} from "../../JsonManager";
 
 export class AddQuoteText extends BaseCommand {
     public constructor() {
@@ -34,7 +34,7 @@ export class AddQuoteText extends BaseCommand {
             ],
             guildOnly: true,
             botOwnerOnly: false,
-            allowOnServers: [GeneralConstants.DOOMERS_SERVER_ID]
+            allowOnServers: GeneralConstants.PERMITTED_SERVER_IDS
         });
     }
 
@@ -60,12 +60,16 @@ export class AddQuoteText extends BaseCommand {
         }
 
         await ctx.interaction.deferReply();
-        await QuoteHelpers.writeToQuoteJson({
-            text,
-            author: {
-                name: mention.id,
-                fromMention: true
-            }
+        await JsonManager.QuoteJsonFile.runOperation(q => {
+            q.push({
+                text,
+                author: {
+                    name: mention.id,
+                    fromMention: true
+                }
+            });
+
+            return q;
         });
 
         await ctx.interaction.editReply({

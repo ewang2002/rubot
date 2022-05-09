@@ -1,6 +1,7 @@
 import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
 import {GeneralConstants} from "../../constants/GeneralConstants";
-import {DadHelper} from "../../DadHelper";
+import {JsonManager} from "../../JsonManager";
+import {TimeUtilities} from "../../utilities/TimeUtilities";
 
 export class SetDadPercent extends BaseCommand {
     public constructor() {
@@ -40,7 +41,7 @@ export class SetDadPercent extends BaseCommand {
             ],
             guildOnly: true,
             botOwnerOnly: false,
-            allowOnServers: [GeneralConstants.DOOMERS_SERVER_ID]
+            allowOnServers: GeneralConstants.PERMITTED_SERVER_IDS
         });
     }
 
@@ -59,10 +60,36 @@ export class SetDadPercent extends BaseCommand {
             return -1;
         }
 
-        await DadHelper.saveUserToJson({
-            id: mention.id,
-            percent: percent / 100
-        });
+        if (percent === 0) {
+            await JsonManager.DadJsonFile.runOperation(d => {
+                const idx = d.findIndex(x => x.id === mention.id);
+                if (idx === -1) {
+                    return d;
+                }
+
+                d.splice(idx, 1);
+                console.info(`[${TimeUtilities.getDateTime()}] Deleted user with ID ${mention.id}.`);
+                return d;
+            });
+        }
+        else {
+            await JsonManager.DadJsonFile.runOperation(d => {
+                const idx = d.findIndex(x => x.id === mention.id);
+                if (idx === -1) {
+                    d.push({
+                        id: mention.id,
+                        percent: percent / 100
+                    });
+                }
+                else {
+                    d[idx].percent = percent / 100;
+                }
+
+                console.info(`[${TimeUtilities.getDateTime()}] Added user with ID ${mention.id} & percent `
+                    + `${percent / 100}.`);
+                return d;
+            });
+        }
 
         await ctx.interaction.editReply({
             content: `Target ${mention} has been saved with probability response of \`${percent / 100}\`.`,

@@ -5,14 +5,16 @@ import * as path from "path";
 import {StringBuilder} from "./utilities/StringBuilder";
 import {TimeUtilities} from "./utilities/TimeUtilities";
 import {Constants} from "./Constants";
+import {JsonManager} from "./JsonManager";
 
 (async () => {
-    const content = fs.readFileSync(path.join(__dirname, "..", "config.production.json"));
+    const content = fs.readFileSync(path.join(__dirname, "..", "config.json"));
     const config: IConfiguration = JSON.parse(content.toString());
     const bot = new Bot(config);
     bot.startAllEvents();
     Constants.initCapeData();
     Constants.initSectionData("SP22");
+    JsonManager.startAll();
     if (config.isProd) {
         await Constants.initEnrollmentData();
     }

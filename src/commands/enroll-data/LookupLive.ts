@@ -29,14 +29,13 @@ export class LookupLive extends BaseCommand {
                     desc: "The term to check.",
                     restrictions: {
                         stringChoices: [
-                            ["Spring 2022", "SP22"],
                             ["Summer Session I 2022", "S122"],
                             ["Summer Session II 2022", "S222"],
                             ["Summer Session III 2022", "S322"]
                         ]
                     },
                     required: true,
-                    example: ["SP22"]
+                    example: ["S322"]
                 },
                 {
                     displayName: "Course & Subject Code",

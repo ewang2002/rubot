@@ -1,29 +1,21 @@
 import {Message} from "discord.js";
 import {GeneralConstants} from "../constants/GeneralConstants";
-import {DadHelper} from "../DadHelper";
 import {GeneralUtilities} from "../utilities/GeneralUtilities";
-import {Bot} from "../Bot";
+import {JsonManager} from "../JsonManager";
 
 export async function onMessage(msg: Message): Promise<void> {
-    if (!Bot.BotInstance.config.isProd) {
+    if (msg.author.bot || !msg.guild || !GeneralConstants.PERMITTED_SERVER_IDS.includes(msg.guild.id)) {
         return;
     }
 
-    if (msg.author.bot || !msg.guild || msg.guild.id !== GeneralConstants.DOOMERS_SERVER_ID) {
-        return;
-    }
-
-    const idx = DadHelper.ALL_ACTIVE_TRACKERS.findIndex(x => x.id === msg.author.id);
-    if (idx === -1 || DadHelper.ALL_ACTIVE_TRACKERS[idx].percent === 0) {
-        return;
-    }
-
-    if (!GeneralConstants.IM_REGEX.test(msg.content)) {
+    const currTracked = JsonManager.DadJsonFile.getCachedData();
+    const idx = currTracked.findIndex(x => x.id === msg.author.id);
+    if (idx === -1 || currTracked[idx].percent === 0) {
         return;
     }
 
     const possName = msg.content.split(GeneralConstants.IM_REGEX).at(-1)!.trim();
-    if (possName.length === 0 || Math.random() > DadHelper.ALL_ACTIVE_TRACKERS[idx].percent) {
+    if (possName.length === 0 || Math.random() > currTracked[idx].percent || possName === msg.content.trim()) {
         return;
     }
 

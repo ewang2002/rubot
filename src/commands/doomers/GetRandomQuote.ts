@@ -3,7 +3,7 @@ import {GeneralUtilities} from "../../utilities/GeneralUtilities";
 import {GeneralConstants} from "../../constants/GeneralConstants";
 import {StringBuilder} from "../../utilities/StringBuilder";
 import {ArrayUtilities} from "../../utilities/ArrayUtilities";
-import {QuoteHelpers} from "../../QuoteHelpers";
+import {JsonManager} from "../../JsonManager";
 
 export class GetRandomQuote extends BaseCommand {
     public constructor() {
@@ -28,7 +28,7 @@ export class GetRandomQuote extends BaseCommand {
             ],
             guildOnly: true,
             botOwnerOnly: false,
-            allowOnServers: [GeneralConstants.DOOMERS_SERVER_ID]
+            allowOnServers: GeneralConstants.PERMITTED_SERVER_IDS
         });
     }
 
@@ -48,8 +48,8 @@ export class GetRandomQuote extends BaseCommand {
         //        ))(await QuoteHelpers.getAllQuotes());
 
         const filteredQuotes = filterByUser
-            ? QuoteHelpers.ALL_ACTIVE_QUOTES.filter(x => x.author.name === filterByUser.id)
-            : QuoteHelpers.ALL_ACTIVE_QUOTES;
+            ? JsonManager.QuoteJsonFile.getCachedData().filter(x => x.author.name === filterByUser.id)
+            : JsonManager.QuoteJsonFile.getCachedData();
 
         const randomQuote = filteredQuotes.length === 0
             ? null

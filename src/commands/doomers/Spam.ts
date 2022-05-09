@@ -39,7 +39,7 @@ export class Spam extends BaseCommand {
             ],
             guildOnly: true,
             botOwnerOnly: false,
-            allowOnServers: [GeneralConstants.DOOMERS_SERVER_ID]
+            allowOnServers: GeneralConstants.PERMITTED_SERVER_IDS
         });
     }
 

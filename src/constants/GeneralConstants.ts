@@ -1,7 +1,7 @@
 export namespace GeneralConstants {
     export const ZERO_WIDTH_SPACE: string = "\u200b";
 
-    export const DOOMERS_SERVER_ID: string = "778738941443440640";
+    export const PERMITTED_SERVER_IDS: string[] = ["778738941443440640", "533476850421202944"];
 
     // Looking for any of: i'm, im, i am (case insensitive) that:
     // - is at the start of the string or starts with at least one space

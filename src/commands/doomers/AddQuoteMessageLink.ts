@@ -1,7 +1,7 @@
 import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
 import {GeneralUtilities} from "../../utilities/GeneralUtilities";
 import {GeneralConstants} from "../../constants/GeneralConstants";
-import {QuoteHelpers} from "../../QuoteHelpers";
+import {JsonManager} from "../../JsonManager";
 
 export class AddQuoteMessageLink extends BaseCommand {
     public constructor() {
@@ -26,7 +26,7 @@ export class AddQuoteMessageLink extends BaseCommand {
             ],
             guildOnly: true,
             botOwnerOnly: false,
-            allowOnServers: [GeneralConstants.DOOMERS_SERVER_ID]
+            allowOnServers: GeneralConstants.PERMITTED_SERVER_IDS
         });
     }
 
@@ -94,12 +94,16 @@ export class AddQuoteMessageLink extends BaseCommand {
             return -1;
         }
 
-        await QuoteHelpers.writeToQuoteJson({
-            text: messageObj.content,
-            author: {
-                name: messageObj.author.id,
-                fromMention: true
-            }
+        await JsonManager.QuoteJsonFile.runOperation(q => {
+            q.push({
+                text: messageObj.content,
+                author: {
+                    name: messageObj.author.id,
+                    fromMention: true
+                }
+            });
+
+            return q;
         });
 
         await ctx.interaction.editReply({

@@ -58,7 +58,7 @@ export class SetStatus extends BaseCommand {
             botPermissions: [],
             guildOnly: false,
             botOwnerOnly: false,
-            allowOnServers: [GeneralConstants.DOOMERS_SERVER_ID]
+            allowOnServers: GeneralConstants.PERMITTED_SERVER_IDS
         };
 
         super(cmi);

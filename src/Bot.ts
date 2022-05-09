@@ -5,8 +5,6 @@ import * as Cmds from "./commands";
 import {onErrorEvent, onInteractionEvent, onMessage, onReadyEvent} from "./events";
 import {REST} from "@discordjs/rest";
 import {RESTPostAPIApplicationCommandsJSONBody, Routes} from "discord-api-types/v10";
-import {QuoteHelpers} from "./QuoteHelpers";
-import {DadHelper} from "./DadHelper";
 
 export class Bot {
     /**
@@ -155,9 +153,6 @@ export class Bot {
         this._bot.on("interactionCreate", async (i: Interaction) => onInteractionEvent(i));
         this._bot.on("error", async (e: Error) => onErrorEvent(e));
         this._eventsIsStarted = true;
-
-        QuoteHelpers.start().then();
-        DadHelper.start().then()
     }
 
     /**

@@ -6,7 +6,7 @@ export namespace ArrayUtilities {
      * @param {T[]} array The array.
      * @returns {T} A random element.
      */
-    export function getRandomElement<T>(array: T[]): T {
+    export function getRandomElement<T>(array: readonly T[]): T {
         return array[Math.floor(Math.random() * array.length)];
     }
 
