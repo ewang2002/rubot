@@ -69,6 +69,7 @@ export class Status extends BaseCommand {
 
         statusEmbed.addField("WebReg", StringUtil.codifyString(webregStatus.toString()));
         statusEmbed.addField("CAPE", StringUtil.codifyString(`${MutableConstants.CAPE_DATA.length} Entries Loaded.`));
+        statusEmbed.addField("Course Listings", StringUtil.codifyString(`${MutableConstants.COURSE_LISTING.length} Courses Loaded.`));
         statusEmbed.addField(
             `Cached Sections (${MutableConstants.CACHED_DATA_TERM})`,
             StringUtil.codifyString(`${MutableConstants.SECTION_TERM_DATA.length} Sections Loaded.`)

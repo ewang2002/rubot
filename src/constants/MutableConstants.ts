@@ -1,5 +1,5 @@
 import {Collection} from "discord.js";
-import {ICapeRow, IGitContent, Meeting, WebRegSection} from "../definitions";
+import {ICapeRow, IGitContent, ListedCourse, Meeting, WebRegSection} from "../definitions";
 import {createReadStream} from "fs";
 import {createInterface} from "readline";
 import * as path from "path";
@@ -118,8 +118,9 @@ export namespace MutableConstants {
     export const SECTION_ENROLL_WIDE: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
     export const SECTION_ENROLL_FSP: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
     export const CAPE_DATA: ICapeRow[] = [];
-
     export const SECTION_TERM_DATA: WebRegSection[] = [];
+    export const COURSE_LISTING: ListedCourse[] = [];
+    export const LISTING_LAST_SCRAPED: string = "May 15, 2022";
 
     // Term that we have section (cached) data for. We should only have one active term at any point.
     export let CACHED_DATA_TERM: string = "";
@@ -127,7 +128,7 @@ export namespace MutableConstants {
     /**
      * Adds the section data to the above array.
      * @param {string} term The term.
-     * @param {string} [pathToFile] The path to the CAPE file, if any.
+     * @param {string} [pathToFile] The path to the section file, if any.
      */
     export function initSectionData(term: string, pathToFile?: string): void {
         CACHED_DATA_TERM = term;
@@ -289,6 +290,50 @@ export namespace MutableConstants {
 
         rl.on("close", () => {
             console.info(`Done reading CAPEs. Data length: ${CAPE_DATA.length}`);
+        });
+    }
+
+    /**
+     * Adds the course listing data to the above array.
+     * @param {string} pathToFile The path to the course listing file, if any.
+     */
+    export function initCourseListing(pathToFile?: string): void {
+        const pathToRead = pathToFile ?? path.join(__dirname, "..", "..", "courses.tsv");
+        const readStream = createReadStream(pathToRead);
+        const rl = createInterface(readStream);
+
+        let firstLinePassed = false;
+        rl.on("line", line => {
+            if (!firstLinePassed) {
+                firstLinePassed = true;
+                return;
+            }
+
+            const rawData = line.split("\t");
+            if (rawData.length !== 5) {
+                console.error(`Bad line read for course listing data; got ${rawData.length} but expected 5.`)
+                return;
+            }
+
+            const [
+                department,
+                subjCourse,
+                courseName,
+                units,
+                description
+            ] = rawData;
+
+            COURSE_LISTING.push({
+                department,
+                courseName,
+                subjCourse,
+                units,
+                description
+            });
+        });
+
+        rl.on("close", () => {
+            console.info(`Done reading course listing. Data length: ${COURSE_LISTING.length}`);
         });
     }
 

@@ -14,6 +14,7 @@ export * from "./ucsd/ViewAllClassrooms";
 export * from "./ucsd/ViewClassroomsOld";
 export * from "./ucsd/CheckRoom";
 export * from "./ucsd/Waitz";
+export * from "./ucsd/CourseInfo";
 
 export * from "./doomers/SetActivity";
 export * from "./doomers/Spam";

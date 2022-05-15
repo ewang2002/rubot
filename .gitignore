@@ -22,5 +22,6 @@ config.production.json
 # Data files.
 cape.tsv
 SP22.tsv
+courses.tsv
 quote.json
 dad.json

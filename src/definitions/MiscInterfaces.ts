@@ -42,3 +42,11 @@ export interface Meeting {
     building: string;
     room: string;
 }
+
+export interface ListedCourse {
+    department: string;
+    subjCourse: string;
+    units: string;
+    courseName: string;
+    description: string;
+}

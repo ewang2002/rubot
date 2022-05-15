@@ -109,7 +109,8 @@ export class Bot {
             new Cmds.ViewAllClassrooms(),
             new Cmds.ViewClassroomsOld(),
             new Cmds.CheckRoom(),
-            new Cmds.Waitz()
+            new Cmds.Waitz(),
+            new Cmds.CourseInfo()
         ]);
 
         Bot.JsonCommands = [];
