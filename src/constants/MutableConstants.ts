@@ -11,15 +11,17 @@ import {StringBuilder} from "../utilities/StringBuilder";
 
 export namespace MutableConstants {
     export const ENROLL_DATA_GH: string = "https://github.com/ewang2002/UCSDHistEnrollData";
+
+    // All active webreg terms (accessible on the rocket web server)
     export const WEBREG_TERMS: {
         term: string;
         termName: string;
         paddedName: string;
     }[] = [
         {
-            term: "SP22",
-            termName: "Spring 2022",
-            paddedName: "Spring 2022            "
+            term: "FA22",
+            termName: "Fall 2022",
+            paddedName: "Fall 2022              "
         },
         {
             term: "S122",

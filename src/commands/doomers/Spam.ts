@@ -1,6 +1,8 @@
 import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
 import {GeneralConstants} from "../../constants/GeneralConstants";
 import {GeneralUtilities} from "../../utilities/GeneralUtilities";
+import {NewsChannel, TextChannel} from "discord.js";
+import {ArrayUtilities} from "../../utilities/ArrayUtilities";
 
 export class Spam extends BaseCommand {
     public constructor() {
@@ -35,7 +37,15 @@ export class Spam extends BaseCommand {
                     required: true,
                     example: ["15"]
                 },
-
+                {
+                    displayName: "All Channel Mode",
+                    argName: "mode",
+                    type: ArgumentType.Boolean,
+                    prettyType: "Boolean",
+                    desc: "Whether to ping in random channels (true) or the current one (false). Default is false.",
+                    required: false,
+                    example: ["False"]
+                }
             ],
             guildOnly: true,
             botOwnerOnly: false,
@@ -49,15 +59,12 @@ export class Spam extends BaseCommand {
     public async run(ctx: ICommandContext): Promise<number> {
         const mention = ctx.interaction.options.getMentionable("member", true);
         const amt = ctx.interaction.options.getInteger("amount", true);
-
-        // So I don't get murdered by ruby
-        if ("id" in mention && mention.id === "224653570044067843") {
-            await ctx.interaction.reply({
-                content: "> i will stab someone\n> \n> someone is going to die.\n- ruby"
-            });
-
-            return -1;
-        }
+        const mode = ctx.interaction.options.getBoolean("mode", false) ?? false;
+        const allChannels = Array.from(
+            ctx.guild!.channels.cache
+                .filter(x => x.isText() && x.permissionsFor(ctx.guild!.me!).has(["VIEW_CHANNEL", "SEND_MESSAGES"]))
+                .values()
+        ) as (TextChannel | NewsChannel)[];
 
         await ctx.interaction.reply({
             content: `Ok, ${ctx.user.toString()} executed the spam command on ${mention.toString()}.`
@@ -65,8 +72,12 @@ export class Spam extends BaseCommand {
 
         for (let i = 0; i < amt; ++i) {
             await GeneralUtilities.tryExecuteAsync(async () => {
+                const channel = mode
+                    ? ArrayUtilities.getRandomElement(allChannels)
+                    : ctx.channel;
+
                 const m = await GeneralUtilities.tryExecuteAsync(async () => {
-                    return ctx.channel.send({content: mention.toString()});
+                    return channel.send({content: mention.toString()});
                 });
 
                 if (m) {

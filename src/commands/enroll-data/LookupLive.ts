@@ -8,6 +8,7 @@ import {EmojiConstants, GeneralConstants} from "../../constants/GeneralConstants
 import {ArrayUtilities} from "../../utilities/ArrayUtilities";
 import {StringUtil} from "../../utilities/StringUtilities";
 import {MessageEmbed} from "discord.js";
+import {MutableConstants} from "../../constants/MutableConstants";
 
 export class LookupLive extends BaseCommand {
     public constructor() {
@@ -30,7 +31,7 @@ export class LookupLive extends BaseCommand {
      * @inheritDoc
      */
     public async run(ctx: ICommandContext): Promise<number> {
-        const term = ctx.interaction.options.getString("term", true);
+        const term = ctx.interaction.options.getString("term", false) ?? MutableConstants.WEBREG_TERMS[0].term;
         const code = ctx.interaction.options.getString("course_subj_num", true);
         const showAll = ctx.interaction.options.getBoolean("show_all", false) ?? true;
         const parsedCode = parseCourseSubjCode(code);

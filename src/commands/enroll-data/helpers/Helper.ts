@@ -19,13 +19,13 @@ export const LOOKUP_ARGUMENTS: IArgumentInfo[] = [
         argName: "term",
         type: ArgumentType.String,
         prettyType: "String",
-        desc: "The term to check.",
+        desc: `The term to check. Defaults to ${MutableConstants.WEBREG_TERMS[0].termName}`,
         restrictions: {
             stringChoices: MutableConstants.WEBREG_TERMS.map(x => {
                 return [x.termName, x.term];
             })
         },
-        required: true,
+        required: false,
         example: ["S322"]
     },
     {
