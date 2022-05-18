@@ -223,7 +223,7 @@ export namespace MutableConstants {
             SECTION_TERM_DATA.push({
                 available_seats: -1,
                 enrolled_ct: -1,
-                instructor: instructor.split(" & "),
+                instructors: instructor.split(" & "),
                 meetings: allMeetings.filter(x => x !== null) as Meeting[],
                 needs_waitlist: false,
                 section_code: sectionCode,

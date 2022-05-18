@@ -23,7 +23,7 @@ export interface WebRegSection {
     subj_course_id: string;
     section_id: string;
     section_code: string;
-    instructor: string[];
+    instructors: string[];
     available_seats: number;
     enrolled_ct: number;
     total_seats: number;

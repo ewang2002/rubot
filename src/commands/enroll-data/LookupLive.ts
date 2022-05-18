@@ -91,7 +91,7 @@ export class LookupLive extends BaseCommand {
                             ? EmojiConstants.RED_SQUARE_EMOJI
                             : EmojiConstants.GREEN_SQUARE_EMOJI
                     )
-                    .append(` ${x.enrolled_ct}/${x.total_seats}`)
+                    .append(` ${x.enrolled_ct} Enrolled / ${x.total_seats} Total`)
                     .append(` (${x.waitlist_ct} WL)`)
                     .appendLine()
                     .toString();

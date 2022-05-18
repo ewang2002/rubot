@@ -147,7 +147,7 @@ export async function displayInteractiveWebregData(ctx: ICommandContext, section
             .setTitle(`**${parsedCode}** Section **${sectionFamily}** (Term: ${term})`)
             .setDescription(
                 new StringBuilder()
-                    .append(`Instructor: **\`${entries[0].instructor}\`**`).appendLine()
+                    .append(`Instructor: **\`${entries[0].instructors.join(" & ")}\`**`).appendLine()
                     .append(`Sections: **\`${entries.length}\`**`).appendLine()
                     .append(`Evaluations: Click [Here](${capeUrl})`).appendLine()
                     .toString()
