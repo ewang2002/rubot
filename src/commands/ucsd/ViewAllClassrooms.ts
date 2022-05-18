@@ -194,7 +194,8 @@ export class ViewAllClassrooms extends BaseCommand {
                 location: `${m.building} ${m.room}`,
                 startTime: m.start_hr * 100 + m.start_min,
                 endTime: m.end_hr * 100 + m.end_min,
-                day: typeof m.meeting_days === "string" ? [m.meeting_days] : m.meeting_days,
+                // This should never be null since, in the cached file, it's already defined as "n/a"
+                day: (typeof m.meeting_days === "string" ? [m.meeting_days] : m.meeting_days) as string[],
                 subjCourseId: x.subj_course_id,
                 meetingType: m.meeting_type,
                 startHr: m.start_hr,

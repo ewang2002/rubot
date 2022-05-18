@@ -8,8 +8,8 @@ import {ArgumentType, IArgumentInfo, ICommandContext} from "../../BaseCommand";
 import {GeneralUtilities} from "../../../utilities/GeneralUtilities";
 import {EmojiConstants} from "../../../constants/GeneralConstants";
 import {AdvancedCollector} from "../../../utilities/AdvancedCollector";
-import CAPE_DATA = MutableConstants.CAPE_DATA;
 import {TimeUtilities} from "../../../utilities/TimeUtilities";
+import CAPE_DATA = MutableConstants.CAPE_DATA;
 import padTimeDigit = TimeUtilities.padTimeDigit;
 import getTimeStr = TimeUtilities.getTimeStr;
 
@@ -169,7 +169,7 @@ export async function displayInteractiveWebregData(ctx: ICommandContext, section
                             : EmojiConstants.GREEN_SQUARE_EMOJI
                     )
                     .append(` [${entry.section_id}] ${entry.section_code} -`)
-                    .append(` ${entry.enrolled_ct} Enrolled /${entry.total_seats} Total`)
+                    .append(` ${entry.enrolled_ct} Enrolled / ${entry.total_seats} Total`)
                     .append(` (${entry.waitlist_ct} WL)`)
                     .toString();
             }
@@ -187,7 +187,11 @@ export async function displayInteractiveWebregData(ctx: ICommandContext, section
                         if (Array.isArray(x.meeting_days)) {
                             meetingDay = x.meeting_days.join("");
                         }
+                        else if (x.meeting_days === null) {
+                            meetingDay = "N/A";
+                        }
                         else {
+                            // meeting_days can be null?
                             const [year, month, day] = x.meeting_days.split("-")
                                 .map(x => Number.parseInt(x, 10));
                             meetingDay = `${padTimeDigit(month)}/${padTimeDigit(day)}/${padTimeDigit(year)}`;

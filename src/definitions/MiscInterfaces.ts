@@ -34,7 +34,7 @@ export interface WebRegSection {
 
 export interface Meeting {
     meeting_type: string;
-    meeting_days: string[] | string;
+    meeting_days: string[] | string | null;
     start_hr: number;
     start_min: number;
     end_hr: number;
