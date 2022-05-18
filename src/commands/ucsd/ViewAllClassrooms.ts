@@ -426,7 +426,6 @@ export class ViewAllClassrooms extends BaseCommand {
                 );
             }
 
-
             const busyFields = ArrayUtilities.arrayToStringFields(
                 val.busy,
                 (i, elem) => elem.display + "\n"
@@ -442,8 +441,6 @@ export class ViewAllClassrooms extends BaseCommand {
             embeds.push(embed);
             labelToIdx[key] = i++;
         }
-
-        embeds.forEach(embed => embed.footer!.text += `/${embeds.length}.`);
 
         if (embeds.length === 0 || allBuildings.length === 0) {
             await ctx.interaction.editReply({

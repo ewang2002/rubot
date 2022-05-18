@@ -5,6 +5,8 @@ import {MutableConstants} from "../../constants/MutableConstants";
 import {StringUtil} from "../../utilities/StringUtilities";
 import {ViewAllClassrooms} from "./ViewAllClassrooms";
 import {AdvancedCollector} from "../../utilities/AdvancedCollector";
+import {TimeUtilities} from "../../utilities/TimeUtilities";
+import getDateTime = TimeUtilities.getDateTime;
 
 export class FreeRooms extends BaseCommand {
     public constructor() {
@@ -22,13 +24,23 @@ export class FreeRooms extends BaseCommand {
                     argName: "minutes",
                     type: ArgumentType.Integer,
                     prettyType: "Integer",
-                    desc: "The number of minutes that the room should be available for, starting from current time.",
+                    desc: "The number of minutes that the room should be available for, starting from current (or" +
+                        " specified) time.",
                     restrictions: {
                         integerMin: 20,
                         integerMax: 16 * 60
                     },
                     required: true,
                     example: ["115"]
+                },
+                {
+                    displayName: "Time",
+                    argName: "time",
+                    type: ArgumentType.String,
+                    prettyType: "String",
+                    desc: "The specific time that you want to look up. Defaults to current time.",
+                    required: false,
+                    example: ["04/02/2002 1:30 PM."]
                 }
             ],
             guildOnly: false,
@@ -40,9 +52,20 @@ export class FreeRooms extends BaseCommand {
      * @inheritDoc
      */
     public async run(ctx: ICommandContext): Promise<number> {
+        const time = ctx.interaction.options.getString("time", false);
+        const cDateTime = time ? new Date(time) : new Date();
+        if (Number.isNaN(cDateTime.getTime())) {
+            await ctx.interaction.reply({
+                content: `The time that you specified, \`${time}\`, is invalid. Your time must have a date followed by`
+                    + " a time; for example, `04/02/2022 4:15 PM`.",
+                ephemeral: true
+            });
+
+            return -1;
+        }
+
         const minAhead = ctx.interaction.options.getInteger("minutes", true);
         await ctx.interaction.deferReply();
-        const cDateTime = new Date();
 
         // We use this function since this already does what we want it to do.
         const data = getUsedClassrooms(cDateTime, minAhead * 60 * 1000);
@@ -92,9 +115,9 @@ export class FreeRooms extends BaseCommand {
                         : `**${key}** (Term: ${MutableConstants.CACHED_DATA_TERM})`
                 )
                 .setDescription(
-                    `You are currently viewing all classrooms that are free for the next \`${minAhead}\` minute(s).`
-                    + " Keep in mind that these classrooms are free based on what WebReg says, and may be used for" +
-                    " other purposes."
+                    `You are currently viewing all classrooms that are free for the next \`${minAhead}\` minute(s),`
+                    + ` starting at the time **\`${getDateTime(cDateTime)}\`**. Keep in mind that these classrooms are`
+                    + " free based on what WebReg says, and may be used for other purposes."
                 )
                 .setFooter({text: `Free Classrooms Only. Page ${i + 1}`})
                 .setTimestamp(cDateTime);
