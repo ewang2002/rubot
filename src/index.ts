@@ -8,7 +8,7 @@ import {MutableConstants} from "./constants/MutableConstants";
 import {JsonManager} from "./JsonManager";
 
 (async () => {
-    const content = fs.readFileSync(path.join(__dirname, "..", "config.production.json"));
+    const content = fs.readFileSync(path.join(__dirname, "..", "config.json"));
     const config: IConfiguration = JSON.parse(content.toString());
     const bot = new Bot(config);
     bot.startAllEvents();

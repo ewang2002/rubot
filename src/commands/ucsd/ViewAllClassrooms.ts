@@ -2,14 +2,14 @@
 import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
 import {MutableConstants} from "../../constants/MutableConstants";
 import {TimeUtilities} from "../../utilities/TimeUtilities";
-import {Collection, MessageEmbed, MessageSelectMenu, MessageSelectOptionData} from "discord.js";
+import {Collection, MessageEmbed} from "discord.js";
 import {EmojiConstants, GeneralConstants} from "../../constants/GeneralConstants";
 import {ArrayUtilities} from "../../utilities/ArrayUtilities";
 import {StringUtil} from "../../utilities/StringUtilities";
 import {AdvancedCollector} from "../../utilities/AdvancedCollector";
 import {StringBuilder} from "../../utilities/StringBuilder";
+import {getSelectMenusFromBuildings, getTimeFromObj, getUsedClassrooms} from "./Helpers/Helpers";
 import SECTION_TERM_DATA = MutableConstants.SECTION_TERM_DATA;
-import padTimeDigit = TimeUtilities.padTimeDigit;
 import getTimeStr = TimeUtilities.getTimeStr;
 import getDateTime = TimeUtilities.getDateTime;
 
@@ -27,6 +27,7 @@ export interface IInternalCourseData {
     endMin: number;
     instructor: string[];
 }
+
 
 export class ViewAllClassrooms extends BaseCommand {
     public static FINAL_DURATION_TO_MS: number = 179 * 60 * 1000;
@@ -182,8 +183,8 @@ export class ViewAllClassrooms extends BaseCommand {
         });
     }
 
-    public static ALL_COURSES: IInternalCourseData[] = [];
-    public static ALL_CLASSROOMS: string[] = [];
+    private static ALL_COURSES: IInternalCourseData[] = [];
+    private static ALL_CLASSROOMS: string[] = [];
 
     /**
      * Sets all variables, in particular for all courses and all classrooms.
@@ -233,6 +234,23 @@ export class ViewAllClassrooms extends BaseCommand {
     }
 
     /**
+     * Gets all in-person courses and classrooms. If the data isn't initially loaded, this will do that first.
+     * @returns {[IInternalCourseData[], string[]]} The in-person courses and classrooms.
+     */
+    public static getCoursesClassrooms(): [IInternalCourseData[], string[]] {
+        let allCourses: IInternalCourseData[] = ViewAllClassrooms.ALL_COURSES;
+        let classrooms: string[] = ViewAllClassrooms.ALL_CLASSROOMS;
+        // If this length is 0, then compute it and then save it
+        if (allCourses.length === 0) {
+            ViewAllClassrooms.setVars();
+            allCourses = ViewAllClassrooms.ALL_COURSES;
+            classrooms = ViewAllClassrooms.ALL_CLASSROOMS;
+        }
+
+        return [allCourses, classrooms];
+    }
+
+    /**
      * @inheritDoc
      */
     public async run(ctx: ICommandContext): Promise<number> {
@@ -252,115 +270,7 @@ export class ViewAllClassrooms extends BaseCommand {
         }
 
         await ctx.interaction.deferReply();
-        let allCourses: IInternalCourseData[] = ViewAllClassrooms.ALL_COURSES;
-        let classrooms: string[] = ViewAllClassrooms.ALL_CLASSROOMS;
-        // If this length is 0, then compute it and then save it
-        if (allCourses.length === 0) {
-            ViewAllClassrooms.setVars();
-            allCourses = ViewAllClassrooms.ALL_COURSES;
-            classrooms = ViewAllClassrooms.ALL_CLASSROOMS;
-        }
-
-        const currTimeNum = cDateTime.getHours() * 100 + cDateTime.getMinutes();
-        const currDayOfWk = ViewAllClassrooms.DAY_OF_WEEK[cDateTime.getDay()];
-        const currDateStr = cDateTime.getFullYear()
-            + "-" + padTimeDigit(cDateTime.getMonth() + 1)
-            + "-" + padTimeDigit(cDateTime.getDate());
-
-        // Assume that, if the day is a finals day, then there must be at least ONE course
-        // with that final date which has a length of 179 minutes
-        const isFinalTime = allCourses.some(x => x.day[0] === currDateStr
-            && new Date(
-                2022, 0, 1, x.endHr, x.endMin
-            ).getTime() - new Date(
-                2022, 0, 1, x.startHr, x.startMin
-            ).getTime() === ViewAllClassrooms.FINAL_DURATION_TO_MS);
-
-        const coll: {
-            // Current:
-            //  - If we're looking at ACTIVE sections, then current will be the currently active session, or null
-            //    if no such section exists.
-            //  - If we're looking at INACTIVE sections, then current will be some classroom with an inactive session,
-            //    or null if it is currently in use.
-            //
-            // upcomingSession represents the next session.
-            [k: string]: {
-                current: IInternalCourseData[];
-                upcomingSession: IInternalCourseData[];
-            };
-        } = {};
-
-        const getTimeFromObj = (c: IInternalCourseData, useStart: boolean): Date => {
-            const endDateTime = new Date(cDateTime);
-            endDateTime.setHours(useStart ? c.startHr : c.endHr);
-            endDateTime.setMinutes(useStart ? c.startMin : c.endMin);
-            endDateTime.setSeconds(0);
-            return endDateTime;
-        };
-
-        for (const classroom of classrooms) {
-            // Filter the courses so that only the courses which is in progress or hasn't started yet is
-            // left. Additionally, we only want classes that are on the current day.
-            let sharedClasses = allCourses
-                .filter(x => x.location === classroom
-                    && (x.startTime >= currTimeNum || x.endTime >= currTimeNum)
-                    && (isFinalTime
-                        ? x.day[0] === currDateStr
-                        : x.day.includes(currDayOfWk) || x.day[0] === currDateStr));
-            // Sort the classes by start time.
-            sharedClasses.sort((a, b) => a.startTime - b.startTime);
-            coll[classroom] = {
-                current: [],
-                upcomingSession: []
-            };
-
-            if (sharedClasses.length === 0) {
-                continue;
-            }
-
-            // Now we want to find all active classes
-            // If the current time is between the first class's start, end time, then there is an
-            // active session
-
-            let i = 0;
-            const seenCourses = new Set<string>();
-            for (; i < sharedClasses.length; i++) {
-                const classToCheck = sharedClasses[i];
-                const identifier = `${classToCheck.subjCourseId}-${classToCheck.meetingType}`
-                    + `-${classToCheck.startTime}-${classToCheck.endTime}-${classToCheck.sectionFamily}`;
-                if (seenCourses.has(identifier)) {
-                    continue;
-                }
-
-                if (classToCheck.startTime <= currTimeNum && currTimeNum <= classToCheck.endTime) {
-                    coll[classroom].current.push(classToCheck);
-                    seenCourses.add(identifier);
-                    continue;
-                }
-
-                break;
-            }
-
-
-            seenCourses.clear();
-            for (; i < sharedClasses.length; i++) {
-                const classToCheck = sharedClasses[i];
-                const identifier = `${classToCheck.subjCourseId}-${classToCheck.meetingType}`
-                    + `-${classToCheck.startTime}-${classToCheck.endTime}-${classToCheck.sectionFamily}`;
-                if (seenCourses.has(identifier)) {
-                    continue;
-                }
-
-                if (getTimeFromObj(classToCheck, true).getTime() - cDateTime.getTime() <= nextTime) {
-                    coll[classroom].upcomingSession.push(classToCheck);
-                    seenCourses.add(identifier);
-                    continue;
-                }
-
-                break;
-            }
-        }
-
+        const coll = getUsedClassrooms(cDateTime, nextTime);
         const uniqueId = `${Date.now()}_${ctx.user.id}_${Math.random()}`;
         // Key is the building
         // Value is the room +
@@ -387,7 +297,7 @@ export class ViewAllClassrooms extends BaseCommand {
             const getUpcomingAsStr = (sb: StringBuilder) => {
                 for (const data of u) {
                     const oTimeStart = TimeUtilities.formatDuration(
-                        getTimeFromObj(data, true).getTime() - cDateTime.getTime(),
+                        getTimeFromObj(cDateTime, data, true).getTime() - cDateTime.getTime(),
                         false,
                         false
                     );
@@ -418,7 +328,7 @@ export class ViewAllClassrooms extends BaseCommand {
 
                 for (const act of c) {
                     const cTimeLeft = TimeUtilities.formatDuration(
-                        getTimeFromObj(act, false).getTime() - cDateTime.getTime(),
+                        getTimeFromObj(cDateTime, act, false).getTime() - cDateTime.getTime(),
                         false,
                         false
                     );
@@ -463,27 +373,14 @@ export class ViewAllClassrooms extends BaseCommand {
         });
 
         // Make the embed
-        const allBuildings: MessageSelectMenu[] = ArrayUtilities.breakArrayIntoSubsets(
-            Array.from(embedCollection.keys()).map(x => {
-                const b = ViewAllClassrooms.BUILDING_CODES[x];
-                return {code: x, name: b ? b : x};
-            }),
-            25
-        ).map((x, i) => {
-            const menu = new MessageSelectMenu();
-            const options: MessageSelectOptionData[] = [];
-            for (const {code, name} of x) {
-                options.push({
-                    label: code,
-                    value: code,
-                    description: name
-                });
-            }
+        const allBuildings = getSelectMenusFromBuildings(Array.from(embedCollection.keys()), uniqueId);
+        if (!allBuildings) {
+            await ctx.interaction.editReply({
+                content: "An unknown error occurred [2]."
+            });
 
-            return menu.addOptions(options)
-                .setPlaceholder(`${x[0].code} - ${x.at(-1)!.code}`)
-                .setCustomId(`${uniqueId}_select_${i}`);
-        });
+            return -1;
+        }
 
         const embeds: MessageEmbed[] = [];
         const labelToIdx: { [label: string]: number } = {};
@@ -554,49 +451,6 @@ export class ViewAllClassrooms extends BaseCommand {
             });
 
             return -1;
-        }
-
-        // Add the cancel option somehow
-        // If the last dropdown is at the max possible amount
-        if (allBuildings.at(-1)!.options.length === 25) {
-            // If there are too many buildings
-            if (allBuildings.length === 5) {
-                await ctx.interaction.editReply({
-                    content: "An unknown error occurred [2]."
-                });
-
-                return -1;
-            }
-            // Otherwise, just push a new select menu
-            else {
-                allBuildings.push(
-                    new MessageSelectMenu()
-                        .addOptions([
-                            {
-                                emoji: EmojiConstants.X_EMOJI,
-                                label: "End Process",
-                                value: "END_PROCESS",
-                                description: "Ends this menu."
-                            }
-                        ])
-                        .setPlaceholder("Close Process")
-                        .setCustomId(`${uniqueId}_select_123`)
-                );
-            }
-        }
-        else {
-            allBuildings.at(-1)!.addOptions([
-                {
-                    emoji: EmojiConstants.X_EMOJI,
-                    label: "End Process",
-                    value: "END_PROCESS",
-                    description: "Ends this menu."
-                }
-            ]);
-
-            // Set the cancel option as the very first option
-            allBuildings.at(-1)!.options.unshift(allBuildings.at(-1)!.options.pop()!);
-            allBuildings.at(-1)!.placeholder += " & End Process"
         }
 
         await ctx.interaction.editReply({

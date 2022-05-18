@@ -8,8 +8,8 @@ import {TimeUtilities} from "../../utilities/TimeUtilities";
 import {StringBuilder} from "../../utilities/StringBuilder";
 import {StringUtil} from "../../utilities/StringUtilities";
 import {MutableConstants} from "../../constants/MutableConstants";
-import padTimeDigit = TimeUtilities.padTimeDigit;
 import getTimeStr = TimeUtilities.getTimeStr;
+import getWebRegDateStr = TimeUtilities.getWebRegDateStr;
 
 export class CheckRoom extends BaseCommand {
     public static LONG_DAY_OF_WEEK: string[] = [
@@ -53,14 +53,7 @@ export class CheckRoom extends BaseCommand {
     public async run(ctx: ICommandContext): Promise<number> {
         await ctx.interaction.deferReply();
         const roomToCheck = ctx.interaction.options.getString("room", true).toUpperCase().trim();
-
-        let classrooms: string[] = ViewAllClassrooms.ALL_CLASSROOMS;
-        let allCourses: IInternalCourseData[] = ViewAllClassrooms.ALL_COURSES;
-        if (allCourses.length === 0) {
-            ViewAllClassrooms.setVars();
-            allCourses = ViewAllClassrooms.ALL_COURSES;
-            classrooms = ViewAllClassrooms.ALL_CLASSROOMS;
-        }
+        const [allCourses, classrooms] = ViewAllClassrooms.getCoursesClassrooms();
 
         const roomsToConsider: string[] = [];
         for (const c of classrooms) {
@@ -156,9 +149,7 @@ export class CheckRoom extends BaseCommand {
 
         // In case it's a final or midterm day, so we can keep track of that too
         const currDate = new Date();
-        const currDateStr = currDate.getFullYear()
-            + "-" + padTimeDigit(currDate.getMonth() + 1)
-            + "-" + padTimeDigit(currDate.getDate());
+        const currDateStr = getWebRegDateStr(currDate);
 
         // Create the fields for the display embed
         const coursesToUse = allCourses.filter(x => x.location === classroomToUse);

@@ -11,10 +11,10 @@ export * from "./enroll-data/GetCape";
 export * from "./enroll-data/LookupCached";
 
 export * from "./ucsd/ViewAllClassrooms";
-export * from "./ucsd/ViewClassroomsOld";
 export * from "./ucsd/CheckRoom";
 export * from "./ucsd/Waitz";
 export * from "./ucsd/CourseInfo";
+export * from "./ucsd/FreeRooms";
 
 export * from "./doomers/SetActivity";
 export * from "./doomers/Spam";

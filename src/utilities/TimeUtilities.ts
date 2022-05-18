@@ -8,6 +8,15 @@ export namespace TimeUtilities {
     export const padTimeDigit = (n: number): string => n >= 10 ? "" + n : "0" + n;
 
     /**
+     * Gets the date formatted as if it was on WebReg. Useful for comparing dates.
+     * @param {Date} d The date.
+     * @returns {string} The formatted date.
+     */
+    export const getWebRegDateStr = (d: Date): string => d.getFullYear()
+        + "-" + padTimeDigit(d.getMonth() + 1)
+        + "-" + padTimeDigit(d.getDate());
+
+    /**
      * Converts the hour and minute values to a time string.
      * @param {number} hr The hour.
      * @param {number} min The minute.
