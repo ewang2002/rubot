@@ -169,7 +169,7 @@ export async function displayInteractiveWebregData(ctx: ICommandContext, section
                             : EmojiConstants.GREEN_SQUARE_EMOJI
                     )
                     .append(` [${entry.section_id}] ${entry.section_code} -`)
-                    .append(` ${entry.enrolled_ct}/${entry.total_seats}`)
+                    .append(` ${entry.enrolled_ct} Enrolled /${entry.total_seats} Total`)
                     .append(` (${entry.waitlist_ct} WL)`)
                     .toString();
             }
