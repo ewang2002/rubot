@@ -78,7 +78,7 @@ export namespace MutableConstants {
                 wide: false
             },
             section: {
-                reg: false,
+                reg: true,
                 fsp: false,
                 wide: false
             }
@@ -107,6 +107,20 @@ export namespace MutableConstants {
             },
             section: {
                 reg: true,
+                fsp: false,
+                wide: false
+            }
+        },
+        {
+            term: "FA22",
+            termName: "Fall 2022",
+            overall: {
+                reg: true,
+                fsp: false,
+                wide: false
+            },
+            section: {
+                reg: false,
                 fsp: false,
                 wide: false
             }
