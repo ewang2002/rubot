@@ -1,6 +1,6 @@
 import {BaseMessageComponent, Collection, MessageButton, MessageEmbed} from "discord.js";
 import {MutableConstants} from "../../../constants/MutableConstants";
-import {ICapeRow, WebRegSection} from "../../../definitions";
+import {ICapeRow, Meeting, WebRegSection} from "../../../definitions";
 import {ArrayUtilities} from "../../../utilities/ArrayUtilities";
 import {StringBuilder} from "../../../utilities/StringBuilder";
 import {StringUtil} from "../../../utilities/StringUtilities";
@@ -9,9 +9,11 @@ import {GeneralUtilities} from "../../../utilities/GeneralUtilities";
 import {EmojiConstants} from "../../../constants/GeneralConstants";
 import {AdvancedCollector} from "../../../utilities/AdvancedCollector";
 import {TimeUtilities} from "../../../utilities/TimeUtilities";
+import {Bot} from "../../../Bot";
 import CAPE_DATA = MutableConstants.CAPE_DATA;
 import padTimeDigit = TimeUtilities.padTimeDigit;
 import getTimeStr = TimeUtilities.getTimeStr;
+import WARNING_EMOJI = EmojiConstants.WARNING_EMOJI;
 
 export const LOOKUP_ARGUMENTS: IArgumentInfo[] = [
     {
@@ -36,15 +38,6 @@ export const LOOKUP_ARGUMENTS: IArgumentInfo[] = [
         desc: "The course subject code.",
         required: true,
         example: ["CSE 100", "MATH100A"]
-    },
-    {
-        displayName: "Show All",
-        argName: "show_all",
-        type: ArgumentType.Boolean,
-        prettyType: "Boolean",
-        desc: "Whether to show more detailed data. By default, this is true.",
-        required: false,
-        example: ["True"]
     }
 ];
 
@@ -105,6 +98,55 @@ export function getColorByPercent(percent: number): [number, number, number] {
 }
 
 /**
+ * Requests data from the WebReg API (from the `ucsd_webreg_api` Rust project).
+ * @param {ICommandContext} ctx The command context. Note that the interaction should NOT be responded/deferred to.
+ * @param {string} term The four-character term (e.g. FA22).
+ * @param {string} code The course code (e.g. CSE 100).
+ * @returns {Promise<WebRegSection[] | null>} The array of sections, if the input was valid and the API is
+ * functioning, or `null` otherwise. Note that the interaction WILL be responded/deferred to.
+ */
+export async function requestFromWebRegApi(ctx: ICommandContext,
+                                           term: string, code: string): Promise<WebRegSection[] | null> {
+    const parsedCode = parseCourseSubjCode(code);
+    if (parsedCode.indexOf(" ") === -1) {
+        await ctx.interaction.reply({
+            content: `Your input, \`${code}\`, is improperly formatted. It should look like \`SUBJ XXX\`.`,
+            ephemeral: true
+        });
+
+        return null;
+    }
+
+    const [subj, num] = parsedCode.split(" ");
+    await ctx.interaction.deferReply();
+    const json: WebRegSection[] | { "error": string } | null = await GeneralUtilities.tryExecuteAsync(async () => {
+        // You will need the ucsd_webreg_rs app available
+        const d = await Bot.AxiosClient.get(`http://localhost:8000/course/${term}/${subj}/${num}`);
+        return d.data;
+    });
+
+    if (!json || "error" in json) {
+        await ctx.interaction.editReply({
+            content: "An error occurred when trying to request data from WebReg. It's possible that the wrapper" +
+                " being used to interact with WebReg's API is down, or WebReg is in maintenance mode. Try again" +
+                " later."
+        });
+
+        return null;
+    }
+
+    if (json.length === 0) {
+        await ctx.interaction.editReply({
+            content: `No data was found for **\`${parsedCode}\`** (Term: \`${term}\`).`
+        });
+
+        return null;
+    }
+
+    return json;
+}
+
+/**
  * Displays WebReg data, allowing the user to use interactions to navigate between different pages, where each page
  * represents a section family and each page displays data about that section.
  *
@@ -145,13 +187,6 @@ export async function displayInteractiveWebregData(ctx: ICommandContext, section
         const embed = new MessageEmbed()
             .setColor(live ? getColorByPercent(numEnrolled / total) : "RANDOM")
             .setTitle(`**${parsedCode}** Section **${sectionFamily}** (Term: ${term})`)
-            .setDescription(
-                new StringBuilder()
-                    .append(`Instructor: **\`${entries[0].instructors.join(" & ")}\`**`).appendLine()
-                    .append(`Sections: **\`${entries.length}\`**`).appendLine()
-                    .append(`Evaluations: Click [Here](${capeUrl})`).appendLine()
-                    .toString()
-            )
             .setFooter({
                 text: (live
                     ? `Data Fetched from WebReg. Powered by waffle being a clown. `
@@ -159,6 +194,42 @@ export async function displayInteractiveWebregData(ctx: ICommandContext, section
             })
             .setTimestamp();
 
+        const commonMeetings: string[] = [];
+
+        // Find all common meetings only if there's more than 1 meeting
+        if (entries.length > 1) {
+            // Find all common meetings for this section
+            const meetingMap: {[m: string]: number} = {};
+            for (const section of entries) {
+                for (const meeting of section.meetings) {
+                    const s = meetingToString(meeting);
+                    if (!meetingMap[s]) {
+                        meetingMap[s] = 0;
+                    }
+
+                    meetingMap[s]++;
+                }
+            }
+
+            for (const m in meetingMap) {
+                // If this is a common meeting
+                if (meetingMap[m] === entries.length) {
+                    commonMeetings.push(m);
+                    // Then remove this meeting from all the section meetings
+                    entries.forEach(section => {
+                        const idx = section.meetings.findIndex(x => meetingToString(x) === m);
+                        if (idx === -1) {
+                            console.warn("this shouldn't be hit at all.");
+                            return;
+                        }
+
+                        section.meetings.splice(idx, 1);
+                    });
+                }
+            }
+        }
+
+        let sectionsAdded = 0;
         for (const entry of entries) {
             let fieldTitle: string;
             if (live) {
@@ -182,35 +253,66 @@ export async function displayInteractiveWebregData(ctx: ICommandContext, section
                 fieldTitle,
                 // Field entry
                 StringUtil.codifyString(
-                    entry.meetings.map(x => {
-                        let meetingDay: string;
-                        if (Array.isArray(x.meeting_days)) {
-                            meetingDay = x.meeting_days.join("");
-                        }
-                        else if (x.meeting_days === null) {
-                            meetingDay = "N/A";
-                        }
-                        else {
-                            // meeting_days can be null?
-                            const [year, month, day] = x.meeting_days.split("-")
-                                .map(x => Number.parseInt(x, 10));
-                            meetingDay = `${padTimeDigit(month)}/${padTimeDigit(day)}/${padTimeDigit(year)}`;
-                        }
-
-                        return new StringBuilder()
-                            .append(`[${x.meeting_type}] ${meetingDay} ${getTimeStr(x.start_hr, x.start_min)}`)
-                            .append(` - ${getTimeStr(x.end_hr, x.end_min)}`).appendLine()
-                            .append(`     ${x.building} ${x.room}`)
-                            .toString();
-                    }).join("\n")
+                    entry.meetings.map(x => meetingToString(x)).join("\n")
                 )
             );
+
+            if (embed.length >= 5900 || embed.fields.length > 25) {
+                embed.fields.pop();
+                break;
+            }
+
+            sectionsAdded++;
         }
 
+        const descSb = new StringBuilder()
+            .append(`Instructor: **\`${entries[0].instructors.join(" & ")}\`**`).appendLine();
+        if (sectionsAdded === entries.length) {
+            descSb.append(`Sections: **\`${entries.length}\`**`).appendLine();
+        }
+        else {
+            descSb.append(
+                `Sections: **\`${entries.length}\`** (${WARNING_EMOJI} Only **\`${sectionsAdded}\`** Displayed)`
+            ).appendLine();
+        }
+        descSb.append(`Evaluations: Click [Here](${capeUrl})`).appendLine();
+
+        if (commonMeetings.length > 0) {
+            descSb.append(`__Common Meetings (All Sections)__`)
+                .append(StringUtil.codifyString(commonMeetings.join("\n")));
+        }
+
+        embed.setDescription(descSb.toString());
         embeds.push(embed);
     }
 
     await manageMultipageEmbed(ctx, embeds);
+}
+
+/**
+ * Given a meeting object, returns a string representation of it.
+ * @param {Meeting} x The meeting object.
+ * @returns {string} The string representation of it.
+ */
+function meetingToString(x: Meeting): string {
+    let meetingDay: string;
+    if (Array.isArray(x.meeting_days)) {
+        meetingDay = x.meeting_days.join("");
+    }
+    else if (x.meeting_days === null) {
+        meetingDay = "N/A";
+    }
+    else {
+        const [year, month, day] = x.meeting_days.split("-")
+            .map(x => Number.parseInt(x, 10));
+        meetingDay = `${padTimeDigit(month)}/${padTimeDigit(day)}/${padTimeDigit(year)}`;
+    }
+
+    return new StringBuilder()
+        .append(`[${x.meeting_type}] ${meetingDay} ${getTimeStr(x.start_hr, x.start_min)}`)
+        .append(` - ${getTimeStr(x.end_hr, x.end_min)}`).appendLine()
+        .append(`     ${x.building || "N/A"} ${x.room || "N/A"}`)
+        .toString();
 }
 
 /**

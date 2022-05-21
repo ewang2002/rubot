@@ -16,9 +16,9 @@ import {JsonManager} from "./JsonManager";
     MutableConstants.initCourseListing();
     MutableConstants.initSectionData("SP22");
     JsonManager.startAll();
-    if (config.isProd) {
-        await MutableConstants.initEnrollmentData();
-    }
+    //if (config.isProd) {
+    //    await MutableConstants.initEnrollmentData();
+    //}
     console.info("All data received.");
     await bot.login();
 })();
