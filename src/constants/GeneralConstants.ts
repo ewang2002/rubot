@@ -29,4 +29,5 @@ export namespace EmojiConstants {
     export const LONG_RIGHT_TRIANGLE_EMOJI: string = "➡";
     export const STOP_SIGN_EMOJI: string = "🛑";
     export const WARNING_EMOJI: string = "⚠️";
+    export const QUESTION_MARK_EMOJI: string = "❓";
 }

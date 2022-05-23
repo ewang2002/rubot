@@ -248,12 +248,13 @@ export async function displayInteractiveWebregData(ctx: ICommandContext, section
                 fieldTitle = `[${entry.section_id}] Section ${entry.section_code}`;
             }
 
+            const meetings = entry.meetings.map(x => meetingToString(x)).join("\n");
             embed.addField(
                 // Field title
                 fieldTitle,
                 // Field entry
                 StringUtil.codifyString(
-                    entry.meetings.map(x => meetingToString(x)).join("\n")
+                    meetings.length > 0 ? meetings : "N/A"
                 )
             );
 
@@ -266,7 +267,7 @@ export async function displayInteractiveWebregData(ctx: ICommandContext, section
         }
 
         const descSb = new StringBuilder()
-            .append(`Instructor: **\`${entries[0].instructors.join(" & ")}\`**`).appendLine();
+            .append(`Instructor: **\`${entries[0].all_instructors.join(" & ")}\`**`).appendLine();
         if (sectionsAdded === entries.length) {
             descSb.append(`Sections: **\`${entries.length}\`**`).appendLine();
         }

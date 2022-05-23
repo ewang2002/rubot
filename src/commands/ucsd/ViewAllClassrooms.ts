@@ -206,7 +206,7 @@ export class ViewAllClassrooms extends BaseCommand {
                 startMin: m.start_min,
                 endHr: m.end_hr,
                 endMin: m.end_min,
-                instructor: x.instructors
+                instructor: x.all_instructors
             };
         })).filter(x => {
             if (x.location.trim() === "") {
