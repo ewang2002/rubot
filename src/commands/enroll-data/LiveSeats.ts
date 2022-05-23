@@ -170,6 +170,11 @@ export class LiveSeats extends BaseCommand {
                 continue;
             }
 
+            if (json.length === 0) {
+                desc.append(`- \`${parsedCode}\`: ${EmojiConstants.X_EMOJI} No Sections Found`).appendLine();
+                continue;
+            }
+
             const rows = processRows(json);
             const [, , percentFilled] = getStats(json);
 
