@@ -1,10 +1,11 @@
 import {IConfiguration} from "./definitions";
-import {Client, Collection, Interaction,} from "discord.js";
+import {Client, Collection, GuildChannel, Interaction,} from "discord.js";
 import axios, {AxiosInstance} from "axios";
 import * as Cmds from "./commands";
 import {onErrorEvent, onInteractionEvent, onMessage, onReadyEvent} from "./events";
 import {REST} from "@discordjs/rest";
 import {RESTPostAPIApplicationCommandsJSONBody, Routes} from "discord-api-types/v10";
+import { trackWebReg } from "./TrackerService";
 
 export class Bot {
     /**
@@ -103,7 +104,7 @@ export class Bot {
             new Cmds.LookupLive(),
             new Cmds.GetCape(),
             new Cmds.LookupCached(),
-            new Cmds.LiveSeats()
+            new Cmds.LiveSeats(),
         ]);
 
         Bot.Commands.set("UCSD", [
@@ -156,10 +157,11 @@ export class Bot {
             return;
         }
 
-        this._bot.on("messageCreate", async (m) => onMessage(m));
-        this._bot.on("ready", async () => onReadyEvent());
-        this._bot.on("interactionCreate", async (i: Interaction) => onInteractionEvent(i));
-        this._bot.on("error", async (e: Error) => onErrorEvent(e));
+        this._bot.on("messageCreate",  (m) => onMessage(m));
+        this._bot.on("ready",  () => onReadyEvent());
+        this._bot.on("interactionCreate",  (i: Interaction) => onInteractionEvent(i));
+        this._bot.on("error",  (e: Error) => onErrorEvent(e));
+        trackWebReg().then();
         this._eventsIsStarted = true;
     }
 

@@ -9,6 +9,7 @@ export namespace GeneralConstants {
 }
 
 export namespace EmojiConstants {
+    export const LOCK_EMOJI: string = "🔒";
     export const MINUS_EMOJI: string = "➖";
     export const PLUS_EMOJI: string = "➕";
     export const LONG_UP_ARROW_EMOJI: string = "⬆️";

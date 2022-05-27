@@ -77,5 +77,12 @@ export interface IConfiguration {
          * @type {string}
          */
         galleryChannel: string;
+
+        /**
+         * The category where the bot should keep track of courses.
+         *
+         * @type {string}
+         */
+        webregCategory: string;
     }
 }

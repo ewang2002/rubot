@@ -11,6 +11,7 @@
     "repoName": ""
   },
   "channels": {
-    "galleryChannel": ""
+    "galleryChannel": "",
+    "webregCategory": ""
   }
 }

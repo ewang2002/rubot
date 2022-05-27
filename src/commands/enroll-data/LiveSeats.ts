@@ -32,7 +32,7 @@ export class LiveSeats extends BaseCommand {
      * @inheritDoc
      */
     public async run(ctx: ICommandContext): Promise<number> {
-        const term = ctx.interaction.options.getString("term", false) ?? MutableConstants.WEBREG_TERMS[0].term;
+        const term = ctx.interaction.options.getString("term", false) ?? MutableConstants.DEFAULT_TERM;
         const codeArg = ctx.interaction.options.getString("course_subj_num", true);
         const allCodes = codeArg.split(",").map(x => x.trim()).filter(x => x.length > 0);
 

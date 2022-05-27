@@ -28,7 +28,7 @@ export class LookupLive extends BaseCommand {
      * @inheritDoc
      */
     public async run(ctx: ICommandContext): Promise<number> {
-        const term = ctx.interaction.options.getString("term", false) ?? MutableConstants.WEBREG_TERMS[0].term;
+        const term = ctx.interaction.options.getString("term", false) ?? MutableConstants.DEFAULT_TERM;
         const code = ctx.interaction.options.getString("course_subj_num", true);
 
         const json = await requestFromWebRegApi(ctx, term, code);

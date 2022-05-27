@@ -18,6 +18,7 @@ export namespace MutableConstants {
         termName: string;
         paddedName: string;
     }[] = [
+        // Default term should be the first one.
         {
             term: "FA22",
             termName: "Fall 2022",
@@ -39,6 +40,8 @@ export namespace MutableConstants {
             paddedName: "Summer Session III 2022"
         }
     ];
+
+    export const DEFAULT_TERM: string = MutableConstants.WEBREG_TERMS[0].term;
 
     // Terms that we have github data for.
     export const GH_TERMS: {
