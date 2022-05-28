@@ -145,7 +145,8 @@ export async function trackWebReg(): Promise<void> {
                 };
 
                 messageToSend.push(
-                    `Section \`${s.section_code}\` has been added with \`${s.total_seats}\` total seats.`
+                    `\`[${s.section_code}]\` ${EmojiConstants.INBOX_EMOJI} Section \`${s.section_code}\` has been`
+                        + ` added with \`${s.total_seats}\` total seats.`
                 );
                 continue;
             }
@@ -164,8 +165,9 @@ export async function trackWebReg(): Promise<void> {
             // Number of enrolled people changed
             if (cachedData.enrolled !== s.enrolled_ct) {
                 const diff = s.enrolled_ct - cachedData.enrolled;
+                const e = diff > 0 ? EmojiConstants.LONG_UP_ARROW_EMOJI : EmojiConstants.LONG_DOWN_ARROW_EMOJI;
                 messageToSend.push(
-                    `\`[${s.section_code}]\` Change in number of **enrolled students**: \`${cachedData.enrolled}/${cachedData.total}\` →`
+                    `\`[${s.section_code}]\` ${e} Change in number of **enrolled students**: \`${cachedData.enrolled}/${cachedData.total}\` →`
                         + ` \`${s.enrolled_ct}/${s.total_seats}\` (\`${diff > 0 ? "+" + diff : diff}\`)`
                 );
             }
@@ -173,8 +175,9 @@ export async function trackWebReg(): Promise<void> {
             // Number of waitlisted people changed
             if (cachedData.waitlist !== s.waitlist_ct) {
                 const diff = s.waitlist_ct - cachedData.waitlist;
+                const e = diff > 0 ? EmojiConstants.ARROW_HEADING_UP_EMOJI : EmojiConstants.ARROW_HEADING_DOWN_EMOJI;
                 messageToSend.push(
-                    `\`[${s.section_code}]\` Change in number of **waitlisted students**: \`${cachedData.waitlist}\` → \`${s.waitlist_ct}\``
+                    `\`[${s.section_code}]\` ${e} Change in number of **waitlisted students**: \`${cachedData.waitlist}\` → \`${s.waitlist_ct}\``
                     + ` (\`${diff > 0 ? "+" + diff : diff}\`)`
                 );
             }
@@ -182,8 +185,9 @@ export async function trackWebReg(): Promise<void> {
             // Total seats changed
             if (cachedData.total !== s.total_seats) {
                 const diff = s.total_seats - cachedData.total;
+                const e = diff > 0 ? EmojiConstants.GREEN_SQUARE_EMOJI : EmojiConstants.RED_SQUARE_EMOJI;
                 messageToSend.push(
-                    `\`[${s.section_code}]\` Change in number of **total seats**: \`${cachedData.total}\` → \`${s.total_seats}\``
+                    `\`[${s.section_code}]\` ${e} Change in number of **total seats**: \`${cachedData.total}\` → \`${s.total_seats}\``
                     + ` (\`${diff > 0 ? "+" + diff : diff}\`)`
                 );
             }
@@ -201,8 +205,8 @@ export async function trackWebReg(): Promise<void> {
             for (const section of initSections) {
                 const data = CACHE[courseCode][section];
                 messageToSend.push(
-                    `\`[${section}]\` Section \`${section}\` has been removed (initially had \`${data.enrolled}\` enrolled out`
-                        + ` of ${data.total} total seats).`
+                    `\`[${section}]\` ${EmojiConstants.OUTBOX_EMOJI} Section \`${section}\` has been removed (initially had`
+                        + ` \`${data.enrolled}\` enrolled out of ${data.total} total seats).`
                 );
 
                 delete CACHE[courseCode][section];

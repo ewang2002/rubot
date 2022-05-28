@@ -12,8 +12,6 @@ export namespace EmojiConstants {
     export const LOCK_EMOJI: string = "🔒";
     export const MINUS_EMOJI: string = "➖";
     export const PLUS_EMOJI: string = "➕";
-    export const LONG_UP_ARROW_EMOJI: string = "⬆️";
-    export const LONG_DOWN_ARROW_EMOJI: string = "⬇️";
     export const LONG_SIDEWAYS_ARROW_EMOJI: string = "↔️";
     export const X_EMOJI: string = "❌";
     export const RED_SQUARE_EMOJI: string = "🟥";
@@ -31,4 +29,11 @@ export namespace EmojiConstants {
     export const STOP_SIGN_EMOJI: string = "🛑";
     export const WARNING_EMOJI: string = "⚠️";
     export const QUESTION_MARK_EMOJI: string = "❓";
+
+    export const LONG_UP_ARROW_EMOJI: string = "⬆️";
+    export const LONG_DOWN_ARROW_EMOJI: string = "⬇️";
+    export const ARROW_HEADING_UP_EMOJI: string = "⤴️";
+    export const ARROW_HEADING_DOWN_EMOJI: string = "⤵️";
+    export const INBOX_EMOJI: string = "📥";
+    export const OUTBOX_EMOJI: string = "📤";
 }
