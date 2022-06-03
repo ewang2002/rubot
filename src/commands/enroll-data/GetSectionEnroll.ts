@@ -138,15 +138,8 @@ export class GetSectionEnroll extends BaseCommand {
         const data = res.find(x => x.name === selected.values[0])!;
         const sec = data.name.split("_")[1].replaceAll(".png", "");
         await ctx.interaction.editReply({
-            embeds: [
-                new MessageEmbed()
-                    .setTitle(`Course **${parsedCode}** Section **${sec}** (Term **${term}**)`)
-                    .setFooter({text: `Display: ${display}`})
-                    .setDescription(`[Source](${MutableConstants.ENROLL_DATA_GH})`)
-                    .setColor("RANDOM")
-                    .setTimestamp()
-                    .setImage(data.download_url)
-            ],
+            files: [data.download_url],
+            content: `Course **\`${parsedCode}\`**, Section **\`${sec}\`** (Term **\`${term}\`**, Display \`${display}\`)`,
             components: []
         });
 
