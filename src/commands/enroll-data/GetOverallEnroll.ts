@@ -70,15 +70,8 @@ export class GetOverallEnroll extends BaseCommand {
 
         await ctx.interaction.deferReply();
         await ctx.interaction.editReply({
-            embeds: [
-                new MessageEmbed()
-                    .setTitle(`Course **${parsedCode}** All Sections (Term **${term}**)`)
-                    .setFooter({text: `Display: ${display}`})
-                    .setDescription(`[Source](${MutableConstants.ENROLL_DATA_GH})`)
-                    .setColor("RANDOM")
-                    .setTimestamp()
-                    .setImage(res.download_url)
-            ]
+            files: [res.download_url],
+            content: `Course **\`${parsedCode}\`** (Term **\`${term}\`**, Display \`${display}\`)`
         });
 
         return 0;
