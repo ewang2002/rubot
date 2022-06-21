@@ -115,6 +115,10 @@ export class Bot {
             new Cmds.FreeRooms()
         ]);
 
+        Bot.Commands.set("Owner Only", [
+            new Cmds.Exec()
+        ]);
+
         Bot.JsonCommands = [];
         Bot.NameCommands = new Collection<string, Cmds.BaseCommand>();
         Bot.Rest = new REST({version: "9"}).setToken(config.token.botToken);

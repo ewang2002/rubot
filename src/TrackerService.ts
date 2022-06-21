@@ -22,9 +22,6 @@ const ERR_COUNTER: {
 } = {};
 
 export async function trackWebReg(): Promise<void> {
-    console.log(CACHE);
-    console.log(ERR_COUNTER);
-    console.log();
     const category = Bot.BotInstance.client.channels.cache.get(
         Bot.BotInstance.config.channels.webregCategory
     );

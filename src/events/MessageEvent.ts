@@ -3,6 +3,8 @@ import {GeneralConstants} from "../constants/GeneralConstants";
 import {GeneralUtilities} from "../utilities/GeneralUtilities";
 import {JsonManager} from "../JsonManager";
 
+const RECENT_IM: Set<string> = new Set<string>();
+
 export async function onMessage(msg: Message): Promise<void> {
     if (msg.author.bot || !msg.guild || !GeneralConstants.PERMITTED_SERVER_IDS.includes(msg.guild.id)) {
         return;

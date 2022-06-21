@@ -123,7 +123,7 @@ export namespace MutableConstants {
                 wide: false
             },
             section: {
-                reg: false,
+                reg: true,
                 fsp: false,
                 wide: false
             }
