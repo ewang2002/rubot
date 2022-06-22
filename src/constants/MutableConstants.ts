@@ -1,13 +1,13 @@
-import {Collection} from "discord.js";
-import {ICapeRow, IGitContent, ListedCourse, Meeting, WebRegSection} from "../definitions";
-import {createReadStream} from "fs";
-import {createInterface} from "readline";
+import { Collection } from "discord.js";
+import { ICapeRow, IGitContent, ListedCourse, Meeting, WebRegSection } from "../definitions";
+import { createReadStream } from "fs";
+import { createInterface } from "readline";
 import * as path from "path";
-import {TimeUtilities} from "../utilities/TimeUtilities";
-import {AxiosRequestConfig} from "axios";
-import {Bot} from "../Bot";
-import {GeneralUtilities} from "../utilities/GeneralUtilities";
-import {StringBuilder} from "../utilities/StringBuilder";
+import { TimeUtilities } from "../utilities/TimeUtilities";
+import { AxiosRequestConfig } from "axios";
+import { Bot } from "../Bot";
+import { GeneralUtilities } from "../utilities/GeneralUtilities";
+import { StringBuilder } from "../utilities/StringBuilder";
 
 export namespace MutableConstants {
     export const ENROLL_DATA_GH: string = "https://github.com/ewang2002/UCSDHistEnrollData";
@@ -18,28 +18,28 @@ export namespace MutableConstants {
         termName: string;
         paddedName: string;
     }[] = [
-        // Default term should be the first one.
-        {
-            term: "FA22",
-            termName: "Fall 2022",
-            paddedName: "Fall 2022              "
-        },
-        {
-            term: "S122",
-            termName: "Summer Session I 2022",
-            paddedName: "Summer Session I 2022  "
-        },
-        {
-            term: "S222",
-            termName: "Summer Session II 2022",
-            paddedName: "Summer Session II 2022 "
-        },
-        {
-            term: "S322",
-            termName: "Summer Session III 2022",
-            paddedName: "Summer Session III 2022"
-        }
-    ];
+            // Default term should be the first one.
+            {
+                term: "FA22",
+                termName: "Fall 2022",
+                paddedName: "Fall 2022              "
+            },
+            {
+                term: "S122",
+                termName: "Summer Session I 2022",
+                paddedName: "Summer Session I 2022  "
+            },
+            {
+                term: "S222",
+                termName: "Summer Session II 2022",
+                paddedName: "Summer Session II 2022 "
+            },
+            {
+                term: "S322",
+                termName: "Summer Session III 2022",
+                paddedName: "Summer Session III 2022"
+            }
+        ];
 
     export const DEFAULT_TERM: string = MutableConstants.WEBREG_TERMS[0].term;
 
@@ -58,77 +58,77 @@ export namespace MutableConstants {
             wide: boolean;
         };
     }[] = [
-        {
-            term: "SP22",
-            termName: "Spring 2022",
-            overall: {
-                reg: true,
-                fsp: true,
-                wide: true
+            {
+                term: "SP22",
+                termName: "Spring 2022",
+                overall: {
+                    reg: true,
+                    fsp: true,
+                    wide: true
+                },
+                section: {
+                    reg: true,
+                    fsp: true,
+                    wide: true
+                }
             },
-            section: {
-                reg: true,
-                fsp: true,
-                wide: true
-            }
-        },
-        {
-            term: "SP22D",
-            termName: "Spring 2022 (Post-Enrollment)",
-            overall: {
-                reg: true,
-                fsp: false,
-                wide: false
+            {
+                term: "SP22D",
+                termName: "Spring 2022 (Post-Enrollment)",
+                overall: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                },
+                section: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                }
             },
-            section: {
-                reg: true,
-                fsp: false,
-                wide: false
-            }
-        },
-        {
-            term: "S122",
-            termName: "Summer Session I 2022",
-            overall: {
-                reg: true,
-                fsp: false,
-                wide: false
+            {
+                term: "S122",
+                termName: "Summer Session I 2022",
+                overall: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                },
+                section: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                }
             },
-            section: {
-                reg: true,
-                fsp: false,
-                wide: false
-            }
-        },
-        {
-            term: "S222",
-            termName: "Summer Session II 2022",
-            overall: {
-                reg: true,
-                fsp: false,
-                wide: false
+            {
+                term: "S222",
+                termName: "Summer Session II 2022",
+                overall: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                },
+                section: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                }
             },
-            section: {
-                reg: true,
-                fsp: false,
-                wide: false
-            }
-        },
-        {
-            term: "FA22",
-            termName: "Fall 2022",
-            overall: {
-                reg: true,
-                fsp: false,
-                wide: false
+            {
+                term: "FA22",
+                termName: "Fall 2022",
+                overall: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                },
+                section: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                }
             },
-            section: {
-                reg: true,
-                fsp: false,
-                wide: false
-            }
-        },
-    ];
+        ];
 
     export const OVERALL_ENROLL: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
     export const OVERALL_ENROLL_WIDE: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
@@ -140,6 +140,35 @@ export namespace MutableConstants {
     export const SECTION_TERM_DATA: WebRegSection[] = [];
     export const COURSE_LISTING: ListedCourse[] = [];
     export const LISTING_LAST_SCRAPED: string = "May 15, 2022";
+
+    export const BUS_STOPS: {
+        [stopId: string]: {
+            stopName: string;
+        }
+    } = {};
+
+    export const BUS_ROUTES: {
+        [stopId: string]: {
+            routeShortName: string;
+            routeLongName: string;
+            routeColor: number;
+            routeUrl: string;
+        }
+    } = {};
+
+    export const TRIP_DATA_ID: {
+        [tripId: string]: {
+            routeId: string;
+            directionName: string;
+        }
+    } = {};
+
+    export const STOP_TIME: {
+        [tripId: string]: {
+            arrivalTime: string;
+            stopId: string;
+        }[];
+    } = {};
 
     // Term that we have section (cached) data for. We should only have one active term at any point.
     export let CACHED_DATA_TERM: string = "";
@@ -357,6 +386,176 @@ export namespace MutableConstants {
     }
 
     /**
+     * Adds the bus stop data to the above object.
+     * @param {string} pathToFile The path to the bus stop file, if any.
+     */
+    export function initBusStops(pathToFile?: string): void {
+        const pathToRead = pathToFile ?? path.join(__dirname, "..", "..", "mts_stops.csv");
+        const readStream = createReadStream(pathToRead);
+        const rl = createInterface(readStream);
+
+        let numRead = 0;
+        let firstLinePassed = false;
+        rl.on("line", line => {
+            if (!firstLinePassed) {
+                firstLinePassed = true;
+                return;
+            }
+
+            const rawData = line.split(",");
+            if (rawData.length !== 13) {
+                console.error(`Bad line read for bus stop data; got ${rawData.length} but expected 13.`)
+                return;
+            }
+
+            const [
+                stopId,
+                stopName
+            ] = rawData;
+
+            BUS_STOPS[stopId] = { stopName };
+            numRead++;
+        });
+
+        rl.on("close", () => {
+            console.info(`Done reading bus stop data. Data length: ${numRead}`);
+        });
+    }
+
+    /**
+     * Adds the bus route data to the above object.
+     * @param {string} pathToFile The path to the bus route file, if any.
+     */
+    export function initBusRoutes(pathToFile?: string): void {
+        const pathToRead = pathToFile ?? path.join(__dirname, "..", "..", "mts_routes.csv");
+        const readStream = createReadStream(pathToRead);
+        const rl = createInterface(readStream);
+
+        let numRead = 0;
+        let firstLinePassed = false;
+        rl.on("line", line => {
+            if (!firstLinePassed) {
+                firstLinePassed = true;
+                return;
+            }
+
+            const rawData = line.split(",");
+            if (rawData.length !== 11) {
+                console.error(`Bad line read for bus route data; got ${rawData.length} but expected 11.`)
+                return;
+            }
+
+            const [
+                routeId,
+                routeShortName,
+                routeLongName, , , ,
+                routeUrl,
+                routeColor, , ,
+            ] = rawData;
+
+            BUS_ROUTES[routeId] = {
+                routeShortName,
+                routeLongName,
+                routeColor: Number.parseInt("0x" + routeColor, 16),
+                routeUrl
+            };
+            numRead++;
+        });
+
+        rl.on("close", () => {
+            console.info(`Done reading bus route data. Data length: ${numRead}`);
+        });
+    }
+
+
+    /**
+     * Adds the bus trip data to the above object.
+     * @param {string} pathToFile The path to the bus trip file, if any.
+     */
+    export function initBusTrips(pathToFile?: string): void {
+        const pathToRead = pathToFile ?? path.join(__dirname, "..", "..", "mts_trips.csv");
+        const readStream = createReadStream(pathToRead);
+        const rl = createInterface(readStream);
+
+        let numRead = 0;
+        let firstLinePassed = false;
+        rl.on("line", line => {
+            if (!firstLinePassed) {
+                firstLinePassed = true;
+                return;
+            }
+
+            const rawData = line.split(",");
+            if (rawData.length !== 11) {
+                console.error(`Bad line read for bus trip data; got ${rawData.length} but expected 11.`)
+                return;
+            }
+
+            const [
+                routeId, ,
+                tripId,
+                tripHeadsign,
+            ] = rawData;
+
+            TRIP_DATA_ID[tripId] = {
+                directionName: tripHeadsign.substring(1, tripHeadsign.length - 1),
+                routeId
+            };
+            numRead++;
+        });
+
+        rl.on("close", () => {
+            console.info(`Done reading bus trip data. Data length: ${numRead}`);
+        });
+    }
+
+
+    /**
+     * Adds the bus trip data to the above object.
+     * @param {string} pathToFile The path to the stop time file, if any.
+     */
+    export function initStopTimes(pathToFile?: string): void {
+        const pathToRead = pathToFile ?? path.join(__dirname, "..", "..", "mts_stop_times.csv");
+        const readStream = createReadStream(pathToRead);
+        const rl = createInterface(readStream);
+
+        let numRead = 0;
+        let firstLinePassed = false;
+        rl.on("line", line => {
+            if (!firstLinePassed) {
+                firstLinePassed = true;
+                return;
+            }
+
+            const rawData = line.split(",");
+            if (rawData.length !== 13) {
+                console.error(`Bad line read for stop time data; got ${rawData.length} but expected 13.`)
+                return;
+            }
+
+            const [
+                tripId,
+                arrivalTime, ,
+                stopId,
+            ] = rawData;
+
+            if (!(tripId in STOP_TIME)) {
+                STOP_TIME[tripId] = [];
+            }
+
+            STOP_TIME[tripId].push({
+                arrivalTime,
+                stopId
+            });
+            numRead++;
+        });
+
+        rl.on("close", () => {
+            console.info(`Done reading stop time data. Data length: ${numRead}`);
+        });
+    }
+
+    /**
      * Adds the enrollment graph data to the above collections.
      */
     export async function initEnrollmentData(): Promise<void> {
@@ -374,7 +573,7 @@ export namespace MutableConstants {
             }
         };
 
-        for await (const {term, ...o} of GH_TERMS) {
+        for await (const { term, ...o } of GH_TERMS) {
             if (o.overall.reg) {
                 const overall = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
                     const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_overall`, requestHeader);

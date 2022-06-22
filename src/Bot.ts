@@ -5,7 +5,6 @@ import * as Cmds from "./commands";
 import {onErrorEvent, onInteractionEvent, onMessage, onReadyEvent} from "./events";
 import {REST} from "@discordjs/rest";
 import {RESTPostAPIApplicationCommandsJSONBody, Routes} from "discord-api-types/v10";
-import { trackWebReg } from "./TrackerService";
 
 export class Bot {
     /**
@@ -84,7 +83,8 @@ export class Bot {
         Bot.Commands.set("General", [
             new Cmds.Help(),
             new Cmds.Ping(),
-            new Cmds.Status()
+            new Cmds.Status(),
+            new Cmds.MTS()
         ]);
 
         Bot.Commands.set("Doomers Only", [
@@ -165,7 +165,6 @@ export class Bot {
         this._bot.on("ready",  () => onReadyEvent());
         this._bot.on("interactionCreate",  (i: Interaction) => onInteractionEvent(i));
         this._bot.on("error",  (e: Error) => onErrorEvent(e));
-        trackWebReg().then();
         this._eventsIsStarted = true;
     }
 

@@ -19,9 +19,9 @@ export class SetActivity extends BaseCommand {
                     type: ArgumentType.String,
                     restrictions: {
                         stringChoices: [
-                            ["Playing", "PLAYING"],
-                            ["Listening (to)", "LISTENING"],
-                            ["Watching", "WATCHING"]
+                            {name: "Playing", value: "PLAYING"},
+                            {name: "Listening (to)", value: "LISTENING"},
+                            {name: "Watching", value: "WATCHING"}
                         ]
                     },
                     prettyType: "String",

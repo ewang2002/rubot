@@ -24,7 +24,7 @@ export const LOOKUP_ARGUMENTS: IArgumentInfo[] = [
         desc: `The term to check. Defaults to ${MutableConstants.WEBREG_TERMS[0].termName}`,
         restrictions: {
             stringChoices: MutableConstants.WEBREG_TERMS.map(x => {
-                return [x.termName, x.term];
+                return {name: x.termName, value: x.term};
             })
         },
         required: false,
@@ -48,7 +48,7 @@ export const PLOT_ARGUMENTS: IArgumentInfo[] = [
         type: ArgumentType.String,
         restrictions: {
             stringChoices: MutableConstants.GH_TERMS.map(x => {
-                return [x.termName, x.term];
+                return {name: x.termName, value: x.term};
             })
         },
         prettyType: "String",
@@ -72,9 +72,9 @@ export const PLOT_ARGUMENTS: IArgumentInfo[] = [
         prettyType: "String",
         restrictions: {
             stringChoices: [
-                ["Normal (1500 x 700)", "norm"],
-                ["Wide (5000 x 1000)", "wide"],
-                ["First/Second Pass Only (1500 x 700)", "fsp"]
+                {name: "Normal (1500 x 700)", value: "norm"},
+                {name: "Wide (5000 x 1000)", value: "wide"},
+                {name: "First/Second Pass Only (1500 x 700)", value: "fsp"}
             ]
         },
         desc: "The plot type to get. Note that some plots may not be available for some terms.",

@@ -28,6 +28,14 @@ export interface IConfiguration {
          * @type {string}
          */
         githubAuthToken: string;
+
+
+        /**
+         * The MTS token.
+         * 
+         * @type {string}
+         */
+        mtsToken: string;
     };
 
     /**
