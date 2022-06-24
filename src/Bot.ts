@@ -83,8 +83,7 @@ export class Bot {
         Bot.Commands.set("General", [
             new Cmds.Help(),
             new Cmds.Ping(),
-            new Cmds.Status(),
-            new Cmds.MTS()
+            new Cmds.Status()
         ]);
 
         Bot.Commands.set("Doomers Only", [

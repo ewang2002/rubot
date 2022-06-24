@@ -14,10 +14,6 @@ import {JsonManager} from "./JsonManager";
     bot.startAllEvents();
     MutableConstants.initCapeData();
     MutableConstants.initCourseListing();
-    MutableConstants.initBusRoutes();
-    MutableConstants.initBusStops();
-    MutableConstants.initBusTrips();
-    MutableConstants.initStopTimes();
     MutableConstants.initSectionData("SP22");
     JsonManager.startAll();
     //if (config.isProd) {
