@@ -1,6 +1,6 @@
 {
   "name": "rubot",
-  "version": "1.1.11",
+  "version": "1.1.12",
   "description": "Good question.",
   "main": "index.js",
   "scripts": {
@@ -11,11 +11,12 @@
   "author": "Edward Wang",
   "license": "MIT",
   "dependencies": {
-    "@discordjs/builders": "^0.12.0",
-    "@discordjs/rest": "^0.3.0",
-    "axios": "^0.26.0",
-    "discord-api-types": "^0.29.0",
-    "discord.js": "^13.3.1",
+    "@discordjs/builders": "^0.15.0",
+    "@discordjs/rest": "^0.5.0",
+    "axios": "^0.27.2",
+    "discord-api-types": "^0.34.0",
+    "discord.js": "^13.8.0",
+    "protobufjs": "^6.11.3",
     "text-table": "^0.2.0"
   },
   "devDependencies": {

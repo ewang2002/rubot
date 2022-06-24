@@ -54,7 +54,7 @@ export class LiveSeats extends BaseCommand {
                         data.section_id,
                         data.section_code,
                         data.enrolled_ct.toString(),
-                        data.available_seats.toString(),
+                        (data.enrolled_ct >= data.total_seats || data.waitlist_ct > 0 ? 0 : data.available_seats).toString(),
                         data.total_seats.toString(),
                         data.waitlist_ct.toString(),
                         data.available_seats === 0 || data.waitlist_ct > 0

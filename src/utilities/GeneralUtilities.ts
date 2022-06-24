@@ -4,8 +4,8 @@ import {
     GuildMember,
     Message,
     MessageActionRow,
+    MessageEditOptions,
     MessageEmbed,
-    MessageOptions,
     User
 } from "discord.js";
 
@@ -70,8 +70,8 @@ export namespace GeneralUtilities {
     export function getMessageOptionsFromMessage(
         msg: Message,
         components?: MessageActionRow[]
-    ): MessageOptions & {split?: false | undefined} {
-        const obj: MessageOptions & {split?: false | undefined} = {
+    ): MessageEditOptions & {split?: false | undefined} {
+        const obj: MessageEditOptions & {split?: false | undefined} = {
             components: []
         };
         if (msg.content)

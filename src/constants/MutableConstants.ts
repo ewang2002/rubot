@@ -1,13 +1,13 @@
-import {Collection} from "discord.js";
-import {ICapeRow, IGitContent, ListedCourse, Meeting, WebRegSection} from "../definitions";
-import {createReadStream} from "fs";
-import {createInterface} from "readline";
+import { Collection } from "discord.js";
+import { ICapeRow, IGitContent, ListedCourse, Meeting, WebRegSection } from "../definitions";
+import { createReadStream } from "fs";
+import { createInterface } from "readline";
 import * as path from "path";
-import {TimeUtilities} from "../utilities/TimeUtilities";
-import {AxiosRequestConfig} from "axios";
-import {Bot} from "../Bot";
-import {GeneralUtilities} from "../utilities/GeneralUtilities";
-import {StringBuilder} from "../utilities/StringBuilder";
+import { TimeUtilities } from "../utilities/TimeUtilities";
+import { AxiosRequestConfig } from "axios";
+import { Bot } from "../Bot";
+import { GeneralUtilities } from "../utilities/GeneralUtilities";
+import { StringBuilder } from "../utilities/StringBuilder";
 
 export namespace MutableConstants {
     export const ENROLL_DATA_GH: string = "https://github.com/ewang2002/UCSDHistEnrollData";
@@ -18,28 +18,28 @@ export namespace MutableConstants {
         termName: string;
         paddedName: string;
     }[] = [
-        // Default term should be the first one.
-        {
-            term: "FA22",
-            termName: "Fall 2022",
-            paddedName: "Fall 2022              "
-        },
-        {
-            term: "S122",
-            termName: "Summer Session I 2022",
-            paddedName: "Summer Session I 2022  "
-        },
-        {
-            term: "S222",
-            termName: "Summer Session II 2022",
-            paddedName: "Summer Session II 2022 "
-        },
-        {
-            term: "S322",
-            termName: "Summer Session III 2022",
-            paddedName: "Summer Session III 2022"
-        }
-    ];
+            // Default term should be the first one.
+            {
+                term: "FA22",
+                termName: "Fall 2022",
+                paddedName: "Fall 2022              "
+            },
+            {
+                term: "S122",
+                termName: "Summer Session I 2022",
+                paddedName: "Summer Session I 2022  "
+            },
+            {
+                term: "S222",
+                termName: "Summer Session II 2022",
+                paddedName: "Summer Session II 2022 "
+            },
+            {
+                term: "S322",
+                termName: "Summer Session III 2022",
+                paddedName: "Summer Session III 2022"
+            }
+        ];
 
     export const DEFAULT_TERM: string = MutableConstants.WEBREG_TERMS[0].term;
 
@@ -58,77 +58,77 @@ export namespace MutableConstants {
             wide: boolean;
         };
     }[] = [
-        {
-            term: "SP22",
-            termName: "Spring 2022",
-            overall: {
-                reg: true,
-                fsp: true,
-                wide: true
+            {
+                term: "SP22",
+                termName: "Spring 2022",
+                overall: {
+                    reg: true,
+                    fsp: true,
+                    wide: true
+                },
+                section: {
+                    reg: true,
+                    fsp: true,
+                    wide: true
+                }
             },
-            section: {
-                reg: true,
-                fsp: true,
-                wide: true
-            }
-        },
-        {
-            term: "SP22D",
-            termName: "Spring 2022 (Post-Enrollment)",
-            overall: {
-                reg: true,
-                fsp: false,
-                wide: false
+            {
+                term: "SP22D",
+                termName: "Spring 2022 (Post-Enrollment)",
+                overall: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                },
+                section: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                }
             },
-            section: {
-                reg: true,
-                fsp: false,
-                wide: false
-            }
-        },
-        {
-            term: "S122",
-            termName: "Summer Session I 2022",
-            overall: {
-                reg: true,
-                fsp: false,
-                wide: false
+            {
+                term: "S122",
+                termName: "Summer Session I 2022",
+                overall: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                },
+                section: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                }
             },
-            section: {
-                reg: true,
-                fsp: false,
-                wide: false
-            }
-        },
-        {
-            term: "S222",
-            termName: "Summer Session II 2022",
-            overall: {
-                reg: true,
-                fsp: false,
-                wide: false
+            {
+                term: "S222",
+                termName: "Summer Session II 2022",
+                overall: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                },
+                section: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                }
             },
-            section: {
-                reg: true,
-                fsp: false,
-                wide: false
-            }
-        },
-        {
-            term: "FA22",
-            termName: "Fall 2022",
-            overall: {
-                reg: true,
-                fsp: false,
-                wide: false
+            {
+                term: "FA22",
+                termName: "Fall 2022",
+                overall: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                },
+                section: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                }
             },
-            section: {
-                reg: false,
-                fsp: false,
-                wide: false
-            }
-        },
-    ];
+        ];
 
     export const OVERALL_ENROLL: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
     export const OVERALL_ENROLL_WIDE: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
@@ -374,7 +374,7 @@ export namespace MutableConstants {
             }
         };
 
-        for await (const {term, ...o} of GH_TERMS) {
+        for await (const { term, ...o } of GH_TERMS) {
             if (o.overall.reg) {
                 const overall = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
                     const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_overall`, requestHeader);

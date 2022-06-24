@@ -2,7 +2,8 @@
   "isProd": true,
   "token": {
     "botToken": "",
-    "githubAuthToken": ""
+    "githubAuthToken": "",
+    "mtsToken": ""
   },
   "clientId": "",
   "botOwnerIds": [],

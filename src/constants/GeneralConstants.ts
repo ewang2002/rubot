@@ -6,6 +6,7 @@ export namespace GeneralConstants {
     // - is at the start of the string or starts with at least one space
     // - ends with at least one space
     export const IM_REGEX: RegExp = /(^|\s+)(i'm|im|i\s+am)\s+/ig;
+    export const IM_REGEX_EXACT: RegExp = /^(?:i'm|im|i\s+am)$/ig; 
 }
 
 export namespace EmojiConstants {

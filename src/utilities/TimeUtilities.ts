@@ -117,6 +117,30 @@ export namespace TimeUtilities {
     }
 
     /**
+     * Gets the current time in a nice string format.
+     * @param {Date | number} [date = new Date()] The date to choose, if any.
+     * @param {string} [timezone] The timezone, if applicable. Otherwise, GMT is used. See
+     * https://en.wikipedia.org/wiki/List_of_tz_database_time_zones for a full list.
+     * @returns {string} The current formatter time.
+     */
+    export function getCurrentTime(date: Date | number = new Date(), timezone: string = "America/Los_Angeles"): string {
+        if (!isValidTimeZone(timezone)) {
+            return new Intl.DateTimeFormat([], {
+                hour: "numeric",
+                minute: "numeric",
+                second: "numeric",
+            }).format(date);
+        }
+        const options: Intl.DateTimeFormatOptions = {
+            timeZone: timezone,
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+        };
+        return new Intl.DateTimeFormat([], options).format(date);
+    }
+
+    /**
      * Determines whether the given timezone is valid or not.
      * @param {string} tz The timezone to test.
      * @returns {boolean} Whether the timezone is valid.
@@ -152,7 +176,7 @@ export namespace TimeUtilities {
         dur %= 1000;
 
         const finalArr: string[] = [];
-        if (days > 0) finalArr.push(`${days} Days`);
+        if (days > 0) finalArr.push(`${days}D`);
         if (hours > 0) finalArr.push(`${hours}H`);
         if (minutes > 0) finalArr.push(`${minutes}M`);
         if (seconds > 0 && includeSeconds) finalArr.push(`${seconds}S`);

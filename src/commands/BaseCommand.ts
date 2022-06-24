@@ -9,6 +9,7 @@ import {
 } from "discord.js";
 import {Bot} from "../Bot";
 import {SlashCommandBuilder, SlashCommandChannelOption} from "@discordjs/builders";
+import { APIApplicationCommandOptionChoice } from "discord-api-types/v10";
 
 export interface ICommandContext {
     /**
@@ -138,7 +139,7 @@ function addArgument(scb: SlashCommandBuilder, argInfo: IArgumentInfo): void {
 
                 restrictions?.stringChoices
                 && restrictions.stringChoices.length > 0
-                && o.addChoices(restrictions.stringChoices);
+                && o.addChoices(...restrictions.stringChoices);
 
                 return o;
             });
@@ -455,7 +456,7 @@ export interface IArgumentInfo {
          *
          * @type {[string, string][]}
          */
-        stringChoices?: [string, string][];
+         stringChoices?: APIApplicationCommandOptionChoice<string>[]; 
 
         /**
          * A function to modify the slash channel options; a common use would be to specify the types of channels that

@@ -5,7 +5,6 @@ import * as Cmds from "./commands";
 import {onErrorEvent, onInteractionEvent, onMessage, onReadyEvent} from "./events";
 import {REST} from "@discordjs/rest";
 import {RESTPostAPIApplicationCommandsJSONBody, Routes} from "discord-api-types/v10";
-import { trackWebReg } from "./TrackerService";
 
 export class Bot {
     /**
@@ -115,6 +114,10 @@ export class Bot {
             new Cmds.FreeRooms()
         ]);
 
+        Bot.Commands.set("Owner Only", [
+            new Cmds.Exec()
+        ]);
+
         Bot.JsonCommands = [];
         Bot.NameCommands = new Collection<string, Cmds.BaseCommand>();
         Bot.Rest = new REST({version: "9"}).setToken(config.token.botToken);
@@ -161,7 +164,6 @@ export class Bot {
         this._bot.on("ready",  () => onReadyEvent());
         this._bot.on("interactionCreate",  (i: Interaction) => onInteractionEvent(i));
         this._bot.on("error",  (e: Error) => onErrorEvent(e));
-        trackWebReg().then();
         this._eventsIsStarted = true;
     }
 
