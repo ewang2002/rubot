@@ -24,6 +24,5 @@ export * from "./doomers/AddQuoteText";
 export * from "./doomers/GetRandomQuote";
 export * from "./doomers/AddStrangerQuote";
 export * from "./doomers/BadnessLevel";
-export * from "./doomers/SetDadPercent";
 
 export * from "./owner/Exec";
