@@ -2,7 +2,7 @@ import {IConfiguration} from "./definitions";
 import {Client, Collection, GuildChannel, Interaction,} from "discord.js";
 import axios, {AxiosInstance} from "axios";
 import * as Cmds from "./commands";
-import {onErrorEvent, onInteractionEvent, onMessage, onReadyEvent} from "./events";
+import {onErrorEvent, onInteractionEvent, onReadyEvent} from "./events";
 import {REST} from "@discordjs/rest";
 import {RESTPostAPIApplicationCommandsJSONBody, Routes} from "discord-api-types/v10";
 
@@ -94,7 +94,6 @@ export class Bot {
             new Cmds.AddStrangerQuote(),
             new Cmds.GetRandomQuote(),
             new Cmds.BadnessLevel(),
-            new Cmds.SetDadPercent()
         ]);
 
         Bot.Commands.set("Enrollment Data", [
@@ -160,7 +159,6 @@ export class Bot {
             return;
         }
 
-        this._bot.on("messageCreate",  (m) => onMessage(m));
         this._bot.on("ready",  () => onReadyEvent());
         this._bot.on("interactionCreate",  (i: Interaction) => onInteractionEvent(i));
         this._bot.on("error",  (e: Error) => onErrorEvent(e));
