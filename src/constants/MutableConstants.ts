@@ -25,19 +25,9 @@ export namespace MutableConstants {
                 paddedName: "Fall 2022              "
             },
             {
-                term: "S122",
-                termName: "Summer Session I 2022",
-                paddedName: "Summer Session I 2022  "
-            },
-            {
                 term: "S222",
                 termName: "Summer Session II 2022",
                 paddedName: "Summer Session II 2022 "
-            },
-            {
-                term: "S322",
-                termName: "Summer Session III 2022",
-                paddedName: "Summer Session III 2022"
             }
         ];
 
@@ -89,6 +79,20 @@ export namespace MutableConstants {
             {
                 term: "S122",
                 termName: "Summer Session I 2022",
+                overall: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                },
+                section: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                }
+            },
+            {
+                term: "S122D",
+                termName: "Summer Session I 2022 (Post-Enrollment)",
                 overall: {
                     reg: true,
                     fsp: false,
