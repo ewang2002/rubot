@@ -1,5 +1,5 @@
 import {IConfiguration} from "./definitions";
-import {Client, Collection, GuildChannel, Interaction,} from "discord.js";
+import {Client, Collection, Interaction,} from "discord.js";
 import axios, {AxiosInstance} from "axios";
 import * as Cmds from "./commands";
 import {onErrorEvent, onInteractionEvent, onReadyEvent} from "./events";
@@ -83,7 +83,8 @@ export class Bot {
         Bot.Commands.set("General", [
             new Cmds.Help(),
             new Cmds.Ping(),
-            new Cmds.Status()
+            new Cmds.Status(),
+            new Cmds.DidItBreak()
         ]);
 
         Bot.Commands.set("Doomers Only", [

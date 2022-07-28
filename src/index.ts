@@ -2,8 +2,6 @@ import {Bot} from "./Bot";
 import {IConfiguration} from "./definitions";
 import * as fs from "fs";
 import * as path from "path";
-import {StringBuilder} from "./utilities/StringBuilder";
-import {TimeUtilities} from "./utilities/TimeUtilities";
 import {MutableConstants} from "./constants/MutableConstants";
 import {JsonManager} from "./JsonManager";
 
