@@ -12,7 +12,7 @@ import {JsonManager} from "./JsonManager";
     bot.startAllEvents();
     MutableConstants.initCapeData();
     MutableConstants.initCourseListing();
-    MutableConstants.initSectionData("SP22");
+    MutableConstants.initSectionData("S222");
     JsonManager.startAll();
     if (config.isProd) {
         await MutableConstants.initEnrollmentData();

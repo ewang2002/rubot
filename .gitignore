@@ -20,8 +20,6 @@ config.production.json
 .vscode/*
 
 # Data files.
-cape.tsv
-SP22.tsv
-courses.tsv
+*.tsv
 quote.json
 webreg.json
