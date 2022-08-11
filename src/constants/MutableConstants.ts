@@ -143,7 +143,7 @@ export namespace MutableConstants {
     export const CAPE_DATA: ICapeRow[] = [];
     export const SECTION_TERM_DATA: WebRegSection[] = [];
     export const COURSE_LISTING: ListedCourse[] = [];
-    export const LISTING_LAST_SCRAPED: string = "May 15, 2022";
+    export const LISTING_LAST_SCRAPED: string = "August 10, 2022";
 
     // Term that we have section (cached) data for. We should only have one active term at any point.
     export let CACHED_DATA_TERM: string = "";

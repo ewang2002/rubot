@@ -50,3 +50,14 @@ export interface ListedCourse {
     courseName: string;
     description: string;
 }
+
+
+export interface PrerequisiteInfo {
+    course_prerequisites: CoursePrerequisite[][];
+    exam_prerequisites: string[];
+}
+
+export interface CoursePrerequisite {
+    subj_course_id: string;
+    course_title: string;
+}
