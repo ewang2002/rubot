@@ -23,11 +23,6 @@ export namespace MutableConstants {
                 term: "FA22",
                 termName: "Fall 2022",
                 paddedName: "Fall 2022              "
-            },
-            {
-                term: "S222",
-                termName: "Summer Session II 2022",
-                paddedName: "Summer Session II 2022 "
             }
         ];
 
@@ -163,6 +158,20 @@ export namespace MutableConstants {
             {
                 term: "FA22NS",
                 termName: "Fall 2022 (New Student)",
+                overall: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                },
+                section: {
+                    reg: true,
+                    fsp: false,
+                    wide: false
+                }
+            },
+            {
+                term: "FA22A",
+                termName: "Fall 2022 (All Students)",
                 overall: {
                     reg: true,
                     fsp: false,
