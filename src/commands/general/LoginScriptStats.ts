@@ -28,7 +28,7 @@ export class LoginScriptStats extends BaseCommand {
     public async run(ctx: ICommandContext): Promise<number> {
         const term = ctx.interaction.options.getString("term", false) ?? MutableConstants.DEFAULT_TERM;
         await ctx.interaction.deferReply();
-        
+
         const startTime: number | { "error": string } | null = await GeneralUtilities.tryExecuteAsync(async () => {
             // You will need the ucsd_webreg_rs app available
             const d = await Bot.AxiosClient.get(`http://localhost:8000/stat/start/${term}`);
@@ -66,13 +66,19 @@ export class LoginScriptStats extends BaseCommand {
         }
 
         const msgContent = new StringBuilder()
-            .append(`**Term:** ${term.toUpperCase()}`).appendLine()
-            .append(`- Login Script Init: \`${TimeUtilities.getDateTime(startTime)} PT\``).append(" ")
-            .append(`(\`${TimeUtilities.formatDuration(Date.now() - startTime, false, false)}\` Ago)`).appendLine()
-            .append(`- Login Script Call History: Called **${history.length}** Times.`).append("```").appendLine();
-        for (const data of history) {
-            msgContent.append(`\t${TimeUtilities.getDateTime(data)} PT`).appendLine();
+            .append(`**Term:** **\`${term.toUpperCase()}\`**`).appendLine()
+            .append(`- Login Script Init: **\`${TimeUtilities.getDateTime(startTime)} PT\`**`).append(" ")
+            .append(`(**\`${TimeUtilities.formatDuration(Date.now() - startTime, false, false)}\`** Ago)`).appendLine()
+            .append(`- Login Script Call History: Called **\`${history.length}\`** Times.`).append("```").appendLine();
+        if (history.length > 0) {
+            for (const data of history) {
+                msgContent.append(`@ ${TimeUtilities.getDateTime(data)} PT`).appendLine();
+            }
         }
+        else {
+            msgContent.append("N/A");
+        }
+
         msgContent.append("```");
 
         await ctx.interaction.editReply({
