@@ -84,7 +84,8 @@ export class Bot {
             new Cmds.Help(),
             new Cmds.Ping(),
             new Cmds.Status(),
-            new Cmds.DidItBreak()
+            new Cmds.DidItBreak(),
+            new Cmds.LoginScriptStats()
         ]);
 
         Bot.Commands.set("Doomers Only", [

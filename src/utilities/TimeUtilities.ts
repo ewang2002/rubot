@@ -181,7 +181,7 @@ export namespace TimeUtilities {
         if (minutes > 0) finalArr.push(`${minutes}M`);
         if (seconds > 0 && includeSeconds) finalArr.push(`${seconds}S`);
         if (dur > 0 && includeMs) finalArr.push(`${dur}MS`);
-        return finalArr.length > 0 ? finalArr.join(" ") : "0 Seconds";
+        return finalArr.length > 0 ? finalArr.join(" ") : "0S";
     }
 
     /**

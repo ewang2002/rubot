@@ -15,7 +15,7 @@ import padTimeDigit = TimeUtilities.padTimeDigit;
 import getTimeStr = TimeUtilities.getTimeStr;
 import WARNING_EMOJI = EmojiConstants.WARNING_EMOJI;
 
-export const LOOKUP_ARGUMENTS: IArgumentInfo[] = [
+export const TERM_ARGUMENTS: IArgumentInfo[] = [
     {
         displayName: "Term",
         argName: "term",
@@ -29,7 +29,11 @@ export const LOOKUP_ARGUMENTS: IArgumentInfo[] = [
         },
         required: false,
         example: ["S322"]
-    },
+    }
+];
+
+export const LOOKUP_ARGUMENTS: IArgumentInfo[] = [
+    ...TERM_ARGUMENTS,
     {
         displayName: "Course & Subject Code",
         argName: "course_subj_num",
