@@ -105,7 +105,8 @@ export class Bot {
             new Cmds.GetCape(),
             new Cmds.LookupCached(),
             new Cmds.LiveSeats(),
-            new Cmds.GetPrereq()
+            new Cmds.GetPrereq(),
+            new Cmds.GetAllRemoteClasses()
         ]);
 
         Bot.Commands.set("UCSD", [
