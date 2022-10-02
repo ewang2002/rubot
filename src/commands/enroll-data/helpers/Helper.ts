@@ -77,7 +77,7 @@ export const PLOT_ARGUMENTS: IArgumentInfo[] = [
         restrictions: {
             stringChoices: [
                 {name: "Normal (1500 x 700)", value: "norm"},
-                {name: "Wide (5000 x 1000)", value: "wide"},
+                {name: "Wide (6000 x 1500)", value: "wide"},
                 {name: "First/Second Pass Only (1500 x 700)", value: "fsp"}
             ]
         },
