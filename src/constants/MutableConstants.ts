@@ -128,59 +128,31 @@ export namespace MutableConstants {
                 }
             },
             {
-                term: "FA22UG",
-                termName: "Fall 2022 (Undergraduate)",
-                overall: {
-                    reg: true,
-                    fsp: false,
-                    wide: false
-                },
-                section: {
-                    reg: true,
-                    fsp: false,
-                    wide: false
-                }
-            },
-            {
                 term: "FA22G",
                 termName: "Fall 2022 (Graduate)",
                 overall: {
                     reg: true,
                     fsp: false,
-                    wide: false
+                    wide: true
                 },
                 section: {
                     reg: true,
                     fsp: false,
-                    wide: false
+                    wide: true
                 }
             },
             {
-                term: "FA22NS",
-                termName: "Fall 2022 (New Student)",
+                term: "FA22",
+                termName: "Fall 2022 (Undergraduate)",
                 overall: {
                     reg: true,
                     fsp: false,
-                    wide: false
+                    wide: true
                 },
                 section: {
                     reg: true,
                     fsp: false,
-                    wide: false
-                }
-            },
-            {
-                term: "FA22A",
-                termName: "Fall 2022 (All Students)",
-                overall: {
-                    reg: true,
-                    fsp: false,
-                    wide: false
-                },
-                section: {
-                    reg: true,
-                    fsp: false,
-                    wide: false
+                    wide: true
                 }
             }
         ].reverse();

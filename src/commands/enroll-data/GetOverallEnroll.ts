@@ -1,7 +1,7 @@
 import {BaseCommand, ICommandContext} from "../BaseCommand";
 import {MutableConstants} from "../../constants/MutableConstants";
 import {PLOT_ARGUMENTS, parseCourseSubjCode} from "./helpers/Helper";
-import {Collection, MessageEmbed} from "discord.js";
+import {Collection} from "discord.js";
 import {IGitContent} from "../../definitions";
 
 export class GetOverallEnroll extends BaseCommand {
