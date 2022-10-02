@@ -117,7 +117,9 @@ export class FreeRooms extends BaseCommand {
                 .setDescription(
                     `You are currently viewing all classrooms that are free for the next \`${minAhead}\` minute(s),`
                     + ` starting at the time **\`${getDateTime(cDateTime)}\`**. Keep in mind that these classrooms are`
-                    + " free based on what WebReg says, and may be used for other purposes."
+                    + " free based on what WebReg says, and may be used for other purposes.\n\nNo, *Ruby*, I cannot"
+                    + " tell you if a classroom listed here is locked; you'll need to check yourself -- y'know, by"
+                    + " walking there or something (I know, hard stuff)."
                 )
                 .setFooter({text: `Free Classrooms Only. Page ${i + 1}`})
                 .setTimestamp(cDateTime);
