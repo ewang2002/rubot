@@ -58,11 +58,11 @@ export class LiveSeats extends BaseCommand {
                         data.total_seats.toString(),
                         data.waitlist_ct.toString(),
                         data.available_seats === 0 || data.waitlist_ct > 0
-                            ? "✓"
-                            : " ",
+                            ? "X"
+                            : "✓",
                         data.is_visible
                             ? "✓"
-                            : " "
+                            : "X"
                     ]
                 })
             );
