@@ -30,6 +30,7 @@ export interface WebRegSection {
     waitlist_ct: number;
     meetings: Meeting[];
     needs_waitlist: boolean;
+    is_visible: boolean;
 }
 
 export interface Meeting {

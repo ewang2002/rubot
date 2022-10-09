@@ -30,6 +30,8 @@ export namespace EmojiConstants {
     export const STOP_SIGN_EMOJI: string = "🛑";
     export const WARNING_EMOJI: string = "⚠️";
     export const QUESTION_MARK_EMOJI: string = "❓";
+    export const GHOST_EMOJI: string = "👻";
+    export const EYE_EMOJI: string = "👁️";
 
     export const LONG_UP_ARROW_EMOJI: string = "⬆️";
     export const LONG_DOWN_ARROW_EMOJI: string = "⬇️";

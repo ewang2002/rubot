@@ -47,7 +47,7 @@ export class LiveSeats extends BaseCommand {
 
         const processRows = (json: WebRegSection[]): string[][] => {
             return [
-                ["SEC", "Code", "ENR", "AVA", "TTL", "WL", "EN"]
+                ["SEC", "Code", "ENR", "AVA", "TTL", "WL", "EN", "V"]
             ].concat(
                 json.map(data => {
                     return [
@@ -59,7 +59,10 @@ export class LiveSeats extends BaseCommand {
                         data.waitlist_ct.toString(),
                         data.available_seats === 0 || data.waitlist_ct > 0
                             ? EmojiConstants.X_EMOJI
-                            : EmojiConstants.GREEN_CHECK_EMOJI
+                            : EmojiConstants.GREEN_CHECK_EMOJI,
+                        data.is_visible
+                            ? EmojiConstants.EYE_EMOJI
+                            : EmojiConstants.GHOST_EMOJI
                     ]
                 })
             );
@@ -99,6 +102,7 @@ export class LiveSeats extends BaseCommand {
                         .append("- `TTL:` Total Seats").appendLine()
                         .append("- `WL :` Waitlist Count").appendLine()
                         .append("- `EN :` Enrollable?").appendLine()
+                        .append("- `V  :` Visible?").appendLine()
                         .toString()
                 )
                 .setFooter({
