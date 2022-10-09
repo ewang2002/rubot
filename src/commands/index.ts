@@ -14,6 +14,7 @@ export * from "./enroll-data/LookupCached";
 export * from "./enroll-data/LiveSeats";
 export * from "./enroll-data/GetPrereq";
 export * from "./enroll-data/GetAllRemoteClasses";
+export * from "./enroll-data/LiveSeatLegends";
 
 export * from "./ucsd/ViewAllClassrooms";
 export * from "./ucsd/CheckRoom";

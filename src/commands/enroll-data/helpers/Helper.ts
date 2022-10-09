@@ -246,7 +246,7 @@ export async function displayInteractiveWebregData(ctx: ICommandContext, section
                     .append(` [${entry.section_id}] ${entry.section_code} -`)
                     .append(` ${entry.enrolled_ct} Enrolled / ${entry.total_seats} Total`)
                     .append(` (${entry.waitlist_ct} WL)`)
-                    .append(` ${entry.is_visible ? EmojiConstants.EYE_EMOJI : EmojiConstants.GHOST_EMOJI}`)
+                    .append(`   ${entry.is_visible ? EmojiConstants.EYE_EMOJI : EmojiConstants.GHOST_EMOJI}`)
                     .toString();
             }
             else {

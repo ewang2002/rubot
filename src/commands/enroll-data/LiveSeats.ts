@@ -58,11 +58,11 @@ export class LiveSeats extends BaseCommand {
                         data.total_seats.toString(),
                         data.waitlist_ct.toString(),
                         data.available_seats === 0 || data.waitlist_ct > 0
-                            ? EmojiConstants.X_EMOJI
-                            : EmojiConstants.GREEN_CHECK_EMOJI,
+                            ? "✓"
+                            : " ",
                         data.is_visible
-                            ? EmojiConstants.EYE_EMOJI
-                            : EmojiConstants.GHOST_EMOJI
+                            ? "✓"
+                            : " "
                     ]
                 })
             );
@@ -93,18 +93,7 @@ export class LiveSeats extends BaseCommand {
             const embed = new MessageEmbed()
                 .setColor(getColorByPercent(numEnrolled / total))
                 .setTitle(`WebReg Info: **${parsedCode}** (Term: ${term})`)
-                .setDescription(
-                    new StringBuilder()
-                        .append(`Found ${json.length} section(s) of **\`${parsedCode}\`**.`)
-                        .appendLine()
-                        .append("- `ENR:` Enrolled Count").appendLine()
-                        .append("- `AVA:` Available Seats").appendLine()
-                        .append("- `TTL:` Total Seats").appendLine()
-                        .append("- `WL :` Waitlist Count").appendLine()
-                        .append("- `EN :` Enrollable?").appendLine()
-                        .append("- `V  :` Visible?").appendLine()
-                        .toString()
-                )
+                .setDescription(`Found ${json.length} section(s) of **\`${parsedCode}\`**.`)
                 .setFooter({
                     text: "Data Fetched from WebReg."
                 })
