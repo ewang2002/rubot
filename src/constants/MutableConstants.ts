@@ -274,7 +274,8 @@ export namespace MutableConstants {
                 section_id: sectionId,
                 subj_course_id: subjCourseId,
                 total_seats: Number.parseInt(totalSeats, 10),
-                waitlist_ct: -1
+                waitlist_ct: -1,
+                is_visible: false,
             });
         });
 
