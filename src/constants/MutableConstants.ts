@@ -23,6 +23,11 @@ export namespace MutableConstants {
                 term: "FA22",
                 termName: "Fall 2022",
                 paddedName: "Fall 2022              "
+            },
+            {
+                term: "WI23",
+                termName: "Winter 2023",
+                paddedName: "Winter 2023            "
             }
         ];
 
