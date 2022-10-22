@@ -20,14 +20,14 @@ export namespace MutableConstants {
     }[] = [
             // Default term should be the first one.
             {
-                term: "FA22",
-                termName: "Fall 2022",
-                paddedName: "Fall 2022              "
-            },
-            {
                 term: "WI23",
                 termName: "Winter 2023",
                 paddedName: "Winter 2023            "
+            },
+            {
+                term: "FA22",
+                termName: "Fall 2022",
+                paddedName: "Fall 2022              "
             }
         ];
 
