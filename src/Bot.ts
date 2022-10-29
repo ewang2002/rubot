@@ -107,7 +107,8 @@ export class Bot {
             new Cmds.LiveSeats(),
             new Cmds.GetPrereq(),
             new Cmds.GetAllRemoteClasses(),
-            new Cmds.LiveSeatLegends()
+            new Cmds.LiveSeatLegends(),
+            new Cmds.SearchCourse()
         ]);
 
         Bot.Commands.set("UCSD", [

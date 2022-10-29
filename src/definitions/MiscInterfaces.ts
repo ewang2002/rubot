@@ -33,6 +33,14 @@ export interface WebRegSection {
     is_visible: boolean;
 }
 
+export interface IWebRegSearchResult {
+    UNIT_TO: number;
+    SUBJ_CODE: string;
+    CRSE_TITLE: string;
+    UNIT_FROM: number;
+    CRSE_CODE: string;
+}
+
 export interface Meeting {
     meeting_type: string;
     meeting_days: string[] | string | null;
