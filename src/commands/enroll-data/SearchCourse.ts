@@ -99,15 +99,15 @@ export class SearchCourse extends BaseCommand {
         const subjects = ctx.interaction.options.getString(
             "subjects",
             false
-        )?.split(",").map(x => x.trim()).filter(x => x.length > 0) ?? [];
+        )?.toUpperCase().split(",").map(x => x.trim()).filter(x => x.length > 0) ?? [];
         const courses = ctx.interaction.options.getString(
             "courses",
             false
-        )?.split(",").map(x => x.trim()).filter(x => x.length > 0) ?? [];
+        )?.toUpperCase().split(",").map(x => x.trim()).filter(x => x.length > 0) ?? [];
         const departments = ctx.interaction.options.getString(
             "departments",
             false
-        )?.split(",").map(x => x.trim()).filter(x => x.length > 0) ?? [];
+        )?.toUpperCase().split(",").map(x => x.trim()).filter(x => x.length > 0) ?? [];
         const instructor = ctx.interaction.options.getString("instructor", false) ?? null;
         const title = ctx.interaction.options.getString("title", false) ?? null;
         const onlyShowOpen = ctx.interaction.options.getBoolean("only_show_open", false) ?? false;
