@@ -84,6 +84,33 @@ export class SearchCourse extends BaseCommand {
                     desc: "Whether to show course titles. Defaults to true.",
                     required: false,
                     example: ["false", "true"]
+                },
+                {
+                    displayName: "Show Lower-Division Courses",
+                    argName: "show_lower",
+                    type: ArgumentType.Boolean,
+                    prettyType: "Boolean",
+                    desc: "Whether to show lower-division courses. Defaults to true.",
+                    required: false,
+                    example: ["false", "true"]
+                },
+                {
+                    displayName: "Show Upper-Division Courses",
+                    argName: "show_upper",
+                    type: ArgumentType.Boolean,
+                    prettyType: "Boolean",
+                    desc: "Whether to show upper-division courses. Defaults to true.",
+                    required: false,
+                    example: ["false", "true"]
+                },
+                {
+                    displayName: "Show Graduate-Division Courses",
+                    argName: "show_graduate",
+                    type: ArgumentType.Boolean,
+                    prettyType: "Boolean",
+                    desc: "Whether to show graduate-division courses. Defaults to true.",
+                    required: false,
+                    example: ["false", "true"]
                 }
             ]),
             guildOnly: false,
@@ -112,6 +139,9 @@ export class SearchCourse extends BaseCommand {
         const title = ctx.interaction.options.getString("title", false) ?? null;
         const onlyShowOpen = ctx.interaction.options.getBoolean("only_show_open", false) ?? false;
         const showTitles = ctx.interaction.options.getBoolean("showtitle", false) ?? true;
+        const showLower = ctx.interaction.options.getBoolean("show_lower", false) ?? true;
+        const showUpper = ctx.interaction.options.getBoolean("show_upper", false) ?? true;
+        const showGrad = ctx.interaction.options.getBoolean("show_graduate", false) ?? true;
 
         await ctx.interaction.deferReply();
 
@@ -119,7 +149,10 @@ export class SearchCourse extends BaseCommand {
             subjects,
             courses,
             departments,
-            only_allow_open: onlyShowOpen
+            only_allow_open: onlyShowOpen,
+            show_grad_div: showGrad,
+            show_lower_div: showLower,
+            show_upper_div: showUpper
         };
 
         if (title) {
@@ -238,4 +271,7 @@ interface SearchQuery {
     instructor?: string;
     title?: string;
     only_allow_open: boolean;
+    show_lower_div: boolean,
+    show_upper_div: boolean,
+    show_grad_div: boolean,
 }
