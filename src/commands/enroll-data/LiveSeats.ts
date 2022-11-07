@@ -124,7 +124,7 @@ export class LiveSeats extends BaseCommand {
         }
 
         // Max of 4 codes
-        while (allCodes.length > 4) {
+        while (allCodes.length > 6) {
             allCodes.pop();
         }
 
