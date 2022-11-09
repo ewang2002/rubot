@@ -43,119 +43,133 @@ export namespace MutableConstants {
             wide: boolean;
         };
     }[] = [
-            {
-                term: "SP22",
-                termName: "Spring 2022",
-                overall: {
-                    reg: true,
-                    fsp: true,
-                    wide: true
-                },
-                section: {
-                    reg: true,
-                    fsp: true,
-                    wide: true
-                }
+        {
+            term: "SP22",
+            termName: "Spring 2022",
+            overall: {
+                reg: true,
+                fsp: true,
+                wide: true
             },
-            {
-                term: "SP22D",
-                termName: "Spring 2022 (Post-Enrollment)",
-                overall: {
-                    reg: true,
-                    fsp: false,
-                    wide: false
-                },
-                section: {
-                    reg: true,
-                    fsp: false,
-                    wide: false
-                }
-            },
-            {
-                term: "S122",
-                termName: "Summer Session I 2022",
-                overall: {
-                    reg: true,
-                    fsp: false,
-                    wide: false
-                },
-                section: {
-                    reg: true,
-                    fsp: false,
-                    wide: false
-                }
-            },
-            {
-                term: "S122D",
-                termName: "Summer Session I 2022 (Post-Enrollment)",
-                overall: {
-                    reg: true,
-                    fsp: false,
-                    wide: false
-                },
-                section: {
-                    reg: true,
-                    fsp: false,
-                    wide: false
-                }
-            },
-            {
-                term: "S222",
-                termName: "Summer Session II 2022",
-                overall: {
-                    reg: true,
-                    fsp: false,
-                    wide: false
-                },
-                section: {
-                    reg: true,
-                    fsp: false,
-                    wide: false
-                }
-            },
-            {
-                term: "S222D",
-                termName: "Summer Session II 2022 (Post-Enrollment)",
-                overall: {
-                    reg: true,
-                    fsp: false,
-                    wide: false
-                },
-                section: {
-                    reg: true,
-                    fsp: false,
-                    wide: false
-                }
-            },
-            {
-                term: "FA22G",
-                termName: "Fall 2022 (Graduate)",
-                overall: {
-                    reg: true,
-                    fsp: false,
-                    wide: true
-                },
-                section: {
-                    reg: true,
-                    fsp: false,
-                    wide: true
-                }
-            },
-            {
-                term: "FA22",
-                termName: "Fall 2022 (Undergraduate)",
-                overall: {
-                    reg: true,
-                    fsp: false,
-                    wide: true
-                },
-                section: {
-                    reg: true,
-                    fsp: false,
-                    wide: true
-                }
+            section: {
+                reg: true,
+                fsp: true,
+                wide: true
             }
-        ].reverse();
+        },
+        {
+            term: "SP22D",
+            termName: "Spring 2022 (Post-Enrollment)",
+            overall: {
+                reg: true,
+                fsp: false,
+                wide: false
+            },
+            section: {
+                reg: true,
+                fsp: false,
+                wide: false
+            }
+        },
+        {
+            term: "S122",
+            termName: "Summer Session I 2022",
+            overall: {
+                reg: true,
+                fsp: false,
+                wide: false
+            },
+            section: {
+                reg: true,
+                fsp: false,
+                wide: false
+            }
+        },
+        {
+            term: "S122D",
+            termName: "Summer Session I 2022 (Post-Enrollment)",
+            overall: {
+                reg: true,
+                fsp: false,
+                wide: false
+            },
+            section: {
+                reg: true,
+                fsp: false,
+                wide: false
+            }
+        },
+        {
+            term: "S222",
+            termName: "Summer Session II 2022",
+            overall: {
+                reg: true,
+                fsp: false,
+                wide: false
+            },
+            section: {
+                reg: true,
+                fsp: false,
+                wide: false
+            }
+        },
+        {
+            term: "S222D",
+            termName: "Summer Session II 2022 (Post-Enrollment)",
+            overall: {
+                reg: true,
+                fsp: false,
+                wide: false
+            },
+            section: {
+                reg: true,
+                fsp: false,
+                wide: false
+            }
+        },
+        {
+            term: "FA22G",
+            termName: "Fall 2022 (Graduate)",
+            overall: {
+                reg: true,
+                fsp: false,
+                wide: true
+            },
+            section: {
+                reg: true,
+                fsp: false,
+                wide: true
+            }
+        },
+        {
+            term: "FA22",
+            termName: "Fall 2022 (Undergraduate)",
+            overall: {
+                reg: true,
+                fsp: false,
+                wide: true
+            },
+            section: {
+                reg: true,
+                fsp: false,
+                wide: true
+            }
+        },
+        {
+            term: "WI23",
+            termName: "Winter 2023 (Undergraduate)",
+            overall: {
+                reg: true,
+                fsp: false,
+                wide: false
+            },
+            section: {
+                reg: true,
+                fsp: false,
+                wide: false
+            }
+        }
+    ].reverse();
 
     export const OVERALL_ENROLL: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
     export const OVERALL_ENROLL_WIDE: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
