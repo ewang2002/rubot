@@ -156,6 +156,20 @@ export namespace MutableConstants {
             }
         },
         {
+            term: "WI23G",
+            termName: "Winter 2023 (Graduate)",
+            overall: {
+                reg: true,
+                fsp: false,
+                wide: false
+            },
+            section: {
+                reg: true,
+                fsp: false,
+                wide: false
+            }
+        },
+        {
             term: "WI23",
             termName: "Winter 2023 (Undergraduate)",
             overall: {
