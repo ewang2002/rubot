@@ -15,7 +15,7 @@ import {JsonManager} from "./JsonManager";
     MutableConstants.initSectionData("FA22");
     JsonManager.startAll();
     if (config.isProd) {
-        await MutableConstants.initEnrollmentData();
+        //await MutableConstants.initEnrollmentData();
     }
     console.info("All data received.");
     await bot.login();

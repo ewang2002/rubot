@@ -43,8 +43,7 @@ export class Role extends BaseCommand {
                 content: `You cannot give the role, ${role}, to yourself.`,
                 allowedMentions: {
                     roles: []
-                },
-                ephemeral: true
+                }
             });
 
             return -1;
@@ -52,7 +51,7 @@ export class Role extends BaseCommand {
 
         if (ctx.member!.roles.cache.has(role.id)) {
             const roleRemoveStatus = await GeneralUtilities.tryExecuteAsync<boolean>(async () => {
-                await ctx.member!.roles.remove(role.id);
+                await ctx.member!.roles.remove(role.id, "Via role command.");
                 return true;
             }) ?? false;
     
@@ -62,15 +61,14 @@ export class Role extends BaseCommand {
                     : `Unable to remove ${role} from you.`,
                 allowedMentions: {
                     roles: []
-                },
-                ephemeral: true
+                }
             });
 
             return 0;
         }
 
         const roleGiveStatus = await GeneralUtilities.tryExecuteAsync<boolean>(async () => {
-            await ctx.member!.roles.add(role.id);
+            await ctx.member!.roles.add(role.id, "Via role command.");
             return true;
         }) ?? false;
 
@@ -80,8 +78,7 @@ export class Role extends BaseCommand {
                 : `Unable to assign ${role} to you.`,
             allowedMentions: {
                 roles: []
-            },
-            ephemeral: true
+            }
         });
 
         return 0;
