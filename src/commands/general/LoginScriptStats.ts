@@ -31,13 +31,13 @@ export class LoginScriptStats extends BaseCommand {
 
         const startTime: number | { "error": string } | null = await GeneralUtilities.tryExecuteAsync(async () => {
             // You will need the ucsd_webreg_rs app available
-            const d = await Bot.AxiosClient.get(`http://localhost:8000/stat/start/${term}`);
+            const d = await Bot.AxiosClient.get(`http://127.0.0.1:8000/stat/start/${term}`);
             return d.data;
         });
 
         const history: number[] | { "error": string } | null = await GeneralUtilities.tryExecuteAsync(async () => {
             // You will need the ucsd_webreg_rs app available
-            const d = await Bot.AxiosClient.get(`http://localhost:8000/stat/history/${term}`);
+            const d = await Bot.AxiosClient.get(`http://127.0.0.1:8000/stat/history/${term}`);
             return d.data;
         });
 

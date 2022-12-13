@@ -31,7 +31,7 @@ export class DidItBreak extends BaseCommand {
                 "error": string
             } | null = await GeneralUtilities.tryExecuteAsync(async () => {
                 // You will need the ucsd_webreg_rs app available
-                const d = await Bot.AxiosClient.get(`http://localhost:8000/course/${data.term}/CSE/8A`);
+                const d = await Bot.AxiosClient.get(`http://127.0.0.1:8000/course/${data.term}/CSE/8A`);
                 return d.data;
             });
 

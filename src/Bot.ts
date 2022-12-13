@@ -1,5 +1,5 @@
 import {IConfiguration} from "./definitions";
-import {Client, Collection, Interaction,} from "discord.js";
+import {Client, Collection, Interaction, Message,} from "discord.js";
 import axios, {AxiosInstance} from "axios";
 import * as Cmds from "./commands";
 import {onErrorEvent, onInteractionEvent, onReadyEvent} from "./events";
@@ -85,11 +85,10 @@ export class Bot {
             new Cmds.Ping(),
             new Cmds.Status(),
             new Cmds.DidItBreak(),
-            new Cmds.LoginScriptStats()
+            new Cmds.LoginScriptStats(),
         ]);
 
         Bot.Commands.set("Doomers Only", [
-            new Cmds.Spam(),
             new Cmds.SetActivity(),
             new Cmds.AddQuoteMessageLink(),
             new Cmds.AddQuoteText(),

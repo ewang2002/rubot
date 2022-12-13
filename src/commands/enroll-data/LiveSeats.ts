@@ -154,7 +154,7 @@ export class LiveSeats extends BaseCommand {
 
             const [subj, num] = parsedCode.split(" ");
             const json: WebRegSection[] | { "error": string } | null = await GeneralUtilities.tryExecuteAsync(async () => {
-                const d = await Bot.AxiosClient.get(`http://localhost:8000/course/${term}/${subj}/${num}`);
+                const d = await Bot.AxiosClient.get(`http://127.0.0.1:8000/course/${term}/${subj}/${num}`);
                 return d.data;
             });
 

@@ -125,7 +125,7 @@ export async function requestFromWebRegApi(ctx: ICommandContext,
     await ctx.interaction.deferReply();
     const json: WebRegSection[] | { "error": string } | null = await GeneralUtilities.tryExecuteAsync(async () => {
         // You will need the ucsd_webreg_rs app available
-        const d = await Bot.AxiosClient.get(`http://localhost:8000/course/${term}/${subj}/${num}`);
+        const d = await Bot.AxiosClient.get(`http://127.0.0.1:8000/course/${term}/${subj}/${num}`);
         return d.data;
     });
 
