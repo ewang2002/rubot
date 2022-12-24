@@ -1,11 +1,11 @@
 import {BaseCommand, ICommandContext} from "../BaseCommand";
 import {MutableConstants} from "../../constants/MutableConstants";
 import {ArrayUtilities} from "../../utilities/ArrayUtilities";
-import {Collection, MessageButton, MessageEmbed, MessageSelectMenu} from "discord.js";
+import {Collection, MessageButton, MessageSelectMenu} from "discord.js";
 import {AdvancedCollector} from "../../utilities/AdvancedCollector";
 import {EmojiConstants} from "../../constants/GeneralConstants";
 import {PLOT_ARGUMENTS, parseCourseSubjCode} from "./helpers/Helper";
-import {IGitContent} from "../../definitions";
+import { IPlotInfo } from "../../definitions";
 
 export class GetSectionEnroll extends BaseCommand {
     public constructor() {
@@ -31,7 +31,7 @@ export class GetSectionEnroll extends BaseCommand {
         const term = ctx.interaction.options.getString("term", true);
         const searchType = ctx.interaction.options.getString("search_type", false) ?? "norm";
 
-        let coll: Readonly<Collection<string, IGitContent[]>>;
+        let coll: Readonly<Collection<string, IPlotInfo[]>>;
         let display: string;
         switch (searchType) {
             case "wide":
@@ -61,13 +61,11 @@ export class GetSectionEnroll extends BaseCommand {
 
         const parsedCode = parseCourseSubjCode(code);
         const res = arr.filter(x => {
-            if (!x.name.includes("_")) {
+            if (!x.fileName.includes("_")) {
                 return false;
             }
 
-            return x.name
-                .replace(".png", "")
-                .split("_")[0] === parsedCode;
+            return x.fileName.split("_")[0] === parsedCode;
         });
         if (res.length === 0) {
             await ctx.interaction.reply({
@@ -93,10 +91,10 @@ export class GetSectionEnroll extends BaseCommand {
                     .setMaxValues(1)
                     .setPlaceholder("All Possible Sections " + (i + 1))
                     .addOptions(subsets[i].map(x => {
-                        const rawOpt = x.name.replaceAll(".png", "").split("_");
+                        const rawOpt = x.fileName.split("_");
                         return {
                             label: `${rawOpt[0]} (Section ${rawOpt[1]})`,
-                            value: x.name
+                            value: x.fileName
                         };
                     }))
             );
@@ -135,10 +133,10 @@ export class GetSectionEnroll extends BaseCommand {
             components: []
         });
 
-        const data = res.find(x => x.name === selected.values[0])!;
-        const sec = data.name.split("_")[1].replaceAll(".png", "");
+        const data = res.find(x => x.fileName === selected.values[0])!;
+        const sec = data.fileName.split("_")[1];
         await ctx.interaction.editReply({
-            files: [data.download_url],
+            files: [data.fileUrl],
             content: `Course **\`${parsedCode}\`**, Section **\`${sec}\`** (Term **\`${term}\`**, Display \`${display}\`)`,
             components: []
         });

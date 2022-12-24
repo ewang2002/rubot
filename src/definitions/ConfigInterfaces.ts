@@ -53,25 +53,11 @@ export interface IConfiguration {
     botOwnerIds: string[];
 
     /**
-     * Repository to the enrollment data.
+     * The organization containing all enrollment data repositories.
      *
-     * @type {object}
+     * @type {string}
      */
-    enrollData: {
-        /**
-         * The repository's owner.
-         *
-         * @type {string}
-         */
-        repoOwner: string;
-
-        /**
-         * The repository name.
-         *
-         * @type {string}
-         */
-        repoName: string;
-    };
+    enrollDataOrgName: string;
 
     /**
      * Various channel IDs to keep note of.

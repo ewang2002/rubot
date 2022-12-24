@@ -1,8 +1,6 @@
-export interface IGitContent {
-    name: string;
-    path: string;
-    size: number;
-    download_url: string;
+export interface IPlotInfo {
+    fileName: string; 
+    fileUrl: string;
 }
 
 export interface ICapeRow {

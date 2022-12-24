@@ -7,10 +7,7 @@
   },
   "clientId": "",
   "botOwnerIds": [],
-  "enrollData": {
-    "repoOwner": "",
-    "repoName": ""
-  },
+  "enrollDataOrgName": "",
   "channels": {
     "galleryChannel": "",
     "webregCategory": ""

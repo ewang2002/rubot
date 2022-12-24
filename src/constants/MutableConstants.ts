@@ -1,5 +1,5 @@
 import { Collection } from "discord.js";
-import { ICapeRow, IGitContent, ListedCourse, Meeting, WebRegSection } from "../definitions";
+import { ICapeRow, IPlotInfo, ListedCourse, Meeting, WebRegSection } from "../definitions";
 import { createReadStream } from "fs";
 import { createInterface } from "readline";
 import * as path from "path";
@@ -7,7 +7,6 @@ import { TimeUtilities } from "../utilities/TimeUtilities";
 import { AxiosRequestConfig } from "axios";
 import { Bot } from "../Bot";
 import { GeneralUtilities } from "../utilities/GeneralUtilities";
-import { StringBuilder } from "../utilities/StringBuilder";
 
 export namespace MutableConstants {
     export const ENROLL_DATA_GH: string = "https://github.com/ewang2002/UCSDHistEnrollData";
@@ -32,6 +31,7 @@ export namespace MutableConstants {
     export const GH_TERMS: {
         term: string;
         termName: string;
+        repoName: string;
         overall: {
             reg: boolean;
             fsp: boolean;
@@ -46,6 +46,7 @@ export namespace MutableConstants {
         {
             term: "SP22",
             termName: "Spring 2022",
+            repoName: "2022Spring",
             overall: {
                 reg: true,
                 fsp: true,
@@ -60,6 +61,7 @@ export namespace MutableConstants {
         {
             term: "SP22D",
             termName: "Spring 2022 (Post-Enrollment)",
+            repoName: "2022SpringDrop",
             overall: {
                 reg: true,
                 fsp: false,
@@ -74,6 +76,7 @@ export namespace MutableConstants {
         {
             term: "S122",
             termName: "Summer Session I 2022",
+            repoName: "2022Summer1",
             overall: {
                 reg: true,
                 fsp: false,
@@ -88,6 +91,7 @@ export namespace MutableConstants {
         {
             term: "S122D",
             termName: "Summer Session I 2022 (Post-Enrollment)",
+            repoName: "2022Summer1Drop",
             overall: {
                 reg: true,
                 fsp: false,
@@ -102,6 +106,7 @@ export namespace MutableConstants {
         {
             term: "S222",
             termName: "Summer Session II 2022",
+            repoName: "2022Summer2",
             overall: {
                 reg: true,
                 fsp: false,
@@ -116,6 +121,7 @@ export namespace MutableConstants {
         {
             term: "S222D",
             termName: "Summer Session II 2022 (Post-Enrollment)",
+            repoName: "2022Summer2Drop",
             overall: {
                 reg: true,
                 fsp: false,
@@ -130,6 +136,7 @@ export namespace MutableConstants {
         {
             term: "FA22G",
             termName: "Fall 2022 (Graduate)",
+            repoName: "2022FallGrad",
             overall: {
                 reg: true,
                 fsp: false,
@@ -144,6 +151,7 @@ export namespace MutableConstants {
         {
             term: "FA22",
             termName: "Fall 2022 (Undergraduate)",
+            repoName: "2022Fall",
             overall: {
                 reg: true,
                 fsp: false,
@@ -158,6 +166,7 @@ export namespace MutableConstants {
         {
             term: "WI23G",
             termName: "Winter 2023 (Graduate)",
+            repoName: "2023WinterGrad",
             overall: {
                 reg: true,
                 fsp: false,
@@ -172,6 +181,7 @@ export namespace MutableConstants {
         {
             term: "WI23",
             termName: "Winter 2023 (Undergraduate)",
+            repoName: "2023Winter",
             overall: {
                 reg: true,
                 fsp: false,
@@ -185,12 +195,12 @@ export namespace MutableConstants {
         }
     ].reverse();
 
-    export const OVERALL_ENROLL: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
-    export const OVERALL_ENROLL_WIDE: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
-    export const OVERALL_ENROLL_FSP: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
-    export const SECTION_ENROLL: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
-    export const SECTION_ENROLL_WIDE: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
-    export const SECTION_ENROLL_FSP: Collection<string, IGitContent[]> = new Collection<string, IGitContent[]>();
+    export const OVERALL_ENROLL: Collection<string, IPlotInfo[]> = new Collection<string, IPlotInfo[]>();
+    export const OVERALL_ENROLL_WIDE: Collection<string, IPlotInfo[]> = new Collection<string, IPlotInfo[]>();
+    export const OVERALL_ENROLL_FSP: Collection<string, IPlotInfo[]> = new Collection<string, IPlotInfo[]>();
+    export const SECTION_ENROLL: Collection<string, IPlotInfo[]> = new Collection<string, IPlotInfo[]>();
+    export const SECTION_ENROLL_WIDE: Collection<string, IPlotInfo[]> = new Collection<string, IPlotInfo[]>();
+    export const SECTION_ENROLL_FSP: Collection<string, IPlotInfo[]> = new Collection<string, IPlotInfo[]>();
     export const CAPE_DATA: ICapeRow[] = [];
     export const SECTION_TERM_DATA: WebRegSection[] = [];
     export const COURSE_LISTING: ListedCourse[] = [];
@@ -416,101 +426,104 @@ export namespace MutableConstants {
      * Adds the enrollment graph data to the above collections.
      */
     export async function initEnrollmentData(): Promise<void> {
-        const baseUrl = new StringBuilder()
-            .append("https://api.github.com/repos/")
-            .append(Bot.BotInstance.config.enrollData.repoOwner)
-            .append("/")
-            .append(Bot.BotInstance.config.enrollData.repoName)
-            .append("/contents")
-            .toString();
-
         const requestHeader: AxiosRequestConfig = {
             headers: {
                 "User-Agent": "rubot (ewang2002)"
             }
         };
 
-        for await (const { term, ...o } of GH_TERMS) {
-            if (o.overall.reg) {
-                const overall = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
-                    const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_overall`, requestHeader);
-                    return res.data;
-                });
+        for await (const { term, repoName, ...o } of GH_TERMS) {
+            const allOverallTerms = await GeneralUtilities.tryExecuteAsync<string[]>(async () => {
+                const req = await Bot.AxiosClient.get<Buffer>(
+                    `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/all_courses.txt`,
+                    {
+                        responseType: "arraybuffer"
+                    }
+                );
 
-                // OVERALL
-                if (overall) {
-                    OVERALL_ENROLL.set(term, overall.filter(x => x.name.endsWith(".png")));
+                return req.data.toString("utf16le").split("\n").map(x => x.trim()).filter(x => x.length > 0);
+            });
+
+            if (allOverallTerms) {
+                if (o.overall.reg) {
+                    OVERALL_ENROLL.set(term, []);
+                    for (const course of allOverallTerms) {
+                        OVERALL_ENROLL.get(term)!.push({
+                            fileName: course,
+                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_overall/${course}.png`
+                        });
+                    }
                 }
-                else {
-                    console.error(`Could not get overall data for ${term}.`);
+
+
+                if (o.overall.fsp) {
+                    // Overall (first/second pass)
+                    OVERALL_ENROLL_FSP.set(term, []);
+                    for (const course of allOverallTerms) {
+                        OVERALL_ENROLL_FSP.get(term)!.push({
+                            fileName: course,
+                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_overall_fsp/${course}.png`
+                        });
+                    }
                 }
-            }
 
 
-            if (o.overall.fsp) {
-                // Overall (first/second pass)
-                const overallFsp = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
-                    const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_overall_fsp`, requestHeader);
-                    return res.data;
-                });
-
-                if (overallFsp) {
-                    OVERALL_ENROLL_FSP.set(term, overallFsp.filter(x => x.name.endsWith(".png")));
-                }
-            }
-
-
-            if (o.overall.wide) {
-                // Overall (wide)
-                const overallWide = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
-                    const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_overall_wide`, requestHeader);
-                    return res.data;
-                });
-
-                if (overallWide) {
-                    OVERALL_ENROLL_WIDE.set(term, overallWide.filter(x => x.name.endsWith(".png")));
-                }
-            }
-
-
-            if (o.section.reg) {
-                // SECTION
-                const section = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
-                    const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_section`, requestHeader);
-                    return res.data;
-                });
-
-                if (section) {
-                    SECTION_ENROLL.set(term, section.filter(x => x.name.endsWith(".png")));
-                }
-                else {
-                    console.error(`Could not get section data for ${term}.`);
+                if (o.overall.wide) {
+                    // Overall (wide)
+                    OVERALL_ENROLL_WIDE.set(term, []);
+                    for (const course of allOverallTerms) {
+                        OVERALL_ENROLL_WIDE.get(term)!.push({
+                            fileName: course,
+                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_overall_wide/${course}.png`
+                        });
+                    }
                 }
             }
 
+            const allSectionTerms = await GeneralUtilities.tryExecuteAsync<string[]>(async () => {
+                const req = await Bot.AxiosClient.get<Buffer>(
+                    `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/all_sections.txt`,
+                    {
+                        responseType: "arraybuffer"
+                    }
+                );
 
-            if (o.section.fsp) {
-                // Section (first/second pass)
-                const sectionFsp = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
-                    const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_section_fsp`, requestHeader);
-                    return res.data;
-                });
+                return req.data.toString("utf16le").split("\n").map(x => x.trim()).filter(x => x.length > 0);
+            });
 
-                if (sectionFsp) {
-                    SECTION_ENROLL_FSP.set(term, sectionFsp.filter(x => x.name.endsWith(".png")));
+            if (allSectionTerms) {
+                if (o.section.reg) {
+                    SECTION_ENROLL.set(term, []);
+                    for (const sec of allSectionTerms) {
+                        SECTION_ENROLL.get(term)!.push({
+                            fileName: sec,
+                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_section/${sec}.png`
+                        });
+                    }
                 }
-            }
 
 
-            if (o.section.wide) {
-                // Section (wide)
-                const sectionWide = await GeneralUtilities.tryExecuteAsync<IGitContent[]>(async () => {
-                    const res = await Bot.AxiosClient.get(`${baseUrl}/${term}/plot_section_wide`, requestHeader);
-                    return res.data;
-                });
+                if (o.section.fsp) {
+                    // Section (first/second pass)
+                    SECTION_ENROLL_FSP.set(term, []);
+                    for (const sec of allSectionTerms) {
+                        SECTION_ENROLL_FSP.get(term)!.push({
+                            fileName: sec,
+                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_section_fsp/${sec}.png`
+                        });
+                    }
+                }
 
-                if (sectionWide) {
-                    SECTION_ENROLL_WIDE.set(term, sectionWide.filter(x => x.name.endsWith(".png")));
+
+                if (o.section.wide) {
+                    // Section (wide)
+                    SECTION_ENROLL_WIDE.set(term, []);
+                    for (const sec of allSectionTerms) {
+                        SECTION_ENROLL_WIDE.get(term)!.push({
+                            fileName: sec,
+                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_section_wide/${sec}.png`
+                        });
+                    }
                 }
             }
         }

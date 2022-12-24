@@ -2,7 +2,7 @@ import {BaseCommand, ICommandContext} from "../BaseCommand";
 import {MutableConstants} from "../../constants/MutableConstants";
 import {PLOT_ARGUMENTS, parseCourseSubjCode} from "./helpers/Helper";
 import {Collection} from "discord.js";
-import {IGitContent} from "../../definitions";
+import { IPlotInfo } from "../../definitions";
 
 export class GetOverallEnroll extends BaseCommand {
     public constructor() {
@@ -28,7 +28,7 @@ export class GetOverallEnroll extends BaseCommand {
         const code = ctx.interaction.options.getString("course_subj_num", true);
         const searchType = ctx.interaction.options.getString("search_type", false) ?? "norm";
 
-        let coll: Readonly<Collection<string, IGitContent[]>>;
+        let coll: Readonly<Collection<string, IPlotInfo[]>>;
         let display: string;
         switch (searchType) {
             case "wide":
@@ -57,7 +57,7 @@ export class GetOverallEnroll extends BaseCommand {
         }
 
         const parsedCode = parseCourseSubjCode(code);
-        const res = arr.find(x => x.name.replace(".png", "") === parsedCode);
+        const res = arr.find(x => x.fileName === parsedCode);
         if (!res) {
             await ctx.interaction.reply({
                 content: `The course, **\`${parsedCode}\`**, (term **\`${term}\`** & display \`${display}\`) could not`
@@ -70,7 +70,7 @@ export class GetOverallEnroll extends BaseCommand {
 
         await ctx.interaction.deferReply();
         await ctx.interaction.editReply({
-            files: [res.download_url],
+            files: [res.fileUrl],
             content: `Course **\`${parsedCode}\`** (Term **\`${term}\`**, Display \`${display}\`)`
         });
 
