@@ -165,7 +165,7 @@ export class SearchCourse extends BaseCommand {
 
         const json: IWebRegSearchResult[] | { "error": string } | null = await GeneralUtilities.tryExecuteAsync(async () => {
             // You will need the ucsd_webreg_rs app available
-            const d = await Bot.AxiosClient.post(`http://127.0.0.1:8000/search/${term}`, data);
+            const d = await Bot.AxiosClient.post(`http://127.0.0.1:3000/webreg/search_courses/${term}`, data);
             return d.data;
         });
 
