@@ -10,6 +10,7 @@ import { ArgumentType, BaseCommand, ICommandContext } from "../BaseCommand";
 import { TERM_ARGUMENTS } from "./helpers/Helper";
 import * as table from "text-table";
 import { StringUtil } from "../../utilities/StringUtilities";
+import { TimeUtilities } from "../../utilities/TimeUtilities";
 
 export class SearchCourse extends BaseCommand {
     public constructor() {
@@ -77,15 +78,6 @@ export class SearchCourse extends BaseCommand {
                     example: ["false", "true"]
                 },
                 {
-                    displayName: "Show Title",
-                    argName: "showtitle",
-                    type: ArgumentType.Boolean,
-                    prettyType: "Boolean",
-                    desc: "Whether to show course titles. Defaults to true.",
-                    required: false,
-                    example: ["false", "true"]
-                },
-                {
                     displayName: "Show Lower-Division Courses",
                     argName: "show_lower",
                     type: ArgumentType.Boolean,
@@ -111,7 +103,34 @@ export class SearchCourse extends BaseCommand {
                     desc: "Whether to show graduate-division courses. Defaults to true.",
                     required: false,
                     example: ["false", "true"]
-                }
+                },
+                {
+                    displayName: "Start Time",
+                    argName: "start_time",
+                    type: ArgumentType.String,
+                    prettyType: "String",
+                    desc: "The start time. This must be formatted using HH:MM AM/PM (e.g., 06:30 AM).",
+                    required: false,
+                    example: ["02:30 PM", "05:40 AM"]
+                },
+                {
+                    displayName: "End Time",
+                    argName: "end_time",
+                    type: ArgumentType.String,
+                    prettyType: "String",
+                    desc: "The end time. This must be formatted using HH:MM AM/PM (e.g., 06:30 AM).",
+                    required: false,
+                    example: ["02:30 PM", "05:40 AM"]
+                },
+                {
+                    displayName: "Show Title",
+                    argName: "showtitle",
+                    type: ArgumentType.Boolean,
+                    prettyType: "Boolean",
+                    desc: "Whether to show course titles. Defaults to true.",
+                    required: false,
+                    example: ["false", "true"]
+                },
             ]),
             guildOnly: false,
             botOwnerOnly: false
@@ -143,6 +162,72 @@ export class SearchCourse extends BaseCommand {
         const showUpper = ctx.interaction.options.getBoolean("show_upper", false) ?? true;
         const showGrad = ctx.interaction.options.getBoolean("show_graduate", false) ?? true;
 
+        const timeParser = (rawTime: string): [number, number] | null => {
+            if (!rawTime.includes(":") || (!rawTime.toLowerCase().includes("am") && !rawTime.toLowerCase().includes("pm"))) {
+                return null;
+            }
+
+            const [hr, min, ...rest] = rawTime.split(":").map(x => x.trim());
+            if (rest.length > 0) {
+                return null;
+            }
+
+            const parsedHr = Number.parseInt(hr);
+            if (Number.isNaN(parsedHr) || parsedHr < 1 || parsedHr > 12) {
+                return null;
+            }
+
+            // For minute, only include the actual numerical values
+            let parsedMin = 0;
+            let i = 0;
+            while (i < min.length) {
+                const n = Number.parseInt(min[i]);
+                if (Number.isNaN(n)) {
+                    break;
+                }
+
+                parsedMin = parsedMin * 10 + n;
+                i++;
+            }
+
+            if (parsedMin < 0 || parsedMin > 59) {
+                return null;
+            }
+
+            const amOrPm = min.substring(i).trim().toLowerCase();
+            let isAm: boolean;
+            if (amOrPm === "am") {
+                isAm = true;
+            } 
+            else if (amOrPm === "pm") {
+                isAm = false;
+            } 
+            else {
+                // must not be valid
+                return null;
+            }
+
+            let hrToReturn = 0;
+            if (isAm) {
+                hrToReturn = parsedHr === 12
+                    ? 0
+                    : parsedHr;
+            } 
+            else {
+                hrToReturn = parsedHr === 12
+                    ? 12 
+                    : parsedHr + 12;
+            }
+
+            return [
+                hrToReturn,
+                parsedMin
+            ];
+        };
+
+        const startTime = timeParser(ctx.interaction.options.getString("start_time", false) ?? "");
+        const endTime = timeParser(ctx.interaction.options.getString("end_time", false) ?? "");
+
         await ctx.interaction.deferReply();
 
         const data: SearchQuery = {
@@ -156,16 +241,56 @@ export class SearchCourse extends BaseCommand {
         };
 
         if (title) {
-            data["title"] = title;
+            data.title = title;
         }
 
         if (instructor) {
-            data["instructor"] = instructor;
+            data.instructor = instructor;
+        }
+
+        if (startTime) {
+            const [h, m] = startTime;
+            data.start_min = m;
+            data.start_hr = h;
+        }
+
+        if (endTime) {
+            const [h, m] = endTime;
+            data.end_min = m;
+            data.end_hr = h;
+        }
+
+        // Create a string representing what was searched so the user knows what to expect.
+        const searchQuery = new StringBuilder("__**Your Search Query**__").appendLine()
+            .append(`- \`Subjects      :\` **\`[${data.subjects.join(", ")}]\`**`).appendLine()
+            .append(`- \`Courses       :\` **\`[${data.courses.join(", ")}]\`**`).appendLine()
+            .append(`- \`Departments   :\` **\`[${data.departments.join(", ")}]\`**`).appendLine()
+            .append(`- \`Only Show Open:\` **\`${data.only_allow_open ? "Yes" : "No"}\`**`).appendLine()
+            .append(`- \`Show Grad Only:\` **\`${data.show_grad_div ? "Yes" : "No"}\`**`).appendLine()
+            .append(`- \`Show UD Only  :\` **\`${data.show_upper_div ? "Yes" : "No"}\`**`).appendLine()
+            .append(`- \`Show LD Only  :\` **\`${data.show_lower_div ? "Yes" : "No"}\`**`).appendLine();
+
+        if (title) {
+            searchQuery.append(`- \`Title         :\` **\`${data.title}\`**`).appendLine();
+        }
+        
+        if (instructor) {
+            searchQuery.append(`- \`Instructor    :\` **\`${data.instructor}\`**`).appendLine();
+        }
+        
+        if (startTime) {
+            searchQuery.append(`- \`Start Time    :\` **\`${startTime.map(x => TimeUtilities.padTimeDigit(x)).join(":")}\`**`).appendLine();
+        }
+        
+        if (endTime) {
+            searchQuery.append(`- \`End Time      :\` **\`${endTime.map(x => TimeUtilities.padTimeDigit(x)).join(":")}\`**`).appendLine();
         }
 
         const json: IWebRegSearchResult[] | { "error": string } | null = await GeneralUtilities.tryExecuteAsync(async () => {
             // You will need the ucsd_webreg_rs app available
-            const d = await Bot.AxiosClient.post(`http://127.0.0.1:3000/webreg/search_courses/${term}`, data);
+            const d = await Bot.AxiosClient.get(`http://127.0.0.1:3000/webreg/search_courses/${term}`, {
+                data
+            });
             return d.data;
         });
 
@@ -257,6 +382,7 @@ export class SearchCourse extends BaseCommand {
         });
         
         await ctx.interaction.editReply({
+            content: searchQuery.toString(),
             embeds: [finalEmbed]
         });
 
@@ -274,4 +400,8 @@ interface SearchQuery {
     show_lower_div: boolean,
     show_upper_div: boolean,
     show_grad_div: boolean,
+    start_min?: number;
+    start_hr?: number;
+    end_min?: number;
+    end_hr?: number;
 }

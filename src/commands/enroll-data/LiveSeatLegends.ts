@@ -21,7 +21,7 @@ export class LiveSeatLegends extends BaseCommand {
      * @inheritDoc
      */
     public async run(ctx: ICommandContext): Promise<number> {
-        await ctx.interaction.editReply({
+        await ctx.interaction.reply({
             embeds: [
                 GeneralUtilities.generateBlankEmbed(ctx.user, "RANDOM")
                     .addField("ENR: Enrolled Count", "Number of students *enrolled* in the section.")
