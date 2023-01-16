@@ -170,12 +170,12 @@ export namespace MutableConstants {
             overall: {
                 reg: true,
                 fsp: false,
-                wide: false
+                wide: true
             },
             section: {
                 reg: true,
                 fsp: false,
-                wide: false
+                wide: true
             }
         },
         {
@@ -185,12 +185,12 @@ export namespace MutableConstants {
             overall: {
                 reg: true,
                 fsp: false,
-                wide: false
+                wide: true
             },
             section: {
                 reg: true,
                 fsp: false,
-                wide: false
+                wide: true
             }
         }
     ].reverse();
