@@ -54,12 +54,13 @@ export namespace ArrayUtilities {
      *
      * @returns {number} The last index, if any. -1 otherwise.
      */
-    export function findLastIndex<T>(array: T[], predicate: (value: T, index: number,
-                                                             obj: T[]) => boolean): number {
+    export function findLastIndex<T>(
+        array: T[],
+        predicate: (value: T, index: number, obj: T[]) => boolean
+    ): number {
         let l: number = array.length;
         while (l >= 0) {
-            if (predicate(array[l], l, array))
-                return l;
+            if (predicate(array[l], l, array)) return l;
             l--;
         }
         return -1;
@@ -94,8 +95,7 @@ export namespace ArrayUtilities {
                 if (str.length + tempString.length > maxLenPerElement) {
                     returnArr.push(str);
                     str = tempString;
-                }
-                else {
+                } else {
                     str += tempString;
                 }
             }
@@ -118,7 +118,7 @@ export namespace ArrayUtilities {
     export function generateLeaderboardArray<T>(
         data: T[],
         func: (val: T) => number,
-        compareFn: ((a: T, b: T) => number) = (x, y) => func(y) - func(x)
+        compareFn: (a: T, b: T) => number = (x, y) => func(y) - func(x)
     ): [number, T][] {
         data.sort(compareFn);
         let place: number = 1;
@@ -137,8 +137,7 @@ export namespace ArrayUtilities {
             if (val === func(returnData[lastIndexOfData][1])) {
                 returnData.push([place, data[i]]);
                 diff++;
-            }
-            else {
+            } else {
                 place += diff + 1;
                 diff = 0;
                 returnData.push([place, data[i]]);

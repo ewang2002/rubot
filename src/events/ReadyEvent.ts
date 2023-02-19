@@ -1,4 +1,4 @@
-import {Bot} from "../Bot";
+import { Bot } from "../Bot";
 
 export async function onReadyEvent(): Promise<void> {
     const botUser = Bot.BotInstance.client.user;

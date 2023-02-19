@@ -28,22 +28,21 @@ export interface LocationLiveInfo {
     subLocs: Omit<LocationLiveInfo, "subLocs">[] | false;
 }
 
-
 export interface WaitzCompareData {
     data: LocationCompareInfo[];
 }
 
 export interface LocationCompareInfo {
-    id:         number;
-    name:       string;
+    id: number;
+    name: string;
     comparison: ComparisonInfo[] | null;
-    open:       boolean;
-    trendHtml:  string;
+    open: boolean;
+    trendHtml: string;
 }
 
 export interface ComparisonInfo {
-    valid:   boolean;
-    value?:  string[] | null | string;
-    trend:   string;
+    valid: boolean;
+    value?: string[] | null | string;
+    trend: string;
     string?: string;
 }

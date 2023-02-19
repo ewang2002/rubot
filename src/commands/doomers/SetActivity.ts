@@ -1,6 +1,6 @@
-import {ArgumentType, BaseCommand, ICommandContext, ICommandInfo} from "../BaseCommand";
-import {ActivitiesOptions, PresenceData} from "discord.js";
-import {GeneralConstants} from "../../constants/GeneralConstants";
+import { ArgumentType, BaseCommand, ICommandContext, ICommandInfo } from "../BaseCommand";
+import { ActivitiesOptions, ActivityType, PresenceData } from "discord.js";
+import { GeneralConstants } from "../../constants/GeneralConstants";
 
 export class SetActivity extends BaseCommand {
     public constructor() {
@@ -19,29 +19,27 @@ export class SetActivity extends BaseCommand {
                     type: ArgumentType.String,
                     restrictions: {
                         stringChoices: [
-                            {name: "Playing", value: "PLAYING"},
-                            {name: "Listening (to)", value: "LISTENING"},
-                            {name: "Watching", value: "WATCHING"}
-                        ]
+                            { name: "Playing", value: "PLAYING" },
+                            { name: "Listening (to)", value: "LISTENING" },
+                            { name: "Watching", value: "WATCHING" },
+                        ],
                     },
-                    prettyType: "String",
                     required: true,
-                    example: ["Watching"]
+                    example: ["Watching"],
                 },
                 {
                     displayName: "Activity",
                     argName: "activity",
                     desc: "The bot's activity (game).",
                     type: ArgumentType.String,
-                    prettyType: "String",
                     required: true,
-                    example: ["All of the clowns"]
-                }
+                    example: ["All of the clowns"],
+                },
             ],
             botPermissions: [],
             guildOnly: false,
             botOwnerOnly: false,
-            allowOnServers: GeneralConstants.PERMITTED_SERVER_IDS
+            allowOnServers: GeneralConstants.PERMITTED_SERVER_IDS,
         };
 
         super(cmi);
@@ -59,19 +57,19 @@ export class SetActivity extends BaseCommand {
         const fullActivity: ActivitiesOptions = {};
         switch (activityType) {
             case "PLAYING": {
-                fullActivity.type = "PLAYING";
+                fullActivity.type = ActivityType.Playing;
                 break;
             }
             case "LISTENING": {
-                fullActivity.type = "LISTENING";
+                fullActivity.type = ActivityType.Listening;
                 break;
             }
             case "WATCHING": {
-                fullActivity.type = "WATCHING";
+                fullActivity.type = ActivityType.Watching;
                 break;
             }
             default: {
-                fullActivity.type = "PLAYING";
+                fullActivity.type = ActivityType.Playing;
                 break;
             }
         }
@@ -82,7 +80,7 @@ export class SetActivity extends BaseCommand {
         await ctx.user.client.user!.setPresence(presenceData);
         await ctx.interaction.reply({
             ephemeral: true,
-            content: "Done!"
+            content: "Done!",
         });
         return 0;
     }

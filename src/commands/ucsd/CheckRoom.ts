@@ -1,13 +1,20 @@
-import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
-import {IInternalCourseData, ViewAllClassrooms} from "./ViewAllClassrooms";
-import {Collection, MessageButton, MessageEmbed, MessageSelectMenu, MessageSelectOptionData} from "discord.js";
-import {ArrayUtilities} from "../../utilities/ArrayUtilities";
-import {EmojiConstants, GeneralConstants} from "../../constants/GeneralConstants";
-import {AdvancedCollector} from "../../utilities/AdvancedCollector";
-import {TimeUtilities} from "../../utilities/TimeUtilities";
-import {StringBuilder} from "../../utilities/StringBuilder";
-import {StringUtil} from "../../utilities/StringUtilities";
-import {MutableConstants} from "../../constants/MutableConstants";
+import { ArgumentType, BaseCommand, ICommandContext } from "../BaseCommand";
+import { IInternalCourseData, ViewAllClassrooms } from "./ViewAllClassrooms";
+import {
+    Collection,
+    ButtonBuilder,
+    EmbedBuilder,
+    StringSelectMenuBuilder,
+    SelectMenuComponentOptionData,
+    ButtonStyle,
+} from "discord.js";
+import { ArrayUtilities } from "../../utilities/ArrayUtilities";
+import { EmojiConstants, GeneralConstants } from "../../constants/GeneralConstants";
+import { AdvancedCollector } from "../../utilities/AdvancedCollector";
+import { TimeUtilities } from "../../utilities/TimeUtilities";
+import { StringBuilder } from "../../utilities/StringBuilder";
+import { StringUtil } from "../../utilities/StringUtilities";
+import { MutableConstants } from "../../constants/MutableConstants";
 import getTimeStr = TimeUtilities.getTimeStr;
 import getWebRegDateStr = TimeUtilities.getWebRegDateStr;
 
@@ -19,7 +26,7 @@ export class CheckRoom extends BaseCommand {
         "Wednesday",
         "Thursday",
         "Friday",
-        "Saturday"
+        "Saturday",
     ];
 
     public constructor() {
@@ -36,14 +43,13 @@ export class CheckRoom extends BaseCommand {
                     displayName: "Room Number",
                     argName: "room",
                     type: ArgumentType.String,
-                    prettyType: "String",
                     desc: "The room number to check. For example, if you want to look at CENTR 115, type 115.",
                     required: true,
-                    example: ["115"]
-                }
+                    example: ["115"],
+                },
             ],
             guildOnly: false,
-            botOwnerOnly: false
+            botOwnerOnly: false,
         });
     }
 
@@ -70,9 +76,10 @@ export class CheckRoom extends BaseCommand {
 
         if (roomsToConsider.length === 0) {
             await ctx.interaction.editReply({
-                content: `The room code/number that you provided, **\`${roomToCheck}\`**, was not found on WebReg.`
-                    + " It's possible that the room that you specified isn't being used for this term, or that you"
-                    + " incorrectly typed the room code/number."
+                content:
+                    `The room code/number that you provided, **\`${roomToCheck}\`**, was not found on WebReg.` +
+                    " It's possible that the room that you specified isn't being used for this term, or that you" +
+                    " incorrectly typed the room code/number.",
             });
 
             return -1;
@@ -85,51 +92,54 @@ export class CheckRoom extends BaseCommand {
                 return resolve(roomsToConsider[0]);
             }
 
-            const possibleRooms: MessageSelectMenu[] = ArrayUtilities.breakArrayIntoSubsets(
-                roomsToConsider.map(x => {
-                    const [building,] = x.split(" ");
+            const possibleRooms: StringSelectMenuBuilder[] = ArrayUtilities.breakArrayIntoSubsets(
+                roomsToConsider.map((x) => {
+                    const [building] = x.split(" ");
                     const b = ViewAllClassrooms.BUILDING_CODES[building];
-                    return {room: x, name: b ? b : x};
+                    return { room: x, name: b ? b : x };
                 }),
                 25
             ).map((x, i) => {
-                const menu = new MessageSelectMenu();
-                const options: MessageSelectOptionData[] = [];
-                for (const {room, name} of x) {
+                const menu = new StringSelectMenuBuilder();
+                const options: SelectMenuComponentOptionData[] = [];
+                for (const { room, name } of x) {
                     options.push({
                         label: room,
                         value: room,
-                        description: name
+                        description: name,
                     });
                 }
 
-                return menu.addOptions(options)
-                    .setCustomId(`${uniqueId}_select_${i}`);
+                return menu.addOptions(options).setCustomId(`${uniqueId}_select_${i}`);
             });
 
-            const cancelButton = new MessageButton()
+            const cancelButton = new ButtonBuilder()
                 .setLabel("Cancel")
-                .setStyle("DANGER")
+                .setStyle(ButtonStyle.Danger)
                 .setEmoji(EmojiConstants.X_EMOJI)
                 .setCustomId(`${uniqueId}_CANCEL`);
 
             await ctx.interaction.editReply({
-                content: "There are multiple buildings with the same room code. Please select the correct room code." +
+                content:
+                    "There are multiple buildings with the same room code. Please select the correct room code." +
                     " If you don't see it, it's probably either because you typed the room code incorrectly or the" +
                     " room isn't in use for this term. If you want to cancel this process, press the **Cancel**" +
                     " button.",
                 components: AdvancedCollector.getActionRowsFromComponents([
                     ...possibleRooms,
-                    cancelButton
-                ])
+                    cancelButton,
+                ]),
             });
 
-            const interact = await AdvancedCollector.startInteractionEphemeralCollector({
-                acknowledgeImmediately: true,
-                duration: 60 * 1000,
-                targetAuthor: ctx.user,
-                targetChannel: ctx.channel
-            }, uniqueId);
+            const interact = await AdvancedCollector.startInteractionEphemeralCollector(
+                {
+                    acknowledgeImmediately: true,
+                    duration: 60 * 1000,
+                    targetAuthor: ctx.user,
+                    targetChannel: ctx.channel,
+                },
+                uniqueId
+            );
 
             if (!interact || !interact.isSelectMenu()) {
                 return resolve(null);
@@ -141,7 +151,7 @@ export class CheckRoom extends BaseCommand {
         if (!classroomToUse) {
             await ctx.interaction.editReply({
                 content: "This process has either been canceled or has timed out.",
-                components: []
+                components: [],
             });
 
             return -1;
@@ -152,25 +162,30 @@ export class CheckRoom extends BaseCommand {
         const currDateStr = getWebRegDateStr(currDate);
 
         // Create the fields for the display embed
-        const coursesToUse = allCourses.filter(x => x.location === classroomToUse);
-        const embeds: MessageEmbed[] = [];
+        const coursesToUse = allCourses.filter((x) => x.location === classroomToUse);
+        const embeds: EmbedBuilder[] = [];
         for (let i = 0; i < CheckRoom.LONG_DAY_OF_WEEK.length; i++) {
-            const coursesToConsider = coursesToUse
-                .filter(x => x.day.includes(currDateStr) || x.day.includes(ViewAllClassrooms.DAY_OF_WEEK[i]));
+            const coursesToConsider = coursesToUse.filter(
+                (x) =>
+                    x.day.includes(currDateStr) || x.day.includes(ViewAllClassrooms.DAY_OF_WEEK[i])
+            );
 
             // Categorize the courses into this collection based on timestamp. Also remove any duplicates.
             const coursesToPut = new Collection<string, IInternalCourseData[]>();
             const added: Set<string> = new Set<string>();
-            const keys: { startTime: number; keyVal: string; }[] = [];
+            const keys: { startTime: number; keyVal: string }[] = [];
             for (const c of coursesToConsider) {
                 const identifier = `${c.subjCourseId}-${c.meetingType}-${c.startTime}-${c.endTime}-${c.sectionFamily}`;
                 if (added.has(identifier)) {
                     continue;
                 }
 
-                const timestamp = `${getTimeStr(c.startHr, c.startMin)} - ${getTimeStr(c.endHr, c.endMin)}`;
+                const timestamp = `${getTimeStr(c.startHr, c.startMin)} - ${getTimeStr(
+                    c.endHr,
+                    c.endMin
+                )}`;
                 if (!coursesToPut.has(timestamp)) {
-                    keys.push({startTime: c.startTime, keyVal: timestamp});
+                    keys.push({ startTime: c.startTime, keyVal: timestamp });
                     coursesToPut.set(timestamp, []);
                 }
 
@@ -180,30 +195,34 @@ export class CheckRoom extends BaseCommand {
 
             // Sort by start time
             keys.sort((a, b) => a.startTime - b.startTime);
-            const embed = new MessageEmbed()
-                .setTitle(`**${classroomToUse}**: ${CheckRoom.LONG_DAY_OF_WEEK[i]} Schedule `
-                    + `(Term: ${MutableConstants.CACHED_DATA_TERM})`)
+            const embed = new EmbedBuilder()
+                .setTitle(
+                    `**${classroomToUse}**: ${CheckRoom.LONG_DAY_OF_WEEK[i]} Schedule ` +
+                        `(Term: ${MutableConstants.CACHED_DATA_TERM})`
+                )
                 .setDescription(`Current Time: **\`${TimeUtilities.getDateTime(currDate)}\`**`)
-                .setColor("GOLD");
+                .setColor("Gold");
 
             // keyVal is the timestamp that we'll put as the name of the field
-            for (const {keyVal} of keys) {
+            for (const { keyVal } of keys) {
                 const s = new StringBuilder();
                 for (const v of coursesToPut.get(keyVal)!) {
-                    s.append(`${v.subjCourseId} (${v.meetingType})`).appendLine()
-                        .append(`- ${v.instructor.join(" & ")}`).appendLine()
+                    s.append(`${v.subjCourseId} (${v.meetingType})`)
+                        .appendLine()
+                        .append(`- ${v.instructor.join(" & ")}`)
+                        .appendLine()
                         .append(`- Section ${v.sectionFamily}`)
                         .appendLine();
                 }
 
-                embed.addField(keyVal, StringUtil.codifyString(s.toString()));
+                embed.addFields({ name: keyVal, value: StringUtil.codifyString(s.toString()) });
             }
 
-            if (embed.fields.length === 0) {
-                embed.addField(
-                    GeneralConstants.ZERO_WIDTH_SPACE,
-                    "No sections are scheduled for today."
-                );
+            if (embed.data.fields?.length === 0) {
+                embed.addFields({
+                    name: GeneralConstants.ZERO_WIDTH_SPACE,
+                    value: "No sections are scheduled for today."
+                });
             }
 
             embeds.push(embed);
@@ -212,22 +231,22 @@ export class CheckRoom extends BaseCommand {
         const prevId = `${uniqueId}_PREV`;
         const stopId = `${uniqueId}_STOP`;
         const nextId = `${uniqueId}_NEXT`;
-        const buttons: MessageButton[] = [
-            new MessageButton()
+        const buttons: ButtonBuilder[] = [
+            new ButtonBuilder()
                 .setLabel("Previous")
-                .setStyle("PRIMARY")
+                .setStyle(ButtonStyle.Primary)
                 .setEmoji(EmojiConstants.LONG_LEFT_ARROW_EMOJI)
                 .setCustomId(prevId),
-            new MessageButton()
+            new ButtonBuilder()
                 .setLabel("Stop")
-                .setStyle("DANGER")
+                .setStyle(ButtonStyle.Danger)
                 .setEmoji(EmojiConstants.STOP_SIGN_EMOJI)
                 .setCustomId(stopId),
-            new MessageButton()
+            new ButtonBuilder()
                 .setLabel("Next")
-                .setStyle("PRIMARY")
+                .setStyle(ButtonStyle.Primary)
                 .setEmoji(EmojiConstants.LONG_RIGHT_TRIANGLE_EMOJI)
-                .setCustomId(nextId)
+                .setCustomId(nextId),
         ];
 
         let idx = currDate.getDay();
@@ -235,15 +254,18 @@ export class CheckRoom extends BaseCommand {
             await ctx.interaction.editReply({
                 content: null,
                 embeds: [embeds[idx]],
-                components: AdvancedCollector.getActionRowsFromComponents(buttons)
+                components: AdvancedCollector.getActionRowsFromComponents(buttons),
             });
 
-            const interact = await AdvancedCollector.startInteractionEphemeralCollector({
-                acknowledgeImmediately: true,
-                duration: 2 * 60 * 1000,
-                targetAuthor: ctx.user,
-                targetChannel: ctx.channel
-            }, uniqueId);
+            const interact = await AdvancedCollector.startInteractionEphemeralCollector(
+                {
+                    acknowledgeImmediately: true,
+                    duration: 2 * 60 * 1000,
+                    targetAuthor: ctx.user,
+                    targetChannel: ctx.channel,
+                },
+                uniqueId
+            );
 
             if (!interact) {
                 break;
@@ -272,7 +294,7 @@ export class CheckRoom extends BaseCommand {
         }
 
         await ctx.interaction.editReply({
-            components: []
+            components: [],
         });
 
         return 0;

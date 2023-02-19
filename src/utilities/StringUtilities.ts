@@ -1,4 +1,4 @@
-import {EmojiConstants} from "../constants/GeneralConstants";
+import { EmojiConstants } from "../constants/GeneralConstants";
 
 export namespace StringUtil {
     /**
@@ -21,8 +21,7 @@ export namespace StringUtil {
         const numChunks = Math.ceil(str.length / size);
         const chunks = new Array(numChunks);
 
-        for (let i = 0, o = 0; i < numChunks; ++i, o += size)
-            chunks[i] = str.substr(o, size);
+        for (let i = 0, o = 0; i < numChunks; ++i, o += size) chunks[i] = str.substr(o, size);
 
         return chunks;
     }
@@ -37,11 +36,16 @@ export namespace StringUtil {
     export function getEmojiProgressBar(numSquares: number, percent: number): string {
         let numPut = 0;
         let returnStr = "";
-        const compEmojiUsed = percent < 0.50
-            ? EmojiConstants.GREEN_SQUARE_EMOJI
-            : percent < 0.80
-                ? EmojiConstants.YELLOW_SQUARE_EMOJI
-                : EmojiConstants.RED_SQUARE_EMOJI;
+
+        let compEmojiUsed;
+        if (percent < 0.5) {
+            compEmojiUsed = EmojiConstants.GREEN_CHECK_EMOJI;
+        } else if (percent < 0.8) {
+            compEmojiUsed = EmojiConstants.YELLOW_SQUARE_EMOJI;
+        } else {
+            compEmojiUsed = EmojiConstants.RED_SQUARE_EMOJI;
+        }
+
         for (let i = 0; i < Math.min(Math.floor(percent * numSquares), numSquares); i++) {
             returnStr += compEmojiUsed;
             numPut++;

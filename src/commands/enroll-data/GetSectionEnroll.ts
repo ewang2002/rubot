@@ -1,10 +1,10 @@
-import {BaseCommand, ICommandContext} from "../BaseCommand";
-import {MutableConstants} from "../../constants/MutableConstants";
-import {ArrayUtilities} from "../../utilities/ArrayUtilities";
-import {Collection, MessageButton, MessageSelectMenu} from "discord.js";
-import {AdvancedCollector} from "../../utilities/AdvancedCollector";
-import {EmojiConstants} from "../../constants/GeneralConstants";
-import {PLOT_ARGUMENTS, parseCourseSubjCode} from "./helpers/Helper";
+import { BaseCommand, ICommandContext } from "../BaseCommand";
+import { MutableConstants } from "../../constants/MutableConstants";
+import { ArrayUtilities } from "../../utilities/ArrayUtilities";
+import { Collection, ButtonBuilder, StringSelectMenuBuilder, ButtonStyle } from "discord.js";
+import { AdvancedCollector } from "../../utilities/AdvancedCollector";
+import { EmojiConstants } from "../../constants/GeneralConstants";
+import { PLOT_ARGUMENTS, parseCourseSubjCode } from "./helpers/Helper";
 import { IPlotInfo } from "../../definitions";
 
 export class GetSectionEnroll extends BaseCommand {
@@ -13,13 +13,14 @@ export class GetSectionEnroll extends BaseCommand {
             cmdCode: "GET_SECTION_ENROLL",
             formalCommandName: "Get Section Enrollment Graph",
             botCommandName: "sectionplot",
-            description: "Gets the enrollment chart for a specific section for a particular course.",
+            description:
+                "Gets the enrollment chart for a specific section for a particular course.",
             generalPermissions: [],
             botPermissions: [],
             commandCooldown: 5 * 1000,
             argumentInfo: PLOT_ARGUMENTS,
             guildOnly: false,
-            botOwnerOnly: false
+            botOwnerOnly: false,
         });
     }
 
@@ -53,14 +54,14 @@ export class GetSectionEnroll extends BaseCommand {
         if (!arr) {
             await ctx.interaction.reply({
                 content: `The term, **\`${term}\`** (Display \`${display}\`), could not be found. Try again.`,
-                ephemeral: true
+                ephemeral: true,
             });
 
             return -1;
         }
 
         const parsedCode = parseCourseSubjCode(code);
-        const res = arr.filter(x => {
+        const res = arr.filter((x) => {
             if (!x.fileName.includes("_")) {
                 return false;
             }
@@ -69,34 +70,34 @@ export class GetSectionEnroll extends BaseCommand {
         });
         if (res.length === 0) {
             await ctx.interaction.reply({
-                content: `The course, **\`${parsedCode}\`**, (term **\`${term}\`** & display \`${display}\`) could not`
-                    + " be found. It's possible that there is only one section (e.g. section A) for this course.",
-                ephemeral: true
+                content:
+                    `The course, **\`${parsedCode}\`**, (term **\`${term}\`** & display \`${display}\`) could not` +
+                    " be found. It's possible that there is only one section (e.g. section A) for this course.",
+                ephemeral: true,
             });
 
             return -1;
         }
 
         const uIdentifier = Date.now() + "" + Math.random();
-        const selectMenus: MessageSelectMenu[] = [];
-        const subsets = ArrayUtilities.breakArrayIntoSubsets(
-            res,
-            25
-        );
+        const selectMenus: StringSelectMenuBuilder[] = [];
+        const subsets = ArrayUtilities.breakArrayIntoSubsets(res, 25);
         for (let i = 0; i < Math.min(4, subsets.length); i++) {
             selectMenus.push(
-                new MessageSelectMenu()
+                new StringSelectMenuBuilder()
                     .setCustomId(`${uIdentifier}_${i}`)
                     .setMinValues(1)
                     .setMaxValues(1)
                     .setPlaceholder("All Possible Sections " + (i + 1))
-                    .addOptions(subsets[i].map(x => {
-                        const rawOpt = x.fileName.split("_");
-                        return {
-                            label: `${rawOpt[0]} (Section ${rawOpt[1]})`,
-                            value: x.fileName
-                        };
-                    }))
+                    .addOptions(
+                        subsets[i].map((x) => {
+                            const rawOpt = x.fileName.split("_");
+                            return {
+                                label: `${rawOpt[0]} (Section ${rawOpt[1]})`,
+                                value: x.fileName,
+                            };
+                        })
+                    )
             );
         }
 
@@ -104,25 +105,28 @@ export class GetSectionEnroll extends BaseCommand {
             content: "Select the section that you want to see the enrollment graph for.",
             components: AdvancedCollector.getActionRowsFromComponents([
                 ...selectMenus,
-                new MessageButton()
+                new ButtonBuilder()
                     .setLabel("Cancel")
-                    .setStyle("DANGER")
+                    .setStyle(ButtonStyle.Danger)
                     .setCustomId(`${uIdentifier}_cancel`)
-                    .setEmoji(EmojiConstants.X_EMOJI)
-            ])
+                    .setEmoji(EmojiConstants.X_EMOJI),
+            ]),
         });
 
-        const selected = await AdvancedCollector.startInteractionEphemeralCollector({
-            targetAuthor: ctx.user,
-            acknowledgeImmediately: true,
-            targetChannel: ctx.channel,
-            duration: 30 * 1000
-        }, uIdentifier);
+        const selected = await AdvancedCollector.startInteractionEphemeralCollector(
+            {
+                targetAuthor: ctx.user,
+                acknowledgeImmediately: true,
+                targetChannel: ctx.channel,
+                duration: 30 * 1000,
+            },
+            uIdentifier
+        );
 
         if (!selected || !selected.isSelectMenu()) {
             await ctx.interaction.editReply({
                 content: "You either didn't respond in 30 seconds or you canceled this.",
-                components: []
+                components: [],
             });
 
             return -1;
@@ -130,15 +134,15 @@ export class GetSectionEnroll extends BaseCommand {
 
         await ctx.interaction.editReply({
             content: "Requesting plot. This may take a few seconds.",
-            components: []
+            components: [],
         });
 
-        const data = res.find(x => x.fileName === selected.values[0])!;
+        const data = res.find((x) => x.fileName === selected.values[0])!;
         const sec = data.fileName.split("_")[1];
         await ctx.interaction.editReply({
             files: [data.fileUrl],
             content: `Course **\`${parsedCode}\`**, Section **\`${sec}\`** (Term **\`${term}\`**, Display \`${display}\`)`,
-            components: []
+            components: [],
         });
 
         return 0;

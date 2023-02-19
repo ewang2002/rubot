@@ -1,9 +1,9 @@
 import { exec as execute } from "child_process";
-import { MessageAttachment } from "discord.js";
+import { AttachmentBuilder } from "discord.js";
 import { promisify } from "util";
 import { EmojiConstants } from "../../constants/GeneralConstants";
 import { StringUtil } from "../../utilities/StringUtilities";
-import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
+import { ArgumentType, BaseCommand, ICommandContext } from "../BaseCommand";
 
 export class Exec extends BaseCommand {
     public constructor() {
@@ -20,14 +20,13 @@ export class Exec extends BaseCommand {
                     displayName: "Command",
                     argName: "cmd",
                     type: ArgumentType.String,
-                    prettyType: "String",
                     desc: "The command to execute.",
                     required: true,
-                    example: ["ls -l"]
-                }
+                    example: ["ls -l"],
+                },
             ],
             guildOnly: false,
-            botOwnerOnly: true
+            botOwnerOnly: true,
         });
     }
 
@@ -35,7 +34,7 @@ export class Exec extends BaseCommand {
      * @inheritDoc
      */
     public async run(ctx: ICommandContext): Promise<number> {
-        let rawCmd = ctx.interaction.options.getString("cmd", true);
+        const rawCmd = ctx.interaction.options.getString("cmd", true);
         let cmdToRun = rawCmd;
         // Simple hack for now
         if (process.platform === "linux") {
@@ -45,33 +44,32 @@ export class Exec extends BaseCommand {
         const exec = promisify(execute);
         await ctx.interaction.deferReply();
         try {
-            const {stdout, stderr} = await exec(cmdToRun, {timeout: 60 * 1000});
+            const { stdout, stderr } = await exec(cmdToRun, { timeout: 60 * 1000 });
 
             await ctx.interaction.editReply({
                 files: [
-                    new MessageAttachment(Buffer.from(stdout, "utf8"), "stdout.txt"),
-                    new MessageAttachment(Buffer.from(stderr, "utf8"), "stderr.txt")
+                    new AttachmentBuilder(Buffer.from(stdout, "utf8"), { name: "stdout.txt" }),
+                    new AttachmentBuilder(Buffer.from(stderr, "utf8"), { name: "stderr.txt" }),
                 ],
-                content: `Command Executed: ${StringUtil.codifyString(rawCmd)}`
+                content: `Command Executed: ${StringUtil.codifyString(rawCmd)}`,
             });
         } catch (e) {
             if (typeof e === "object" && e && "stdout" in e && "stderr" in e) {
-                const {stdout, stderr} = e as {stdout: string; stderr: string;};
+                const { stdout, stderr } = e as { stdout: string; stderr: string };
                 await ctx.interaction.editReply({
                     files: [
-                        new MessageAttachment(Buffer.from(stdout, "utf8"), "stdout.txt"),
-                        new MessageAttachment(Buffer.from(stderr, "utf8"), "stderr.txt"),
-                        new MessageAttachment(Buffer.from(e + "", "utf8"), "error.txt")
+                        new AttachmentBuilder(Buffer.from(stdout, "utf8"), { name: "stdout.txt" }),
+                        new AttachmentBuilder(Buffer.from(stderr, "utf8"), { name: "stderr.txt" }),
+                        new AttachmentBuilder(Buffer.from(e + "", "utf8"), { name: "error.txt" }),
                     ],
-                    content: `${EmojiConstants.WARNING_EMOJI} Command Executed: ${StringUtil.codifyString(rawCmd)}`
+                    content: `${
+                        EmojiConstants.WARNING_EMOJI
+                    } Command Executed: ${StringUtil.codifyString(rawCmd)}`,
                 });
-            } 
-            else {
+            } else {
                 await ctx.interaction.editReply({
-                    files: [
-                        new MessageAttachment(Buffer.from(e + "", "utf8"), "error.txt")
-                    ],
-                    content: `Command Executed: ${StringUtil.codifyString(rawCmd)}`
+                    files: [new AttachmentBuilder(Buffer.from(e + "", "utf8"), { name: "error.txt" })],
+                    content: `Command Executed: ${StringUtil.codifyString(rawCmd)}`,
                 });
             }
         }

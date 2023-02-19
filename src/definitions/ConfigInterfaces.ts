@@ -29,10 +29,9 @@ export interface IConfiguration {
          */
         githubAuthToken: string;
 
-
         /**
          * The MTS token.
-         * 
+         *
          * @type {string}
          */
         mtsToken: string;
@@ -78,5 +77,5 @@ export interface IConfiguration {
          * @type {string}
          */
         webregCategory: string;
-    }
+    };
 }

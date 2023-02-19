@@ -1,12 +1,14 @@
+import { EmbedBuilder } from "discord.js";
 import {
     ColorResolvable,
     Guild,
     GuildMember,
     Message,
-    MessageActionRow,
+    ActionRowBuilder,
     MessageEditOptions,
-    MessageEmbed,
-    User
+    User,
+    ButtonBuilder,
+    SelectMenuBuilder,
 } from "discord.js";
 
 export namespace GeneralUtilities {
@@ -30,7 +32,9 @@ export namespace GeneralUtilities {
      * @param {() => void} func The function to run.
      * @return {Promise<T | null>} The result, if any. Null otherwise.
      */
-    export async function tryExecuteAsync<T = void>(func: () => Promise<T | null>): Promise<T | null> {
+    export async function tryExecuteAsync<T = void>(
+        func: () => Promise<T | null>
+    ): Promise<T | null> {
         try {
             return await func();
         } catch (e) {
@@ -43,19 +47,21 @@ export namespace GeneralUtilities {
      * @param {User | GuildMember | Guild} obj The user, guild member, or guild to show in the author section of the
      * embed.
      * @param {ColorResolvable} color The color of this embed.
-     * @returns {MessageEmbed} The new embed.
+     * @returns {EmbedBuilder} The new embed.
      */
-    export function generateBlankEmbed(obj: User | GuildMember | Guild,
-                                       color: ColorResolvable = "RANDOM"): MessageEmbed {
-        const embed = new MessageEmbed().setTimestamp().setColor(color);
+    export function generateBlankEmbed(
+        obj: User | GuildMember | Guild,
+        color: ColorResolvable = "Random"
+    ): EmbedBuilder {
+        const embed = new EmbedBuilder().setTimestamp().setColor(color);
         if (obj instanceof User)
-            embed.setAuthor({name: obj.tag, iconURL: obj.displayAvatarURL()});
+            embed.setAuthor({ name: obj.tag, iconURL: obj.displayAvatarURL() });
         else if (obj instanceof GuildMember)
-            embed.setAuthor({name: obj.displayName, iconURL: obj.user.displayAvatarURL()});
+            embed.setAuthor({ name: obj.displayName, iconURL: obj.user.displayAvatarURL() });
         else {
             const icon = obj.iconURL();
-            if (icon) embed.setAuthor({name: obj.name, iconURL: icon});
-            else embed.setAuthor({name: obj.name});
+            if (icon) embed.setAuthor({ name: obj.name, iconURL: icon });
+            else embed.setAuthor({ name: obj.name });
         }
 
         return embed;
@@ -64,26 +70,21 @@ export namespace GeneralUtilities {
     /**
      * Gets the `MessageOptions` object from a message.
      * @param {Message} msg The message.
-     * @param {MessageActionRow[]} components The components, if any.
+     * @param {ActionRowBuilder[]} components The components, if any.
      * @return {MessageOptions} The new `MessageOptions`.
      */
     export function getMessageOptionsFromMessage(
         msg: Message,
-        components?: MessageActionRow[]
-    ): MessageEditOptions & {split?: false | undefined} {
-        const obj: MessageEditOptions & {split?: false | undefined} = {
-            components: []
+        components?: ActionRowBuilder<ButtonBuilder | SelectMenuBuilder>[]
+    ): MessageEditOptions & { split?: false | undefined } {
+        const obj: MessageEditOptions & { split?: false | undefined } = {
+            components: [],
         };
-        if (msg.content)
-            obj.content = msg.content;
-        if (msg.embeds.length !== 0)
-            obj.embeds = msg.embeds;
-        if (msg.attachments.size !== 0)
-            obj.files = Array.from(msg.attachments.values());
-        if (msg.components.length === 0)
-            obj.components = components;
-        else
-            obj.components = msg.components;
+        if (msg.content) obj.content = msg.content;
+        if (msg.embeds.length !== 0) obj.embeds = msg.embeds;
+        if (msg.attachments.size !== 0) obj.files = Array.from(msg.attachments.values());
+        if (msg.components.length === 0) obj.components = components;
+        else obj.components = msg.components;
 
         return obj;
     }
@@ -94,7 +95,7 @@ export namespace GeneralUtilities {
      * @returns {Promise<void>}
      */
     export async function stopFor(time: number): Promise<void> {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             setTimeout(() => {
                 return resolve();
             }, time);

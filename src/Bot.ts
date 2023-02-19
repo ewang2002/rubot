@@ -1,10 +1,10 @@
-import {IConfiguration} from "./definitions";
-import {Client, Collection, Interaction, Message,} from "discord.js";
-import axios, {AxiosInstance} from "axios";
+import { IConfiguration } from "./definitions";
+import { Client, Collection, Interaction, Partials } from "discord.js";
+import axios, { AxiosInstance } from "axios";
 import * as Cmds from "./commands";
-import {onErrorEvent, onInteractionEvent, onReadyEvent} from "./events";
-import {REST} from "@discordjs/rest";
-import {RESTPostAPIApplicationCommandsJSONBody, Routes} from "discord-api-types/v10";
+import { onErrorEvent, onInteractionEvent, onReadyEvent } from "./events";
+import { REST } from "@discordjs/rest";
+import { RESTPostAPIApplicationCommandsJSONBody, Routes } from "discord-api-types/v10";
 
 export class Bot {
     /**
@@ -64,20 +64,14 @@ export class Bot {
         this.instanceStarted = new Date();
         this._config = config;
         this._bot = new Client({
-            partials: [
-                "MESSAGE",
-                "CHANNEL",
-                "GUILD_MEMBER",
-            ],
-            intents: [
-                "GUILDS",
-                "GUILD_MESSAGES"
-            ],
+            partials: [Partials.Message, Partials.Channel, Partials.GuildMember],
+            intents: ["Guilds", "GuildMessages"],
             ws: {
                 properties: {
-                    $browser: "Discord iOS"
-                }
-            }
+                    //$browser: "Discord iOS",
+                    browser: "Discord iOS",
+                },
+            },
         });
         Bot.Commands = new Collection<string, Cmds.BaseCommand[]>();
         Bot.Commands.set("General", [
@@ -88,15 +82,7 @@ export class Bot {
             new Cmds.LoginScriptStats(),
         ]);
 
-        Bot.Commands.set("Doomers Only", [
-            new Cmds.SetActivity(),
-            new Cmds.AddQuoteMessageLink(),
-            new Cmds.AddQuoteText(),
-            new Cmds.AddStrangerQuote(),
-            new Cmds.GetRandomQuote(),
-            new Cmds.BadnessLevel(),
-            new Cmds.Role()
-        ]);
+        Bot.Commands.set("Doomers Only", [new Cmds.SetActivity(), new Cmds.Role()]);
 
         Bot.Commands.set("Enrollment Data", [
             new Cmds.GetOverallEnroll(),
@@ -106,9 +92,8 @@ export class Bot {
             new Cmds.LookupCached(),
             new Cmds.LiveSeats(),
             new Cmds.GetPrereq(),
-            new Cmds.GetAllRemoteClasses(),
             new Cmds.LiveSeatLegends(),
-            new Cmds.SearchCourse()
+            new Cmds.SearchCourse(),
         ]);
 
         Bot.Commands.set("UCSD", [
@@ -116,21 +101,21 @@ export class Bot {
             new Cmds.CheckRoom(),
             new Cmds.Waitz(),
             new Cmds.CourseInfo(),
-            new Cmds.FreeRooms()
+            new Cmds.FreeRooms(),
         ]);
 
-        Bot.Commands.set("Owner Only", [
-            new Cmds.Exec()
-        ]);
+        Bot.Commands.set("Owner Only", [new Cmds.Exec()]);
 
         Bot.JsonCommands = [];
         Bot.NameCommands = new Collection<string, Cmds.BaseCommand>();
-        Bot.Rest = new REST({version: "9"}).setToken(config.token.botToken);
+        Bot.Rest = new REST({ version: "9" }).setToken(config.token.botToken);
         for (const command of Array.from(Bot.Commands.values()).flat()) {
             Bot.JsonCommands.push(command.data.toJSON() as RESTPostAPIApplicationCommandsJSONBody);
 
             if (command.data.name !== command.commandInfo.botCommandName)
-                throw new Error(`Names not matched: "${command.data.name}" - "${command.commandInfo.botCommandName}"`);
+                throw new Error(
+                    `Names not matched: "${command.data.name}" - "${command.commandInfo.botCommandName}"`
+                );
 
             if (Bot.NameCommands.has(command.data.name))
                 throw new Error(`Duplicate command "${command.data.name}" registered.`);
@@ -165,9 +150,9 @@ export class Bot {
             return;
         }
 
-        this._bot.on("ready",  () => onReadyEvent());
-        this._bot.on("interactionCreate",  (i: Interaction) => onInteractionEvent(i));
-        this._bot.on("error",  (e: Error) => onErrorEvent(e));
+        this._bot.on("ready", () => onReadyEvent());
+        this._bot.on("interactionCreate", (i: Interaction) => onInteractionEvent(i));
+        this._bot.on("error", (e: Error) => onErrorEvent(e));
         this._eventsIsStarted = true;
     }
 
@@ -182,17 +167,15 @@ export class Bot {
         await this._bot.login(this._config.token.botToken);
 
         if (this._config.isProd) {
-            await Bot.Rest.put(
-                Routes.applicationCommands(this._config.clientId),
-                {body: Bot.JsonCommands}
-            );
-        }
-        else {
+            await Bot.Rest.put(Routes.applicationCommands(this._config.clientId), {
+                body: Bot.JsonCommands,
+            });
+        } else {
             await Promise.all(
-                this._bot.guilds.cache.map(async guild => {
+                this._bot.guilds.cache.map(async (guild) => {
                     await Bot.Rest.put(
                         Routes.applicationGuildCommands(this._config.clientId, guild.id),
-                        {body: Bot.JsonCommands}
+                        { body: Bot.JsonCommands }
                     );
                 })
             );

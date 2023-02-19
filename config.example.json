@@ -1,15 +1,15 @@
 {
-  "isProd": true,
-  "token": {
-    "botToken": "",
-    "githubAuthToken": "",
-    "mtsToken": ""
-  },
-  "clientId": "",
-  "botOwnerIds": [],
-  "enrollDataOrgName": "",
-  "channels": {
-    "galleryChannel": "",
-    "webregCategory": ""
-  }
+    "isProd": true,
+    "token": {
+        "botToken": "",
+        "githubAuthToken": "",
+        "mtsToken": ""
+    },
+    "clientId": "",
+    "botOwnerIds": [],
+    "enrollDataOrgName": "",
+    "channels": {
+        "galleryChannel": "",
+        "webregCategory": ""
+    }
 }

@@ -1,5 +1,5 @@
 export interface IPlotInfo {
-    fileName: string; 
+    fileName: string;
     fileUrl: string;
 }
 
@@ -57,7 +57,6 @@ export interface ListedCourse {
     courseName: string;
     description: string;
 }
-
 
 export interface PrerequisiteInfo {
     course_prerequisites: CoursePrerequisite[][];

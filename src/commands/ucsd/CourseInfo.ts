@@ -1,25 +1,20 @@
-import {ArgumentType, BaseCommand, ICommandContext} from "../BaseCommand";
-import {MessageEmbed} from "discord.js";
-import {StringUtil} from "../../utilities/StringUtilities";
-import {ArrayUtilities} from "../../utilities/ArrayUtilities";
-import {parseCourseSubjCode} from "../enroll-data/helpers/Helper";
-import {MutableConstants} from "../../constants/MutableConstants";
+import { ArgumentType, BaseCommand, ICommandContext } from "../BaseCommand";
+import { EmbedBuilder } from "discord.js";
+import { StringUtil } from "../../utilities/StringUtilities";
+import { ArrayUtilities } from "../../utilities/ArrayUtilities";
+import { parseCourseSubjCode } from "../enroll-data/helpers/Helper";
+import { MutableConstants } from "../../constants/MutableConstants";
 
 export class CourseInfo extends BaseCommand {
-    private static TERMS_ALLOWED: string[] = [
-        18,
-        19,
-        20,
-        21,
-        22
-    ].map(x => x.toString());
+    private static TERMS_ALLOWED: string[] = [18, 19, 20, 21, 22].map((x) => x.toString());
 
     public constructor() {
         super({
             cmdCode: "COURSE_INFO",
             formalCommandName: "Course Information",
             botCommandName: "courseinfo",
-            description: "Gets information (e.g., description, prerequisites, etc.) about a course.",
+            description:
+                "Gets information (e.g., description, prerequisites, etc.) about a course.",
             generalPermissions: [],
             botPermissions: [],
             commandCooldown: 2 * 1000,
@@ -28,14 +23,13 @@ export class CourseInfo extends BaseCommand {
                     displayName: "Course & Subject Code",
                     argName: "course_subj_num",
                     type: ArgumentType.String,
-                    prettyType: "String",
                     desc: "The course subject code.",
                     required: true,
-                    example: ["CSE 100", "MATH100A"]
+                    example: ["CSE 100", "MATH100A"],
                 },
             ],
             guildOnly: false,
-            botOwnerOnly: false
+            botOwnerOnly: false,
         });
     }
 
@@ -48,73 +42,73 @@ export class CourseInfo extends BaseCommand {
         if (parsedCode.indexOf(" ") === -1) {
             await ctx.interaction.reply({
                 content: `Your input, \`${code}\`, is not correctly formatted. It should look like \`SUBJ XXX\`.`,
-                ephemeral: true
+                ephemeral: true,
             });
 
             return -1;
         }
 
         await ctx.interaction.deferReply();
-        const searchRes = MutableConstants.COURSE_LISTING.find(x => {
+        const searchRes = MutableConstants.COURSE_LISTING.find((x) => {
             const subjCourseSplit = x.subjCourse.split("/");
             // Case where we might have SUBJ1 NUM1/SUBJ2 NUM2/.../SUBJn NUMn
-            if (subjCourseSplit.find(z => z === parsedCode)) {
+            if (subjCourseSplit.find((z) => z === parsedCode)) {
                 return x;
             }
         });
 
         if (!searchRes) {
             await ctx.interaction.editReply({
-                content: `The course, \`${parsedCode}\`, was not found. Try again.`
+                content: `The course, \`${parsedCode}\`, was not found. Try again.`,
             });
 
             return -1;
         }
 
         const profMap: { [name: string]: Set<string> } = {};
-        MutableConstants.CAPE_DATA
-            .filter(x => CourseInfo.TERMS_ALLOWED.some(z => x.term.endsWith(z)) && x.subjectCourse === parsedCode)
-            .forEach(data => {
-                if (!(data.instructor in profMap)) {
-                    profMap[data.instructor] = new Set<string>();
-                }
+        MutableConstants.CAPE_DATA.filter(
+            (x) =>
+                CourseInfo.TERMS_ALLOWED.some((z) => x.term.endsWith(z)) &&
+                x.subjectCourse === parsedCode
+        ).forEach((data) => {
+            if (!(data.instructor in profMap)) {
+                profMap[data.instructor] = new Set<string>();
+            }
 
-                profMap[data.instructor].add(data.term);
-            });
+            profMap[data.instructor].add(data.term);
+        });
 
         // Although we have a list of terms for which they've been teaching the course, we aren't going to use it
         // right now
         const pastProfessors = ArrayUtilities.breakArrayIntoSubsets(
-            Object.entries(profMap)
-                .map(([profName,]) => profName
-                    .split(", ")
-                    .reverse()
-                    .join(" ")),
+            Object.entries(profMap).map(([profName]) => profName.split(", ").reverse().join(" ")),
             15
-        ).map(x => x.join(", "));
+        ).map((x) => x.join(", "));
 
         const historicalOfferings = ArrayUtilities.removeDuplicates(
-            MutableConstants.CAPE_DATA
-                .filter(x => x.subjectCourse === parsedCode)
-                .map(x => x.term)
+            MutableConstants.CAPE_DATA.filter((x) => x.subjectCourse === parsedCode).map(
+                (x) => x.term
+            )
         ).join(", ");
 
-        const embed = new MessageEmbed()
-            .setTitle(`${searchRes.subjCourse}: **${searchRes.courseName}** (${searchRes.units} Units)`)
-            .setColor("GREEN")
+        const embed = new EmbedBuilder()
+            .setTitle(
+                `${searchRes.subjCourse}: **${searchRes.courseName}** (${searchRes.units} Units)`
+            )
+            .setColor("Green")
             .setDescription(">>> " + searchRes.description)
-            .setFooter({text: `Listings Last Scraped: ${MutableConstants.LISTING_LAST_SCRAPED}`});
+            .setFooter({ text: `Listings Last Scraped: ${MutableConstants.LISTING_LAST_SCRAPED}` });
 
         if (historicalOfferings.length > 0) {
-            embed.addField("Past Terms Offered", StringUtil.codifyString(historicalOfferings));
+            embed.addFields({ name: "Past Terms Offered", value: StringUtil.codifyString(historicalOfferings) });
         }
 
         for (const field of pastProfessors) {
-            embed.addField("Past Professors (WI18+)", StringUtil.codifyString(field));
+            embed.addFields({ name: "Past Professors (WI18+)", value: StringUtil.codifyString(field) });
         }
 
         await ctx.interaction.editReply({
-            embeds: [embed]
+            embeds: [embed],
         });
 
         return 0;

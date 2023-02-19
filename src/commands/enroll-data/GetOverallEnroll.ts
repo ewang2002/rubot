@@ -1,7 +1,7 @@
-import {BaseCommand, ICommandContext} from "../BaseCommand";
-import {MutableConstants} from "../../constants/MutableConstants";
-import {PLOT_ARGUMENTS, parseCourseSubjCode} from "./helpers/Helper";
-import {Collection} from "discord.js";
+import { BaseCommand, ICommandContext } from "../BaseCommand";
+import { MutableConstants } from "../../constants/MutableConstants";
+import { PLOT_ARGUMENTS, parseCourseSubjCode } from "./helpers/Helper";
+import { Collection } from "discord.js";
 import { IPlotInfo } from "../../definitions";
 
 export class GetOverallEnroll extends BaseCommand {
@@ -16,7 +16,7 @@ export class GetOverallEnroll extends BaseCommand {
             commandCooldown: 5 * 1000,
             argumentInfo: PLOT_ARGUMENTS,
             guildOnly: false,
-            botOwnerOnly: false
+            botOwnerOnly: false,
         });
     }
 
@@ -50,19 +50,20 @@ export class GetOverallEnroll extends BaseCommand {
         if (!arr) {
             await ctx.interaction.reply({
                 content: `The term, **\`${term}\`** (Display \`${display}\`), could not be found. Try again.`,
-                ephemeral: true
+                ephemeral: true,
             });
 
             return -1;
         }
 
         const parsedCode = parseCourseSubjCode(code);
-        const res = arr.find(x => x.fileName === parsedCode);
+        const res = arr.find((x) => x.fileName === parsedCode);
         if (!res) {
             await ctx.interaction.reply({
-                content: `The course, **\`${parsedCode}\`**, (term **\`${term}\`** & display \`${display}\`) could not`
-                    + " be found. Try again.",
-                ephemeral: true
+                content:
+                    `The course, **\`${parsedCode}\`**, (term **\`${term}\`** & display \`${display}\`) could not` +
+                    " be found. Try again.",
+                ephemeral: true,
             });
 
             return -1;
@@ -71,7 +72,7 @@ export class GetOverallEnroll extends BaseCommand {
         await ctx.interaction.deferReply();
         await ctx.interaction.editReply({
             files: [res.fileUrl],
-            content: `Course **\`${parsedCode}\`** (Term **\`${term}\`**, Display \`${display}\`)`
+            content: `Course **\`${parsedCode}\`** (Term **\`${term}\`**, Display \`${display}\`)`,
         });
 
         return 0;

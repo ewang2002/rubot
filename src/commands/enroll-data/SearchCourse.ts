@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder, embedLength } from "discord.js";
 import { Bot } from "../../Bot";
 import { GeneralConstants } from "../../constants/GeneralConstants";
 import { MutableConstants } from "../../constants/MutableConstants";
@@ -18,7 +18,8 @@ export class SearchCourse extends BaseCommand {
             cmdCode: "SEARCH_COURSE",
             formalCommandName: "Search Course(s) on WebReg",
             botCommandName: "searchcourse",
-            description: "Searches for one or more courses, returning a list of courses that might meet the criteria.",
+            description:
+                "Searches for one or more courses, returning a list of courses that might meet the criteria.",
             generalPermissions: [],
             botPermissions: [],
             commandCooldown: 5 * 1000,
@@ -27,113 +28,101 @@ export class SearchCourse extends BaseCommand {
                     displayName: "Subjects",
                     argName: "subjects",
                     type: ArgumentType.String,
-                    prettyType: "String",
                     desc: "The subjects to check, separated by a comma.",
                     required: false,
-                    example: ["CSE", "CSE, COGS, MATH"]
+                    example: ["CSE", "CSE, COGS, MATH"],
                 },
                 {
                     displayName: "Courses",
                     argName: "courses",
                     type: ArgumentType.String,
-                    prettyType: "String",
                     desc: "The courses to check, separated by a comma",
                     required: false,
-                    example: ["CSE 101", "CSE, MATH, CSE 95, 108"]
+                    example: ["CSE 101", "CSE, MATH, CSE 95, 108"],
                 },
                 {
                     displayName: "Departments",
                     argName: "departments",
                     type: ArgumentType.String,
-                    prettyType: "String",
                     desc: "The departments to check, separated by a comma",
                     required: false,
-                    example: ["CSE", "CSE, MATH", "COGS"]
+                    example: ["CSE", "CSE, MATH", "COGS"],
                 },
                 {
                     displayName: "Instructor",
                     argName: "instructor",
                     type: ArgumentType.String,
-                    prettyType: "String",
                     desc: "The instructor to look for. Should be in form \"Last, First\"",
                     required: false,
-                    example: ["Kane", "Kedlaya", "Daniel", "Kane, Daniel"]
+                    example: ["Kane", "Kedlaya", "Daniel", "Kane, Daniel"],
                 },
                 {
                     displayName: "Title",
                     argName: "title",
                     type: ArgumentType.String,
-                    prettyType: "String",
                     desc: "The name of the course",
                     required: false,
-                    example: ["Differential", "Data Sci"]
+                    example: ["Differential", "Data Sci"],
                 },
                 {
                     displayName: "Only Show Open Courses",
                     argName: "only_show_open",
                     type: ArgumentType.Boolean,
-                    prettyType: "Boolean",
                     desc: "Whether to only show open courses. Defaults to false.",
                     required: false,
-                    example: ["false", "true"]
+                    example: ["false", "true"],
                 },
                 {
                     displayName: "Show Lower-Division Courses",
                     argName: "show_lower",
                     type: ArgumentType.Boolean,
-                    prettyType: "Boolean",
                     desc: "Whether to show lower-division courses. Defaults to true.",
                     required: false,
-                    example: ["false", "true"]
+                    example: ["false", "true"],
                 },
                 {
                     displayName: "Show Upper-Division Courses",
                     argName: "show_upper",
                     type: ArgumentType.Boolean,
-                    prettyType: "Boolean",
                     desc: "Whether to show upper-division courses. Defaults to true.",
                     required: false,
-                    example: ["false", "true"]
+                    example: ["false", "true"],
                 },
                 {
                     displayName: "Show Graduate-Division Courses",
                     argName: "show_graduate",
                     type: ArgumentType.Boolean,
-                    prettyType: "Boolean",
                     desc: "Whether to show graduate-division courses. Defaults to true.",
                     required: false,
-                    example: ["false", "true"]
+                    example: ["false", "true"],
                 },
                 {
                     displayName: "Start Time",
                     argName: "start_time",
                     type: ArgumentType.String,
-                    prettyType: "String",
                     desc: "The start time. This must be formatted using HH:MM AM/PM (e.g., 06:30 AM).",
                     required: false,
-                    example: ["02:30 PM", "05:40 AM"]
+                    example: ["02:30 PM", "05:40 AM"],
                 },
                 {
                     displayName: "End Time",
                     argName: "end_time",
                     type: ArgumentType.String,
-                    prettyType: "String",
                     desc: "The end time. This must be formatted using HH:MM AM/PM (e.g., 06:30 AM).",
                     required: false,
-                    example: ["02:30 PM", "05:40 AM"]
+                    example: ["02:30 PM", "05:40 AM"],
                 },
                 {
                     displayName: "Show Title",
                     argName: "showtitle",
                     type: ArgumentType.Boolean,
-                    prettyType: "Boolean",
                     desc: "Whether to show course titles. Defaults to true.",
                     required: false,
-                    example: ["false", "true"]
+                    example: ["false", "true"],
                 },
             ]),
             guildOnly: false,
-            botOwnerOnly: false
+            botOwnerOnly: false,
         });
     }
 
@@ -141,19 +130,29 @@ export class SearchCourse extends BaseCommand {
      * @inheritDoc
      */
     public async run(ctx: ICommandContext): Promise<number> {
-        const term = ctx.interaction.options.getString("term", false) ?? MutableConstants.DEFAULT_TERM;
-        const subjects = ctx.interaction.options.getString(
-            "subjects",
-            false
-        )?.toUpperCase().split(",").map(x => x.trim()).filter(x => x.length > 0) ?? [];
-        const courses = ctx.interaction.options.getString(
-            "courses",
-            false
-        )?.toUpperCase().split(",").map(x => x.trim()).filter(x => x.length > 0) ?? [];
-        const departments = ctx.interaction.options.getString(
-            "departments",
-            false
-        )?.toUpperCase().split(",").map(x => x.trim()).filter(x => x.length > 0) ?? [];
+        const term =
+            ctx.interaction.options.getString("term", false) ?? MutableConstants.DEFAULT_TERM;
+        const subjects =
+            ctx.interaction.options
+                .getString("subjects", false)
+                ?.toUpperCase()
+                .split(",")
+                .map((x) => x.trim())
+                .filter((x) => x.length > 0) ?? [];
+        const courses =
+            ctx.interaction.options
+                .getString("courses", false)
+                ?.toUpperCase()
+                .split(",")
+                .map((x) => x.trim())
+                .filter((x) => x.length > 0) ?? [];
+        const departments =
+            ctx.interaction.options
+                .getString("departments", false)
+                ?.toUpperCase()
+                .split(",")
+                .map((x) => x.trim())
+                .filter((x) => x.length > 0) ?? [];
         const instructor = ctx.interaction.options.getString("instructor", false) ?? null;
         const title = ctx.interaction.options.getString("title", false) ?? null;
         const onlyShowOpen = ctx.interaction.options.getBoolean("only_show_open", false) ?? false;
@@ -163,11 +162,14 @@ export class SearchCourse extends BaseCommand {
         const showGrad = ctx.interaction.options.getBoolean("show_graduate", false) ?? true;
 
         const timeParser = (rawTime: string): [number, number] | null => {
-            if (!rawTime.includes(":") || (!rawTime.toLowerCase().includes("am") && !rawTime.toLowerCase().includes("pm"))) {
+            if (
+                !rawTime.includes(":") ||
+                (!rawTime.toLowerCase().includes("am") && !rawTime.toLowerCase().includes("pm"))
+            ) {
                 return null;
             }
 
-            const [hr, min, ...rest] = rawTime.split(":").map(x => x.trim());
+            const [hr, min, ...rest] = rawTime.split(":").map((x) => x.trim());
             if (rest.length > 0) {
                 return null;
             }
@@ -198,31 +200,21 @@ export class SearchCourse extends BaseCommand {
             let isAm: boolean;
             if (amOrPm === "am") {
                 isAm = true;
-            } 
-            else if (amOrPm === "pm") {
+            } else if (amOrPm === "pm") {
                 isAm = false;
-            } 
-            else {
+            } else {
                 // must not be valid
                 return null;
             }
 
             let hrToReturn = 0;
             if (isAm) {
-                hrToReturn = parsedHr === 12
-                    ? 0
-                    : parsedHr;
-            } 
-            else {
-                hrToReturn = parsedHr === 12
-                    ? 12 
-                    : parsedHr + 12;
+                hrToReturn = parsedHr === 12 ? 0 : parsedHr;
+            } else {
+                hrToReturn = parsedHr === 12 ? 12 : parsedHr + 12;
             }
 
-            return [
-                hrToReturn,
-                parsedMin
-            ];
+            return [hrToReturn, parsedMin];
         };
 
         const startTime = timeParser(ctx.interaction.options.getString("start_time", false) ?? "");
@@ -237,7 +229,7 @@ export class SearchCourse extends BaseCommand {
             only_allow_open: onlyShowOpen,
             show_grad_div: showGrad,
             show_lower_div: showLower,
-            show_upper_div: showUpper
+            show_upper_div: showUpper,
         };
 
         if (title) {
@@ -261,44 +253,69 @@ export class SearchCourse extends BaseCommand {
         }
 
         // Create a string representing what was searched so the user knows what to expect.
-        const searchQuery = new StringBuilder("__**Your Search Query**__").appendLine()
-            .append(`- \`Subjects      :\` **\`[${data.subjects.join(", ")}]\`**`).appendLine()
-            .append(`- \`Courses       :\` **\`[${data.courses.join(", ")}]\`**`).appendLine()
-            .append(`- \`Departments   :\` **\`[${data.departments.join(", ")}]\`**`).appendLine()
-            .append(`- \`Only Show Open:\` **\`${data.only_allow_open ? "Yes" : "No"}\`**`).appendLine()
-            .append(`- \`Show Grad Only:\` **\`${data.show_grad_div ? "Yes" : "No"}\`**`).appendLine()
-            .append(`- \`Show UD Only  :\` **\`${data.show_upper_div ? "Yes" : "No"}\`**`).appendLine()
-            .append(`- \`Show LD Only  :\` **\`${data.show_lower_div ? "Yes" : "No"}\`**`).appendLine();
+        const searchQuery = new StringBuilder("__**Your Search Query**__")
+            .appendLine()
+            .append(`- \`Subjects      :\` **\`[${data.subjects.join(", ")}]\`**`)
+            .appendLine()
+            .append(`- \`Courses       :\` **\`[${data.courses.join(", ")}]\`**`)
+            .appendLine()
+            .append(`- \`Departments   :\` **\`[${data.departments.join(", ")}]\`**`)
+            .appendLine()
+            .append(`- \`Only Show Open:\` **\`${data.only_allow_open ? "Yes" : "No"}\`**`)
+            .appendLine()
+            .append(`- \`Show Grad Only:\` **\`${data.show_grad_div ? "Yes" : "No"}\`**`)
+            .appendLine()
+            .append(`- \`Show UD Only  :\` **\`${data.show_upper_div ? "Yes" : "No"}\`**`)
+            .appendLine()
+            .append(`- \`Show LD Only  :\` **\`${data.show_lower_div ? "Yes" : "No"}\`**`)
+            .appendLine();
 
         if (title) {
             searchQuery.append(`- \`Title         :\` **\`${data.title}\`**`).appendLine();
         }
-        
+
         if (instructor) {
             searchQuery.append(`- \`Instructor    :\` **\`${data.instructor}\`**`).appendLine();
         }
-        
+
         if (startTime) {
-            searchQuery.append(`- \`Start Time    :\` **\`${startTime.map(x => TimeUtilities.padTimeDigit(x)).join(":")}\`**`).appendLine();
-        }
-        
-        if (endTime) {
-            searchQuery.append(`- \`End Time      :\` **\`${endTime.map(x => TimeUtilities.padTimeDigit(x)).join(":")}\`**`).appendLine();
+            searchQuery
+                .append(
+                    `- \`Start Time    :\` **\`${startTime
+                        .map((x) => TimeUtilities.padTimeDigit(x))
+                        .join(":")}\`**`
+                )
+                .appendLine();
         }
 
-        const json: IWebRegSearchResult[] | { "error": string } | null = await GeneralUtilities.tryExecuteAsync(async () => {
-            // You will need the ucsd_webreg_rs app available
-            const d = await Bot.AxiosClient.get(`http://127.0.0.1:3000/webreg/search_courses/${term}`, {
-                data
+        if (endTime) {
+            searchQuery
+                .append(
+                    `- \`End Time      :\` **\`${endTime
+                        .map((x) => TimeUtilities.padTimeDigit(x))
+                        .join(":")}\`**`
+                )
+                .appendLine();
+        }
+
+        const json: IWebRegSearchResult[] | { error: string } | null =
+            await GeneralUtilities.tryExecuteAsync(async () => {
+                // You will need the ucsd_webreg_rs app available
+                const d = await Bot.AxiosClient.get(
+                    `http://127.0.0.1:3000/webreg/search_courses/${term}`,
+                    {
+                        data,
+                    }
+                );
+                return d.data;
             });
-            return d.data;
-        });
 
         if (!json || "error" in json) {
             await ctx.interaction.editReply({
-                content: "An error occurred when trying to request data from WebReg. It's possible that the wrapper" +
+                content:
+                    "An error occurred when trying to request data from WebReg. It's possible that the wrapper" +
                     " being used to interact with WebReg's API is down, or WebReg is in maintenance mode. Try again" +
-                    " later."
+                    " later.",
             });
 
             return -1;
@@ -306,19 +323,22 @@ export class SearchCourse extends BaseCommand {
 
         if (json.length === 0) {
             await ctx.interaction.editReply({
-                content: "No results found. Try again."
+                content: "No results found. Try again.",
             });
 
             return 0;
         }
 
-        const finalEmbed = new MessageEmbed({ color: "RANDOM" });
+        const finalEmbed = new EmbedBuilder().setColor("Random");
         finalEmbed.setTitle(`Search Results: **${term}**`);
         let footerText = `${json.length} results found.`;
 
         if (showTitles) {
             const allData = table(
-                json.map(w => [`${w.SUBJ_CODE.trim()} ${w.CRSE_CODE.trim()}`, w.CRSE_TITLE.trim()])
+                json.map((w) => [
+                    `${w.SUBJ_CODE.trim()} ${w.CRSE_CODE.trim()}`,
+                    w.CRSE_TITLE.trim(),
+                ])
             ).split("\n");
 
             const desc = new StringBuilder();
@@ -337,15 +357,18 @@ export class SearchCourse extends BaseCommand {
             finalEmbed.setDescription(StringUtil.codifyString(desc.toString()));
             let addedAll = true;
             for (const field of fields) {
-                if (finalEmbed.fields.length + 1 >= 25) {
+                if ((finalEmbed.data.fields?.length ?? 0) + 1 >= 25) {
                     addedAll = false;
                     break;
                 }
 
-                finalEmbed.addField(GeneralConstants.ZERO_WIDTH_SPACE, StringUtil.codifyString(field));
+                finalEmbed.addFields({
+                    name: GeneralConstants.ZERO_WIDTH_SPACE,
+                    value: StringUtil.codifyString(field)
+                });
 
-                if (finalEmbed.length + 25 >= 5950) {
-                    finalEmbed.fields.pop();
+                if (embedLength(finalEmbed.data) + 25 >= 5950) {
+                    finalEmbed.data.fields?.pop();
                     addedAll = false;
                     break;
                 }
@@ -354,19 +377,21 @@ export class SearchCourse extends BaseCommand {
             if (!addedAll) {
                 footerText += " Some fields were omitted.";
             }
-        }
-        else {
+        } else {
             const fields = ArrayUtilities.arrayToStringFields(
-                json.map(x => `${x.SUBJ_CODE.trim()} ${x.CRSE_CODE.trim()}, `),
+                json.map((x) => `${x.SUBJ_CODE.trim()} ${x.CRSE_CODE.trim()}, `),
                 (_, elem) => elem
             );
 
             let addedAll = true;
             for (const field of fields) {
-                finalEmbed.addField(GeneralConstants.ZERO_WIDTH_SPACE, field.substring(0, field.length - 2));
+                finalEmbed.addFields({
+                    name: GeneralConstants.ZERO_WIDTH_SPACE,
+                    value: field.substring(0, field.length - 2)
+                });
 
-                if (finalEmbed.length + 50 >= 5950) {
-                    finalEmbed.fields.pop();
+                if (embedLength(finalEmbed.data) + 50 >= 5950) {
+                    finalEmbed.data.fields?.pop();
                     addedAll = false;
                     break;
                 }
@@ -378,12 +403,12 @@ export class SearchCourse extends BaseCommand {
         }
 
         finalEmbed.setFooter({
-            text: footerText
+            text: footerText,
         });
-        
+
         await ctx.interaction.editReply({
             content: searchQuery.toString(),
-            embeds: [finalEmbed]
+            embeds: [finalEmbed],
         });
 
         return 0;
@@ -397,9 +422,9 @@ interface SearchQuery {
     instructor?: string;
     title?: string;
     only_allow_open: boolean;
-    show_lower_div: boolean,
-    show_upper_div: boolean,
-    show_grad_div: boolean,
+    show_lower_div: boolean;
+    show_upper_div: boolean;
+    show_grad_div: boolean;
     start_min?: number;
     start_hr?: number;
     end_min?: number;

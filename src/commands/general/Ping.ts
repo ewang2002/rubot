@@ -1,4 +1,4 @@
-import {BaseCommand, ICommandContext} from "../BaseCommand";
+import { BaseCommand, ICommandContext } from "../BaseCommand";
 
 export class Ping extends BaseCommand {
     public constructor() {
@@ -12,7 +12,7 @@ export class Ping extends BaseCommand {
             commandCooldown: 3 * 1000,
             argumentInfo: [],
             guildOnly: false,
-            botOwnerOnly: false
+            botOwnerOnly: false,
         });
     }
 
@@ -21,7 +21,7 @@ export class Ping extends BaseCommand {
      */
     public async run(ctx: ICommandContext): Promise<number> {
         await ctx.interaction.reply({
-            content: `**Latency:** \`${ctx.user.client.ws.ping}\`ms.`
+            content: `**Latency:** \`${ctx.user.client.ws.ping}\`ms.`,
         });
         return 0;
     }

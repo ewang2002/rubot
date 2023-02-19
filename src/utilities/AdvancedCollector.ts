@@ -1,17 +1,18 @@
+import { SelectMenuBuilder } from "@discordjs/builders";
 import {
-    BaseMessageComponent,
-    ButtonInteraction,
     GuildMember,
     Message,
-    MessageActionRow,
-    MessageButton,
+    ActionRowBuilder,
+    ButtonBuilder,
     MessageCollector,
     MessageComponentInteraction,
-    MessageOptions, MessageSelectMenu,
-    TextBasedChannel,
-    User
+    StringSelectMenuBuilder,
+    User,
+    ComponentType,
+    BaseMessageOptions,
 } from "discord.js";
-import {GeneralUtilities} from "./GeneralUtilities";
+import { ValidTextChannelType } from "../commands";
+import { GeneralUtilities } from "./GeneralUtilities";
 
 /**
  * A series of helpful collector functions.
@@ -20,7 +21,7 @@ export namespace AdvancedCollector {
     const MAX_ACTION_ROWS: number = 5;
 
     interface ICollectorBaseArgument {
-        readonly targetChannel: TextBasedChannel;
+        readonly targetChannel: ValidTextChannelType;
         readonly targetAuthor: User | GuildMember;
         readonly duration: number;
 
@@ -28,7 +29,7 @@ export namespace AdvancedCollector {
          * The message options. If defined, this will send a message. If not defined, you must have `oldMsg` set to a
          * message. If you plan on using any interactions, provide them through here.
          */
-        msgOptions?: MessageOptions;
+        msgOptions?: BaseMessageOptions;
 
         /**
          * If defined, uses an old message instead of sending a new one.
@@ -83,7 +84,7 @@ export namespace AdvancedCollector {
      */
     export async function startNormalCollector<T>(
         options: IMessageCollectorArgument,
-        func: (collectedMsg: Message, ...otherArgs: any[]) => (T | undefined) | (Promise<T | undefined>)
+        func: (collectedMsg: Message) => (T | undefined) | Promise<T | undefined>
     ): Promise<T | null> {
         return new Promise(async (resolve) => {
             const cancelFlag = options.cancelFlag;
@@ -91,17 +92,16 @@ export namespace AdvancedCollector {
 
             const msgCollector = new MessageCollector(options.targetChannel, {
                 filter: (m: Message) => m.author.id === options.targetAuthor.id,
-                time: options.duration
+                time: options.duration,
             });
 
             msgCollector.on("collect", async (c: Message) => {
-                if (options.deleteResponseMessage)
-                    await c.delete().catch();
+                if (options.deleteResponseMessage) await c.delete().catch();
 
                 if (cancelFlag && cancelFlag.toLowerCase() === c.content.toLowerCase())
                     return resolve(null);
 
-                const info: T | null = await new Promise(async res => {
+                const info: T | null = await new Promise(async (res) => {
                     const attempt = await func(c);
                     return res(attempt ? attempt : null);
                 });
@@ -131,22 +131,25 @@ export namespace AdvancedCollector {
      * @returns {Promise<MessageComponentInteraction | null>} The interaction, if available. `null` otherwise.
      */
     export async function startInteractionEphemeralCollector(
-        options: Omit<IInteractionBase, "msgOptions"
+        options: Omit<
+            IInteractionBase,
+            | "msgOptions"
             | "oldMsg"
             | "deleteBaseMsgAfterComplete"
-            | "clearInteractionsAfterComplete">,
+            | "clearInteractionsAfterComplete"
+        >,
         uniqueIdentifier: string
     ): Promise<MessageComponentInteraction | null> {
         let returnInteraction: MessageComponentInteraction | null = null;
         try {
             returnInteraction = await options.targetChannel.awaitMessageComponent({
-                filter: i => i.user.id === options.targetAuthor.id
-                    && i.customId.startsWith(uniqueIdentifier),
-                time: options.duration
+                filter: (i) =>
+                    i.user.id === options.targetAuthor.id &&
+                    i.customId.startsWith(uniqueIdentifier),
+                time: options.duration,
             });
 
-            if (options.acknowledgeImmediately)
-                await returnInteraction.deferUpdate();
+            if (options.acknowledgeImmediately) await returnInteraction.deferUpdate();
         } catch (e) {
             // Ignore the error; this is because the collector timed out.
         }
@@ -169,19 +172,19 @@ export namespace AdvancedCollector {
         let returnInteraction: MessageComponentInteraction | null = null;
         try {
             returnInteraction = await botMsg.awaitMessageComponent({
-                filter: i => i.user.id === options.targetAuthor.id,
-                time: options.duration
+                filter: (i) => i.user.id === options.targetAuthor.id,
+                time: options.duration,
             });
 
-            if (options.acknowledgeImmediately)
-                await returnInteraction.deferUpdate();
+            if (options.acknowledgeImmediately) await returnInteraction.deferUpdate();
         } catch (e) {
             // Ignore the error; this is because the collector timed out.
         } finally {
-            if (options.deleteBaseMsgAfterComplete)
-                await botMsg.delete().catch();
+            if (options.deleteBaseMsgAfterComplete) await botMsg.delete().catch();
             else if (options.clearInteractionsAfterComplete && botMsg.editable)
-                await botMsg.edit(GeneralUtilities.getMessageOptionsFromMessage(botMsg, [])).catch();
+                await botMsg
+                    .edit(GeneralUtilities.getMessageOptionsFromMessage(botMsg, []))
+                    .catch();
         }
 
         return returnInteraction;
@@ -196,7 +199,7 @@ export namespace AdvancedCollector {
      */
     export async function startDoubleCollector<T>(
         options: IInteractionBase & IMessageCollectorArgument,
-        func: (collectedMsg: Message, ...otherArgs: any[]) => (T | undefined) | (Promise<T | undefined>)
+        func: (collectedMsg: Message) => (T | undefined) | Promise<T | undefined>
     ): Promise<T | MessageComponentInteraction | null> {
         const cancelFlag = options.cancelFlag;
         const botMsg = await initSendCollectorMessage(options);
@@ -205,13 +208,13 @@ export namespace AdvancedCollector {
         return new Promise(async (resolve) => {
             const msgCollector = new MessageCollector(options.targetChannel, {
                 time: options.duration,
-                filter: (m: Message) => m.author.id === options.targetAuthor.id
+                filter: (m: Message) => m.author.id === options.targetAuthor.id,
             });
 
             const interactionCollector = botMsg.createMessageComponentCollector({
-                filter: i => i.user.id === options.targetAuthor.id,
+                filter: (i) => i.user.id === options.targetAuthor.id,
                 max: 1,
-                time: options.duration
+                time: options.duration,
             });
 
             msgCollector.on("collect", async (c: Message) => {
@@ -226,7 +229,7 @@ export namespace AdvancedCollector {
                     return resolve(null);
                 }
 
-                const info: T | null = await new Promise(async res => {
+                const info: T | null = await new Promise(async (res) => {
                     const attempt = await func(c);
                     return res(attempt ?? null);
                 });
@@ -237,9 +240,8 @@ export namespace AdvancedCollector {
                 msgCollector.stop();
             });
 
-            interactionCollector.on("collect", async i => {
-                if (options.acknowledgeImmediately)
-                    await i.deferUpdate();
+            interactionCollector.on("collect", async (i) => {
+                if (options.acknowledgeImmediately) await i.deferUpdate();
                 resolve(i);
                 msgCollector.stop();
             });
@@ -267,7 +269,6 @@ export namespace AdvancedCollector {
         });
     }
 
-
     /**
      * Sends the initial collector message.
      * @param {IInteractionBase} options The options.
@@ -282,8 +283,7 @@ export namespace AdvancedCollector {
             botMsg = await GeneralUtilities.tryExecuteAsync<Message>(async () => {
                 return await options.targetChannel.send(options.msgOptions!);
             });
-        }
-        else if (options.oldMsg) {
+        } else if (options.oldMsg) {
             botMsg = options.oldMsg;
         }
 
@@ -291,23 +291,25 @@ export namespace AdvancedCollector {
     }
 
     /**
-     * Gets an array of `MessageActionRow` from an array of components.
+     * Gets an array of `ActionRowBuilder` from an array of components.
      * @param {BaseMessageComponent[]} options The components.
-     * @return {MessageActionRow[]} The array of `MessageActionRow`.
+     * @return {ActionRowBuilder[]} The array of `ActionRowBuilder`.
      */
-    export function getActionRowsFromComponents(options: BaseMessageComponent[]): MessageActionRow[] {
-        const rows: MessageActionRow[] = [];
+    export function getActionRowsFromComponents(
+        options: (ButtonBuilder | SelectMenuBuilder)[]
+    ): ActionRowBuilder<ButtonBuilder | SelectMenuBuilder>[] {
+        const rows: ActionRowBuilder<ButtonBuilder | SelectMenuBuilder>[] = [];
         let rowsUsed = 0;
 
-        const selectMenus = options.filter(x => x.type === "SELECT_MENU") as MessageSelectMenu[];
+        const selectMenus = options.filter((x) => x.data.type === ComponentType.StringSelect) as StringSelectMenuBuilder[];
         for (let i = 0; i < Math.min(selectMenus.length, MAX_ACTION_ROWS); i++) {
-            rows.push(new MessageActionRow().addComponents(selectMenus[i]));
+            rows.push(new ActionRowBuilder<SelectMenuBuilder>().addComponents(selectMenus[i]));
             rowsUsed++;
         }
 
-        const buttons = options.filter(x => x.type === "BUTTON") as MessageButton[];
+        const buttons = options.filter((x) => x.data.type === ComponentType.Button) as ButtonBuilder[];
         for (let i = 0; i < Math.min(buttons.length, 5 * (MAX_ACTION_ROWS - rowsUsed)); i += 5) {
-            const actionRow = new MessageActionRow();
+            const actionRow = new ActionRowBuilder<ButtonBuilder>();
             for (let j = 0; j < 5 && i + j < buttons.length; j++)
                 actionRow.addComponents(buttons[i + j]);
 

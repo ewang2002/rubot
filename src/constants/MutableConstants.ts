@@ -4,7 +4,6 @@ import { createReadStream } from "fs";
 import { createInterface } from "readline";
 import * as path from "path";
 import { TimeUtilities } from "../utilities/TimeUtilities";
-import { AxiosRequestConfig } from "axios";
 import { Bot } from "../Bot";
 import { GeneralUtilities } from "../utilities/GeneralUtilities";
 
@@ -17,13 +16,13 @@ export namespace MutableConstants {
         termName: string;
         paddedName: string;
     }[] = [
-            // Default term should be the first one.
-            {
-                term: "WI23",
-                termName: "Winter 2023",
-                paddedName: "Winter 2023            "
-            }
-        ];
+        // Default term should be the first one.
+        {
+            term: "SP23",
+            termName: "Spring 2023",
+            paddedName: "Spring 2023            ",
+        },
+    ];
 
     export const DEFAULT_TERM: string = MutableConstants.WEBREG_TERMS[0].term;
 
@@ -50,13 +49,13 @@ export namespace MutableConstants {
             overall: {
                 reg: true,
                 fsp: true,
-                wide: true
+                wide: true,
             },
             section: {
                 reg: true,
                 fsp: true,
-                wide: true
-            }
+                wide: true,
+            },
         },
         {
             term: "SP22D",
@@ -65,13 +64,13 @@ export namespace MutableConstants {
             overall: {
                 reg: true,
                 fsp: false,
-                wide: false
+                wide: false,
             },
             section: {
                 reg: true,
                 fsp: false,
-                wide: false
-            }
+                wide: false,
+            },
         },
         {
             term: "S122",
@@ -80,13 +79,13 @@ export namespace MutableConstants {
             overall: {
                 reg: true,
                 fsp: false,
-                wide: false
+                wide: false,
             },
             section: {
                 reg: true,
                 fsp: false,
-                wide: false
-            }
+                wide: false,
+            },
         },
         {
             term: "S122D",
@@ -95,13 +94,13 @@ export namespace MutableConstants {
             overall: {
                 reg: true,
                 fsp: false,
-                wide: false
+                wide: false,
             },
             section: {
                 reg: true,
                 fsp: false,
-                wide: false
-            }
+                wide: false,
+            },
         },
         {
             term: "S222",
@@ -110,13 +109,13 @@ export namespace MutableConstants {
             overall: {
                 reg: true,
                 fsp: false,
-                wide: false
+                wide: false,
             },
             section: {
                 reg: true,
                 fsp: false,
-                wide: false
-            }
+                wide: false,
+            },
         },
         {
             term: "S222D",
@@ -125,13 +124,13 @@ export namespace MutableConstants {
             overall: {
                 reg: true,
                 fsp: false,
-                wide: false
+                wide: false,
             },
             section: {
                 reg: true,
                 fsp: false,
-                wide: false
-            }
+                wide: false,
+            },
         },
         {
             term: "FA22G",
@@ -140,13 +139,13 @@ export namespace MutableConstants {
             overall: {
                 reg: true,
                 fsp: false,
-                wide: true
+                wide: true,
             },
             section: {
                 reg: true,
                 fsp: false,
-                wide: true
-            }
+                wide: true,
+            },
         },
         {
             term: "FA22",
@@ -155,13 +154,13 @@ export namespace MutableConstants {
             overall: {
                 reg: true,
                 fsp: false,
-                wide: true
+                wide: true,
             },
             section: {
                 reg: true,
                 fsp: false,
-                wide: true
-            }
+                wide: true,
+            },
         },
         {
             term: "WI23G",
@@ -170,13 +169,13 @@ export namespace MutableConstants {
             overall: {
                 reg: true,
                 fsp: false,
-                wide: true
+                wide: true,
             },
             section: {
                 reg: true,
                 fsp: false,
-                wide: true
-            }
+                wide: true,
+            },
         },
         {
             term: "WI23",
@@ -185,22 +184,40 @@ export namespace MutableConstants {
             overall: {
                 reg: true,
                 fsp: false,
-                wide: true
+                wide: true,
             },
             section: {
                 reg: true,
                 fsp: false,
-                wide: true
-            }
-        }
+                wide: true,
+            },
+        },
     ].reverse();
 
-    export const OVERALL_ENROLL: Collection<string, IPlotInfo[]> = new Collection<string, IPlotInfo[]>();
-    export const OVERALL_ENROLL_WIDE: Collection<string, IPlotInfo[]> = new Collection<string, IPlotInfo[]>();
-    export const OVERALL_ENROLL_FSP: Collection<string, IPlotInfo[]> = new Collection<string, IPlotInfo[]>();
-    export const SECTION_ENROLL: Collection<string, IPlotInfo[]> = new Collection<string, IPlotInfo[]>();
-    export const SECTION_ENROLL_WIDE: Collection<string, IPlotInfo[]> = new Collection<string, IPlotInfo[]>();
-    export const SECTION_ENROLL_FSP: Collection<string, IPlotInfo[]> = new Collection<string, IPlotInfo[]>();
+    export const OVERALL_ENROLL: Collection<string, IPlotInfo[]> = new Collection<
+        string,
+        IPlotInfo[]
+    >();
+    export const OVERALL_ENROLL_WIDE: Collection<string, IPlotInfo[]> = new Collection<
+        string,
+        IPlotInfo[]
+    >();
+    export const OVERALL_ENROLL_FSP: Collection<string, IPlotInfo[]> = new Collection<
+        string,
+        IPlotInfo[]
+    >();
+    export const SECTION_ENROLL: Collection<string, IPlotInfo[]> = new Collection<
+        string,
+        IPlotInfo[]
+    >();
+    export const SECTION_ENROLL_WIDE: Collection<string, IPlotInfo[]> = new Collection<
+        string,
+        IPlotInfo[]
+    >();
+    export const SECTION_ENROLL_FSP: Collection<string, IPlotInfo[]> = new Collection<
+        string,
+        IPlotInfo[]
+    >();
     export const CAPE_DATA: ICapeRow[] = [];
     export const SECTION_TERM_DATA: WebRegSection[] = [];
     export const COURSE_LISTING: ListedCourse[] = [];
@@ -217,11 +234,12 @@ export namespace MutableConstants {
     export function initSectionData(term: string, pathToFile?: string): void {
         CACHED_DATA_TERM = term;
 
-        const pathToRead = pathToFile ?? path.join(__dirname, "..", "..", `${CACHED_DATA_TERM}.tsv`);
+        const pathToRead =
+            pathToFile ?? path.join(__dirname, "..", "..", `${CACHED_DATA_TERM}.tsv`);
         const readStream = createReadStream(pathToRead);
         const rl = createInterface(readStream);
         let firstLinePassed = false;
-        rl.on("line", line => {
+        rl.on("line", (line) => {
             if (!firstLinePassed) {
                 firstLinePassed = true;
                 return;
@@ -229,84 +247,70 @@ export namespace MutableConstants {
 
             const rawData = line.split("\t");
             if (rawData.length !== 6) {
-                console.error(`Bad line read for section data; got ${rawData.length} but expected 5.`);
+                console.error(
+                    `Bad line read for section data; got ${rawData.length} but expected 5.`
+                );
                 return;
             }
 
-            const [
-                subjCourseId,
-                sectionCode,
-                sectionId,
-                instructor,
-                totalSeats,
-                meetings
-            ] = rawData;
+            const [subjCourseId, sectionCode, sectionId, instructor, totalSeats, meetings] =
+                rawData;
 
-            const allMeetings: (Meeting | null)[] = meetings.split("|")
-                .map(x => {
-                    const meeting = x.split(",");
-                    if (meeting.length !== 4) {
-                        console.error(`Bad meeting read - ${sectionId}`);
-                        return null;
-                    }
+            const allMeetings: (Meeting | null)[] = meetings.split("|").map((x) => {
+                const meeting = x.split(",");
+                if (meeting.length !== 4) {
+                    console.error(`Bad meeting read - ${sectionId}`);
+                    return null;
+                }
 
-                    const [
-                        meetingType,
-                        rawMeetingDays,
-                        rawTimes,
-                        rawLocation
-                    ] = meeting;
+                const [meetingType, rawMeetingDays, rawTimes, rawLocation] = meeting;
 
-                    // Parse meeting days first.
-                    let meetingDays: string[] | string;
-                    if (rawMeetingDays.includes("-")) {
-                        meetingDays = rawMeetingDays;
-                    }
-                    else {
-                        meetingDays = TimeUtilities.getAllDays(rawMeetingDays);
-                    }
+                // Parse meeting days first.
+                let meetingDays: string[] | string;
+                if (rawMeetingDays.includes("-")) {
+                    meetingDays = rawMeetingDays;
+                } else {
+                    meetingDays = TimeUtilities.getAllDays(rawMeetingDays);
+                }
 
-                    const times = rawTimes.split(/:| - /).map(x => Number.parseInt(x, 10));
-                    if (times.length !== 4) {
-                        console.error(`Bad meeting time read - ${sectionId}`);
-                        return null;
-                    }
+                const times = rawTimes.split(/:| - /).map((x) => Number.parseInt(x, 10));
+                if (times.length !== 4) {
+                    console.error(`Bad meeting time read - ${sectionId}`);
+                    return null;
+                }
 
-                    const [startHr, startMin, endHr, endMin] = times;
-                    const splitLocation = rawLocation.split(" ");
-                    let building;
-                    let room = "";
-                    if (splitLocation.length === 2) {
-                        building = splitLocation[0];
-                        room = splitLocation[1];
-                    }
-                    else if (splitLocation.length < 2) {
-                        building = splitLocation[0];
-                        console.warn(`Weird location - ${sectionId}`);
-                    }
-                    else {
-                        building = splitLocation.shift()!;
-                        room = splitLocation.join(" ");
-                    }
+                const [startHr, startMin, endHr, endMin] = times;
+                const splitLocation = rawLocation.split(" ");
+                let building;
+                let room = "";
+                if (splitLocation.length === 2) {
+                    building = splitLocation[0];
+                    room = splitLocation[1];
+                } else if (splitLocation.length < 2) {
+                    building = splitLocation[0];
+                    console.warn(`Weird location - ${sectionId}`);
+                } else {
+                    building = splitLocation.shift()!;
+                    room = splitLocation.join(" ");
+                }
 
-
-                    return {
-                        meeting_type: meetingType,
-                        meeting_days: meetingDays,
-                        start_hr: startHr,
-                        start_min: startMin,
-                        end_hr: endHr,
-                        end_min: endMin,
-                        building,
-                        room
-                    };
-                });
+                return {
+                    meeting_type: meetingType,
+                    meeting_days: meetingDays,
+                    start_hr: startHr,
+                    start_min: startMin,
+                    end_hr: endHr,
+                    end_min: endMin,
+                    building,
+                    room,
+                };
+            });
 
             SECTION_TERM_DATA.push({
                 available_seats: -1,
                 enrolled_ct: -1,
                 all_instructors: instructor.split(" & "),
-                meetings: allMeetings.filter(x => x !== null) as Meeting[],
+                meetings: allMeetings.filter((x) => x !== null) as Meeting[],
                 needs_waitlist: false,
                 section_code: sectionCode,
                 section_id: sectionId,
@@ -332,7 +336,7 @@ export namespace MutableConstants {
         const rl = createInterface(readStream);
 
         let firstLinePassed = false;
-        rl.on("line", line => {
+        rl.on("line", (line) => {
             if (!firstLinePassed) {
                 firstLinePassed = true;
                 return;
@@ -340,7 +344,9 @@ export namespace MutableConstants {
 
             const rawData = line.split("\t");
             if (rawData.length !== 11) {
-                console.error(`Bad line read for CAPE data; got ${rawData.length} but expected 11.`)
+                console.error(
+                    `Bad line read for CAPE data; got ${rawData.length} but expected 11.`
+                );
                 return;
             }
 
@@ -355,7 +361,7 @@ export namespace MutableConstants {
                 rcmdInstr,
                 studyHrWk,
                 avgGradeExp,
-                avgGradeRec
+                avgGradeRec,
             ] = rawData;
 
             CAPE_DATA.push({
@@ -369,7 +375,7 @@ export namespace MutableConstants {
                 recommendedInstructor: Number.parseFloat(rcmdInstr),
                 studyHourWeek: Number.parseFloat(studyHrWk),
                 averageGradeExp: Number.parseFloat(avgGradeExp),
-                averageGradeRec: Number.parseFloat(avgGradeRec)
+                averageGradeRec: Number.parseFloat(avgGradeRec),
             });
         });
 
@@ -388,7 +394,7 @@ export namespace MutableConstants {
         const rl = createInterface(readStream);
 
         let firstLinePassed = false;
-        rl.on("line", line => {
+        rl.on("line", (line) => {
             if (!firstLinePassed) {
                 firstLinePassed = true;
                 return;
@@ -396,24 +402,20 @@ export namespace MutableConstants {
 
             const rawData = line.split("\t");
             if (rawData.length !== 5) {
-                console.error(`Bad line read for course listing data; got ${rawData.length} but expected 5.`)
+                console.error(
+                    `Bad line read for course listing data; got ${rawData.length} but expected 5.`
+                );
                 return;
             }
 
-            const [
-                department,
-                subjCourse,
-                courseName,
-                units,
-                description
-            ] = rawData;
+            const [department, subjCourse, courseName, units, description] = rawData;
 
             COURSE_LISTING.push({
                 department,
                 courseName,
                 subjCourse,
                 units,
-                description
+                description,
             });
         });
 
@@ -426,22 +428,20 @@ export namespace MutableConstants {
      * Adds the enrollment graph data to the above collections.
      */
     export async function initEnrollmentData(): Promise<void> {
-        const requestHeader: AxiosRequestConfig = {
-            headers: {
-                "User-Agent": "rubot (ewang2002)"
-            }
-        };
-
         for await (const { term, repoName, ...o } of GH_TERMS) {
             const allOverallTerms = await GeneralUtilities.tryExecuteAsync<string[]>(async () => {
                 const req = await Bot.AxiosClient.get<Buffer>(
                     `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/all_courses.txt`,
                     {
-                        responseType: "arraybuffer"
+                        responseType: "arraybuffer",
                     }
                 );
 
-                return req.data.toString("utf16le").split("\n").map(x => x.trim()).filter(x => x.length > 0);
+                return req.data
+                    .toString("utf16le")
+                    .split("\n")
+                    .map((x) => x.trim())
+                    .filter((x) => x.length > 0);
             });
 
             if (allOverallTerms) {
@@ -450,11 +450,10 @@ export namespace MutableConstants {
                     for (const course of allOverallTerms) {
                         OVERALL_ENROLL.get(term)!.push({
                             fileName: course,
-                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_overall/${course}.png`
+                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_overall/${course}.png`,
                         });
                     }
                 }
-
 
                 if (o.overall.fsp) {
                     // Overall (first/second pass)
@@ -462,11 +461,10 @@ export namespace MutableConstants {
                     for (const course of allOverallTerms) {
                         OVERALL_ENROLL_FSP.get(term)!.push({
                             fileName: course,
-                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_overall_fsp/${course}.png`
+                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_overall_fsp/${course}.png`,
                         });
                     }
                 }
-
 
                 if (o.overall.wide) {
                     // Overall (wide)
@@ -474,7 +472,7 @@ export namespace MutableConstants {
                     for (const course of allOverallTerms) {
                         OVERALL_ENROLL_WIDE.get(term)!.push({
                             fileName: course,
-                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_overall_wide/${course}.png`
+                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_overall_wide/${course}.png`,
                         });
                     }
                 }
@@ -484,11 +482,15 @@ export namespace MutableConstants {
                 const req = await Bot.AxiosClient.get<Buffer>(
                     `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/all_sections.txt`,
                     {
-                        responseType: "arraybuffer"
+                        responseType: "arraybuffer",
                     }
                 );
 
-                return req.data.toString("utf16le").split("\n").map(x => x.trim()).filter(x => x.length > 0);
+                return req.data
+                    .toString("utf16le")
+                    .split("\n")
+                    .map((x) => x.trim())
+                    .filter((x) => x.length > 0);
             });
 
             if (allSectionTerms) {
@@ -497,11 +499,10 @@ export namespace MutableConstants {
                     for (const sec of allSectionTerms) {
                         SECTION_ENROLL.get(term)!.push({
                             fileName: sec,
-                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_section/${sec}.png`
+                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_section/${sec}.png`,
                         });
                     }
                 }
-
 
                 if (o.section.fsp) {
                     // Section (first/second pass)
@@ -509,11 +510,10 @@ export namespace MutableConstants {
                     for (const sec of allSectionTerms) {
                         SECTION_ENROLL_FSP.get(term)!.push({
                             fileName: sec,
-                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_section_fsp/${sec}.png`
+                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_section_fsp/${sec}.png`,
                         });
                     }
                 }
-
 
                 if (o.section.wide) {
                     // Section (wide)
@@ -521,7 +521,7 @@ export namespace MutableConstants {
                     for (const sec of allSectionTerms) {
                         SECTION_ENROLL_WIDE.get(term)!.push({
                             fileName: sec,
-                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_section_wide/${sec}.png`
+                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_section_wide/${sec}.png`,
                         });
                     }
                 }

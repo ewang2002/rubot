@@ -1,8 +1,8 @@
-import {BaseCommand, ICommandContext} from "../BaseCommand";
-import {Bot} from "../../Bot";
-import {WebRegSection} from "../../definitions";
-import {GeneralUtilities} from "../../utilities/GeneralUtilities";
-import {MutableConstants} from "../../constants/MutableConstants";
+import { BaseCommand, ICommandContext } from "../BaseCommand";
+import { Bot } from "../../Bot";
+import { WebRegSection } from "../../definitions";
+import { GeneralUtilities } from "../../utilities/GeneralUtilities";
+import { MutableConstants } from "../../constants/MutableConstants";
 import WEBREG_TERMS = MutableConstants.WEBREG_TERMS;
 
 export class DidItBreak extends BaseCommand {
@@ -17,7 +17,7 @@ export class DidItBreak extends BaseCommand {
             commandCooldown: 3 * 1000,
             argumentInfo: [],
             guildOnly: false,
-            botOwnerOnly: false
+            botOwnerOnly: false,
         });
     }
 
@@ -27,13 +27,14 @@ export class DidItBreak extends BaseCommand {
     public async run(ctx: ICommandContext): Promise<number> {
         const errored = [];
         for await (const data of WEBREG_TERMS) {
-            const json: WebRegSection[] | {
-                "error": string
-            } | null = await GeneralUtilities.tryExecuteAsync(async () => {
-                // You will need the ucsd_webreg_rs app available
-                const d = await Bot.AxiosClient.get(`http://127.0.0.1:3000/webreg/course_info/${data.term}?subject=CSE&number=8A`);
-                return d.data;
-            });
+            const json: WebRegSection[] | { error: string } | null =
+                await GeneralUtilities.tryExecuteAsync(async () => {
+                    // You will need the ucsd_webreg_rs app available
+                    const d = await Bot.AxiosClient.get(
+                        `http://127.0.0.1:3000/webreg/course_info/${data.term}?subject=CSE&number=8A`
+                    );
+                    return d.data;
+                });
 
             if (!json || "error" in json) {
                 errored.push(data.term);
@@ -44,14 +45,14 @@ export class DidItBreak extends BaseCommand {
 
         if (errored.length === 0) {
             await ctx.interaction.reply({
-                content: "No."
+                content: "No.",
             });
 
             return 0;
         }
 
         await ctx.interaction.reply({
-            content: `Yes, go fix: \`[${errored.join(", ")}]\`` 
+            content: `Yes, go fix: \`[${errored.join(", ")}]\``,
         });
 
         return 0;

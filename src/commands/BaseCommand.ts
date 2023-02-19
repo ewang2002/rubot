@@ -1,15 +1,21 @@
 import {
+    ChatInputCommandInteraction,
     Collection,
-    CommandInteraction,
+    DMChannel,
     Guild,
     GuildMember,
-    PermissionString,
-    TextBasedChannel,
-    User
+    NewsChannel,
+    PartialDMChannel,
+    PermissionsString,
+    TextChannel,
+    User,
+    VoiceChannel,
 } from "discord.js";
-import {Bot} from "../Bot";
-import {SlashCommandBuilder, SlashCommandChannelOption} from "@discordjs/builders";
+import { Bot } from "../Bot";
+import { SlashCommandBuilder, SlashCommandChannelOption } from "@discordjs/builders";
 import { APIApplicationCommandOptionChoice } from "discord-api-types/v10";
+
+export type ValidTextChannelType = DMChannel | PartialDMChannel | NewsChannel | TextChannel | VoiceChannel; 
 
 export interface ICommandContext {
     /**
@@ -36,16 +42,16 @@ export interface ICommandContext {
     /**
      * The channel where this command was executed.
      *
-     * @type {TextBasedChannel}
+     * @type {ValidTextChannelType}
      */
-    channel: TextBasedChannel;
+    channel: ValidTextChannelType;
 
     /**
      * The interaction that led to this command.
      *
      * @type {CommandInteraction}
      */
-    interaction: CommandInteraction;
+    interaction: ChatInputCommandInteraction;
 }
 
 export enum ArgumentType {
@@ -56,7 +62,7 @@ export enum ArgumentType {
     Mention,
     Number,
     Role,
-    User
+    User,
 }
 
 /**
@@ -66,23 +72,22 @@ export enum ArgumentType {
  * @throws {Error} If an invalid option was somehow provided.
  */
 function addArgument(scb: SlashCommandBuilder, argInfo: IArgumentInfo): void {
-    const desc = argInfo.shortDesc ?? argInfo.desc.length > 100
-        ? argInfo.desc.substring(0, 95) + "..."
-        : argInfo.desc;
+    const desc =
+        argInfo.shortDesc ?? argInfo.desc.length > 100
+            ? argInfo.desc.substring(0, 95) + "..."
+            : argInfo.desc;
 
     const restrictions = argInfo.restrictions;
     switch (argInfo.type) {
         case ArgumentType.Boolean: {
-            scb.addBooleanOption(o => o.setName(argInfo.argName)
-                .setRequired(argInfo.required)
-                .setDescription(desc));
+            scb.addBooleanOption((o) =>
+                o.setName(argInfo.argName).setRequired(argInfo.required).setDescription(desc)
+            );
             break;
         }
         case ArgumentType.Channel: {
-            scb.addChannelOption(o => {
-                o.setName(argInfo.argName)
-                    .setRequired(argInfo.required)
-                    .setDescription(desc);
+            scb.addChannelOption((o) => {
+                o.setName(argInfo.argName).setRequired(argInfo.required).setDescription(desc);
 
                 restrictions && restrictions.channelModifier && restrictions.channelModifier(o);
                 return o;
@@ -90,22 +95,20 @@ function addArgument(scb: SlashCommandBuilder, argInfo: IArgumentInfo): void {
             break;
         }
         case ArgumentType.Role: {
-            scb.addRoleOption(o => o.setName(argInfo.argName)
-                .setRequired(argInfo.required)
-                .setDescription(desc));
+            scb.addRoleOption((o) =>
+                o.setName(argInfo.argName).setRequired(argInfo.required).setDescription(desc)
+            );
             break;
         }
         case ArgumentType.User: {
-            scb.addUserOption(o => o.setName(argInfo.argName)
-                .setRequired(argInfo.required)
-                .setDescription(desc));
+            scb.addUserOption((o) =>
+                o.setName(argInfo.argName).setRequired(argInfo.required).setDescription(desc)
+            );
             break;
         }
         case ArgumentType.Integer: {
-            scb.addIntegerOption(o => {
-                o.setName(argInfo.argName)
-                    .setRequired(argInfo.required)
-                    .setDescription(desc);
+            scb.addIntegerOption((o) => {
+                o.setName(argInfo.argName).setRequired(argInfo.required).setDescription(desc);
 
                 if (typeof restrictions?.integerMin !== "undefined") {
                     o.setMinValue(Math.round(restrictions.integerMin));
@@ -120,26 +123,24 @@ function addArgument(scb: SlashCommandBuilder, argInfo: IArgumentInfo): void {
             break;
         }
         case ArgumentType.Mention: {
-            scb.addMentionableOption(o => o.setName(argInfo.argName)
-                .setRequired(argInfo.required)
-                .setDescription(desc));
+            scb.addMentionableOption((o) =>
+                o.setName(argInfo.argName).setRequired(argInfo.required).setDescription(desc)
+            );
             break;
         }
         case ArgumentType.Number: {
-            scb.addNumberOption(o => o.setName(argInfo.argName)
-                .setRequired(argInfo.required)
-                .setDescription(desc));
+            scb.addNumberOption((o) =>
+                o.setName(argInfo.argName).setRequired(argInfo.required).setDescription(desc)
+            );
             break;
         }
         case ArgumentType.String: {
-            scb.addStringOption(o => {
-                o.setName(argInfo.argName)
-                    .setRequired(argInfo.required)
-                    .setDescription(desc);
+            scb.addStringOption((o) => {
+                o.setName(argInfo.argName).setRequired(argInfo.required).setDescription(desc);
 
-                restrictions?.stringChoices
-                && restrictions.stringChoices.length > 0
-                && o.addChoices(...restrictions.stringChoices);
+                restrictions?.stringChoices &&
+                    restrictions.stringChoices.length > 0 &&
+                    o.addChoices(...restrictions.stringChoices);
 
                 return o;
             });
@@ -168,7 +169,6 @@ export abstract class BaseCommand {
      * @type {Collection<string, number>}
      */
     protected readonly onCooldown: Collection<string, number>;
-    private readonly activeGuildUsers: Collection<string, Set<string>>;
 
     /**
      * Creates a new `BaseCommand` object.
@@ -189,17 +189,20 @@ export abstract class BaseCommand {
 
         if (slashCmdBuilder) {
             if (slashCmdBuilder.name !== cmi.botCommandName)
-                throw new Error(`"${cmi.botCommandName}" does not have matching command names w/ slash command.`);
+                throw new Error(
+                    `"${cmi.botCommandName}" does not have matching command names w/ slash command.`
+                );
 
             if (slashCmdBuilder.description !== cmi.description)
-                throw new Error(`"${cmi.botCommandName}" does not have matching description w/ slash command.`);
+                throw new Error(
+                    `"${cmi.botCommandName}" does not have matching description w/ slash command.`
+                );
         }
 
         this.commandInfo = cmi;
         if (slashCmdBuilder) {
             this.data = slashCmdBuilder;
-        }
-        else {
+        } else {
             this.data = new SlashCommandBuilder()
                 .setName(cmi.botCommandName)
                 .setDescription(
@@ -208,18 +211,21 @@ export abstract class BaseCommand {
                         : cmi.description
                 );
 
-            cmi.argumentInfo.filter(x => x.required).forEach(requiredArg => {
-                addArgument(this.data, requiredArg);
-            });
+            cmi.argumentInfo
+                .filter((x) => x.required)
+                .forEach((requiredArg) => {
+                    addArgument(this.data, requiredArg);
+                });
 
             // Optional arguments always goes last.
-            cmi.argumentInfo.filter(x => !x.required).forEach(optionalArg => {
-                addArgument(this.data, optionalArg);
-            });
+            cmi.argumentInfo
+                .filter((x) => !x.required)
+                .forEach((optionalArg) => {
+                    addArgument(this.data, optionalArg);
+                });
         }
 
         this.onCooldown = new Collection<string, number>();
-        this.activeGuildUsers = new Collection<string, Set<string>>();
     }
 
     /**
@@ -239,7 +245,7 @@ export abstract class BaseCommand {
     public checkCooldownFor(userToTest: User | GuildMember): number {
         // Check if the person is on cooldown.
         if (this.commandInfo.commandCooldown > 0 && this.onCooldown.has(userToTest.id))
-            return this.onCooldown.get(userToTest.id) as number - Date.now();
+            return (this.onCooldown.get(userToTest.id) as number) - Date.now();
 
         return -1;
     }
@@ -269,19 +275,21 @@ export abstract class BaseCommand {
             hasAdmin: false,
             missingBotPerms: [],
             missingUserPerms: [],
-            reason: ""
+            reason: "",
         };
 
         // If the command is bot owner only and the person isn't a bot owner, then this person can't run this command.
-        if (this.commandInfo.botOwnerOnly && !Bot.BotInstance.config.botOwnerIds.includes(userToTest.id))
+        if (
+            this.commandInfo.botOwnerOnly &&
+            !Bot.BotInstance.config.botOwnerIds.includes(userToTest.id)
+        )
             return results;
 
         // The person tried to run the command in DMs. See if the person can do so.
         // If a command can be run in DMs, then there should not be any permission requirements, so we don't check
         // those at all.
         if (!guild) {
-            if (this.commandInfo.guildOnly)
-                return results;
+            if (this.commandInfo.guildOnly) return results;
 
             results.canRun = true;
             return results;
@@ -289,33 +297,34 @@ export abstract class BaseCommand {
 
         // At this point, we know we are in a guild.
         // So userToTest better be a GuildMember.
-        if (userToTest instanceof User)
-            return results;
+        if (userToTest instanceof User) return results;
 
-        if (this.commandInfo.allowOnServers && !this.commandInfo.allowOnServers.includes(guild.id)) {
+        if (
+            this.commandInfo.allowOnServers &&
+            !this.commandInfo.allowOnServers.includes(guild.id)
+        ) {
             results.reason = "Your server is not allowed to run this command.";
             return results;
         }
 
         // Command was executed in the server. We need to check permissions.
-        const bot = guild.me;
+        const bot = guild.members.me;
 
         // Check bot permissions.
         if (bot) {
             const botPerms = bot.permissions.toArray();
-            if (!bot.permissions.has("ADMINISTRATOR")) {
+            if (!bot.permissions.has("Administrator")) {
                 // Go through each required bot permission.
                 for (const perm of this.commandInfo.botPermissions) {
                     // If the bot doesn't have the specified permission, then add it to the list of missing
                     // permissions.
-                    if (!botPerms.includes(perm))
-                        results.missingBotPerms.push(perm);
+                    if (!botPerms.includes(perm)) results.missingBotPerms.push(perm);
                 }
             }
         }
 
         // If you have full Administrator, you can run this command (if the bot can)
-        if (userToTest.permissions.has("ADMINISTRATOR")) {
+        if (userToTest.permissions.has("Administrator")) {
             // Check to make sure the bot can run the command.
             results.canRun = results.missingBotPerms.length === 0;
             results.hasAdmin = true;
@@ -341,7 +350,8 @@ export abstract class BaseCommand {
             }
         }
 
-        results.canRun = results.missingBotPerms.length === 0 && results.missingUserPerms.length === 0;
+        results.canRun =
+            results.missingBotPerms.length === 0 && results.missingUserPerms.length === 0;
         return results;
     }
 }
@@ -349,8 +359,8 @@ export abstract class BaseCommand {
 interface ICanRunResult {
     canRun: boolean;
     hasAdmin: boolean;
-    missingUserPerms: string[];
-    missingBotPerms: string[];
+    missingUserPerms: PermissionsString[];
+    missingBotPerms: PermissionsString[];
     reason: string;
 }
 
@@ -403,15 +413,15 @@ export interface ICommandInfo {
 
     /**
      * The general permissions that the user must have to execute the command.
-     * @type {PermissionString[]}
+     * @type {PermissionsString[]}
      */
-    generalPermissions: PermissionString[];
+    generalPermissions: PermissionsString[];
 
     /**
      * The permissions that a bot must have to execute this command.
-     * @type {PermissionString[]}
+     * @type {PermissionsString[]}
      */
-    botPermissions: PermissionString[];
+    botPermissions: PermissionsString[];
 
     /**
      * Whether the command is for a server only.
@@ -456,7 +466,7 @@ export interface IArgumentInfo {
          *
          * @type {[string, string][]}
          */
-         stringChoices?: APIApplicationCommandOptionChoice<string>[]; 
+        stringChoices?: APIApplicationCommandOptionChoice<string>[];
 
         /**
          * A function to modify the slash channel options; a common use would be to specify the types of channels that
@@ -478,12 +488,6 @@ export interface IArgumentInfo {
          */
         integerMax?: number;
     };
-
-    /**
-     * The argument type, formatted as a string which will then be displayed to the end user.
-     * @type {string}
-     */
-    prettyType: string;
 
     /**
      * The description of this argument.

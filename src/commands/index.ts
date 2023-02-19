@@ -13,7 +13,6 @@ export * from "./enroll-data/GetCape";
 export * from "./enroll-data/LookupCached";
 export * from "./enroll-data/LiveSeats";
 export * from "./enroll-data/GetPrereq";
-export * from "./enroll-data/GetAllRemoteClasses";
 export * from "./enroll-data/LiveSeatLegends";
 export * from "./enroll-data/SearchCourse";
 
@@ -24,11 +23,6 @@ export * from "./ucsd/CourseInfo";
 export * from "./ucsd/FreeRooms";
 
 export * from "./doomers/SetActivity";
-export * from "./doomers/AddQuoteMessageLink";
-export * from "./doomers/AddQuoteText";
-export * from "./doomers/GetRandomQuote";
-export * from "./doomers/AddStrangerQuote";
-export * from "./doomers/BadnessLevel";
 export * from "./doomers/Role";
 
 export * from "./owner/Exec";

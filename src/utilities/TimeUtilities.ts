@@ -1,20 +1,18 @@
 export namespace TimeUtilities {
-
     /**
      * Pads a digit between [0, 9] with a 0 in front.
      * @param {number} n The number.
      * @returns {string} The padded string.
      */
-    export const padTimeDigit = (n: number): string => n >= 10 ? "" + n : "0" + n;
+    export const padTimeDigit = (n: number): string => (n >= 10 ? "" + n : "0" + n);
 
     /**
      * Gets the date formatted as if it was on WebReg. Useful for comparing dates.
      * @param {Date} d The date.
      * @returns {string} The formatted date.
      */
-    export const getWebRegDateStr = (d: Date): string => d.getFullYear()
-        + "-" + padTimeDigit(d.getMonth() + 1)
-        + "-" + padTimeDigit(d.getDate());
+    export const getWebRegDateStr = (d: Date): string =>
+        d.getFullYear() + "-" + padTimeDigit(d.getMonth() + 1) + "-" + padTimeDigit(d.getDate());
 
     /**
      * Converts the hour and minute values to a time string.
@@ -60,14 +58,16 @@ export namespace TimeUtilities {
         return allDays;
     }
 
-
     /**
      * Gets the current time in a nice string format.
      * @param {string} [timezone] The timezone, if applicable. Otherwise, GMT is used.
      * @param {boolean} [removeAmPm] Whether to remove the AM/PM ending.
      * @returns {string} The current formatter date & time.
      */
-    export function getFormattedTime(timezone: string = "Atlantic/Reykjavik", removeAmPm: boolean = true): string {
+    export function getFormattedTime(
+        timezone: string = "Atlantic/Reykjavik",
+        removeAmPm: boolean = true
+    ): string {
         if (!isValidTimeZone(timezone)) {
             return new Intl.DateTimeFormat([], {
                 hour: "numeric",
@@ -93,7 +93,10 @@ export namespace TimeUtilities {
      * https://en.wikipedia.org/wiki/List_of_tz_database_time_zones for a full list.
      * @returns {string} The current formatter date & time.
      */
-    export function getDateTime(date: Date | number = new Date(), timezone: string = "America/Los_Angeles"): string {
+    export function getDateTime(
+        date: Date | number = new Date(),
+        timezone: string = "America/Los_Angeles"
+    ): string {
         if (!isValidTimeZone(timezone)) {
             return new Intl.DateTimeFormat([], {
                 year: "numeric",
@@ -123,7 +126,10 @@ export namespace TimeUtilities {
      * https://en.wikipedia.org/wiki/List_of_tz_database_time_zones for a full list.
      * @returns {string} The current formatter time.
      */
-    export function getCurrentTime(date: Date | number = new Date(), timezone: string = "America/Los_Angeles"): string {
+    export function getCurrentTime(
+        date: Date | number = new Date(),
+        timezone: string = "America/Los_Angeles"
+    ): string {
         if (!isValidTimeZone(timezone)) {
             return new Intl.DateTimeFormat([], {
                 hour: "numeric",
@@ -149,7 +155,7 @@ export namespace TimeUtilities {
      */
     export function isValidTimeZone(tz: string): boolean {
         try {
-            Intl.DateTimeFormat(undefined, {timeZone: tz.trim()});
+            Intl.DateTimeFormat(undefined, { timeZone: tz.trim() });
             return true;
         } catch (ex) {
             return false;
@@ -163,13 +169,17 @@ export namespace TimeUtilities {
      * @param {boolean} [includeMs] Whether to include the milliseconds portion in the formatted string.
      * @returns {string} The string representation of the duration.
      */
-    export function formatDuration(dur: number, includeSeconds: boolean, includeMs: boolean = true): string {
+    export function formatDuration(
+        dur: number,
+        includeSeconds: boolean,
+        includeMs: boolean = true
+    ): string {
         dur = Math.max(0, dur);
 
-        const days = Math.floor(dur / 8.64e+7);
-        dur %= 8.64e+7;
-        const hours = Math.floor(dur / 3.6e+6);
-        dur %= 3.6e+6;
+        const days = Math.floor(dur / 8.64e7);
+        dur %= 8.64e7;
+        const hours = Math.floor(dur / 3.6e6);
+        dur %= 3.6e6;
         const minutes = Math.floor(dur / 60_000);
         dur %= 60_000;
         const seconds = Math.floor(dur / 1000);
@@ -195,17 +205,19 @@ export namespace TimeUtilities {
      * @returns {Date} The new date.
      * @throws {Error} If the day of the week or military time is invalid.
      */
-    export function getNextDate(relativeTo: Date | number, dayOfWeek: number, militaryTime: number): Date {
-        if (dayOfWeek > 6 || dayOfWeek < 0)
-            throw new Error("invalid day of week");
-        if (militaryTime > 2359 || militaryTime < 0)
-            throw new Error("invalid time");
+    export function getNextDate(
+        relativeTo: Date | number,
+        dayOfWeek: number,
+        militaryTime: number
+    ): Date {
+        if (dayOfWeek > 6 || dayOfWeek < 0) throw new Error("invalid day of week");
+        if (militaryTime > 2359 || militaryTime < 0) throw new Error("invalid time");
         const hr = Math.floor(militaryTime / 100);
         const min = militaryTime % 100;
 
         const relativeDate = new Date(relativeTo);
         const diffDays = (dayOfWeek + 7 - relativeDate.getDay()) % 7;
-        const finalDate = new Date(relativeDate.getTime() + diffDays * 8.64e+7);
+        const finalDate = new Date(relativeDate.getTime() + diffDays * 8.64e7);
         finalDate.setHours(hr);
         finalDate.setMinutes(min);
         finalDate.setSeconds(0);
