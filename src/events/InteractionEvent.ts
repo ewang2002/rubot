@@ -5,6 +5,7 @@ import { TimeUtilities } from "../utilities/TimeUtilities";
 import { StringBuilder } from "../utilities/StringBuilder";
 import { ICommandContext, ValidTextChannelType } from "../commands";
 import { GeneralUtilities } from "../utilities/GeneralUtilities";
+import { Data } from "../Data";
 
 /**
  * Executes the slash command, if any.
@@ -12,8 +13,8 @@ import { GeneralUtilities } from "../utilities/GeneralUtilities";
  */
 async function slashCommandHandler(interaction: ChatInputCommandInteraction): Promise<void> {
     if (
-        !Bot.BotInstance.config.isProd &&
-        !Bot.BotInstance.config.botOwnerIds.includes(interaction.user.id)
+        !Data.CONFIG.isProd &&
+        !Data.CONFIG.discord.botOwnerIds.includes(interaction.user.id)
     ) {
         await interaction.reply({
             content: "The bot is currently in development mode, and cannot be used right now.",
@@ -29,7 +30,7 @@ async function slashCommandHandler(interaction: ChatInputCommandInteraction): Pr
         user: interaction.user,
         guild: interaction.guild,
         interaction: interaction,
-        // pretty scuffed fix for now
+        // TODO remove cast once new discord.js release comes out
         channel: interaction.channel! as ValidTextChannelType,
         member: (await interaction.guild?.members.fetch(interaction.user.id)) ?? null,
     };
@@ -57,7 +58,7 @@ async function slashCommandHandler(interaction: ChatInputCommandInteraction): Pr
 
     // Check permissions
     const canRunInfo = foundCommand.hasPermissionToRun(ctx.member!, ctx.guild);
-    if (!Bot.BotInstance.config.botOwnerIds.includes(ctx.user.id) && !canRunInfo.hasAdmin)
+    if (!Data.CONFIG.discord.botOwnerIds.includes(ctx.user.id) && !canRunInfo.hasAdmin)
         foundCommand.addToCooldown(ctx.user);
 
     if (canRunInfo.canRun) {

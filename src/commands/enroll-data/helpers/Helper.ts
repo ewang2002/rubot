@@ -1,16 +1,15 @@
 import { Collection, ButtonBuilder, EmbedBuilder, embedLength, ButtonStyle } from "discord.js";
-import { MutableConstants } from "../../../constants/MutableConstants";
+import { Data } from "../../../Data";
 import { ICapeRow, Meeting, WebRegSection } from "../../../definitions";
 import { ArrayUtilities } from "../../../utilities/ArrayUtilities";
 import { StringBuilder } from "../../../utilities/StringBuilder";
 import { StringUtil } from "../../../utilities/StringUtilities";
 import { ArgumentType, IArgumentInfo, ICommandContext } from "../../BaseCommand";
 import { GeneralUtilities } from "../../../utilities/GeneralUtilities";
-import { EmojiConstants } from "../../../constants/GeneralConstants";
+import { EmojiConstants } from "../../../Constants";
 import { AdvancedCollector } from "../../../utilities/AdvancedCollector";
 import { TimeUtilities } from "../../../utilities/TimeUtilities";
-import { Bot } from "../../../Bot";
-import CAPE_DATA = MutableConstants.CAPE_DATA;
+import CAPE_DATA = Data.CAPE_DATA;
 import padTimeDigit = TimeUtilities.padTimeDigit;
 import getTimeStr = TimeUtilities.getTimeStr;
 import WARNING_EMOJI = EmojiConstants.WARNING_EMOJI;
@@ -20,9 +19,9 @@ export const TERM_ARGUMENTS: IArgumentInfo[] = [
         displayName: "Term",
         argName: "term",
         type: ArgumentType.String,
-        desc: `The term to check. Defaults to ${MutableConstants.WEBREG_TERMS[0].termName}`,
+        desc: `The term to check. Defaults to ${Data.DEFAULT_TERM}`,
         restrictions: {
-            stringChoices: MutableConstants.WEBREG_TERMS.map((x) => {
+            stringChoices: Data.CONFIG.ucsdInfo.currentWebRegTerms.map((x) => {
                 return { name: x.termName, value: x.term };
             }),
         },
@@ -49,7 +48,7 @@ export const PLOT_ARGUMENTS: IArgumentInfo[] = [
         argName: "term",
         type: ArgumentType.String,
         restrictions: {
-            stringChoices: MutableConstants.GH_TERMS.map((x) => {
+            stringChoices: Data.CONFIG.ucsdInfo.githubTerms.map((x) => {
                 return { name: x.termName, value: x.term };
             }),
         },
@@ -120,8 +119,8 @@ export async function requestFromWebRegApi(
     const json: WebRegSection[] | { error: string } | null = await GeneralUtilities.tryExecuteAsync(
         async () => {
             // You will need the ucsd_webreg_rs app available
-            const d = await Bot.AxiosClient.get(
-                `http://127.0.0.1:3000/webreg/course_info/${term}?subject=${subj}&number=${num}`
+            const d = await Data.AXIOS.get(
+                `${Data.CONFIG.ucsdInfo.apiEndpoint}/webreg/course_info/${term}?subject=${subj}&number=${num}`
             );
             return d.data;
         }

@@ -1,9 +1,9 @@
 import { BaseCommand, ICommandContext } from "../BaseCommand";
-import { MutableConstants } from "../../constants/MutableConstants";
+import { Data } from "../../Data";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { Collection, ButtonBuilder, StringSelectMenuBuilder, ButtonStyle } from "discord.js";
 import { AdvancedCollector } from "../../utilities/AdvancedCollector";
-import { EmojiConstants } from "../../constants/GeneralConstants";
+import { EmojiConstants } from "../../Constants";
 import { PLOT_ARGUMENTS, parseCourseSubjCode } from "./helpers/Helper";
 import { IPlotInfo } from "../../definitions";
 
@@ -36,16 +36,12 @@ export class GetSectionEnroll extends BaseCommand {
         let display: string;
         switch (searchType) {
             case "wide":
-                coll = MutableConstants.SECTION_ENROLL_WIDE;
+                coll = Data.SECTION_ENROLL_WIDE;
                 display = "Wide";
-                break;
-            case "fsp":
-                coll = MutableConstants.SECTION_ENROLL_FSP;
-                display = "First/Second Pass";
                 break;
             default:
                 // "norm" is the default
-                coll = MutableConstants.SECTION_ENROLL;
+                coll = Data.SECTION_ENROLL;
                 display = "Normal";
                 break;
         }

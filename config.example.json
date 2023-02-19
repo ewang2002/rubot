@@ -1,15 +1,33 @@
 {
     "isProd": true,
-    "token": {
-        "botToken": "",
-        "githubAuthToken": "",
-        "mtsToken": ""
+    "discord": {
+        "token": "",
+        "clientId": "",
+        "botOwnerIds": []
     },
-    "clientId": "",
-    "botOwnerIds": [],
-    "enrollDataOrgName": "",
-    "channels": {
-        "galleryChannel": "",
-        "webregCategory": ""
+    "ucsdInfo": {
+        "enrollDataOrgName": "",
+        "apiEndpoint": "",
+        "currentWebRegTerms": [
+            {
+                "term": "SP23",
+                "termName": "Spring 2023"
+            }
+        ],
+        "githubTerms": [],
+        "miscData": {
+            "capeData": {
+                "fileName": "",
+                "lastUpdated": ""
+            },
+            "courseList": {
+                "fileName": "",
+                "lastUpdated": ""
+            },
+            "currentTermData": {
+                "fileName": "",
+                "term": ""
+            }
+        }
     }
 }

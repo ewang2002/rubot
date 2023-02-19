@@ -1,5 +1,5 @@
 import { BaseCommand, ICommandContext } from "../BaseCommand";
-import { MutableConstants } from "../../constants/MutableConstants";
+import { Data } from "../../Data";
 import { PLOT_ARGUMENTS, parseCourseSubjCode } from "./helpers/Helper";
 import { Collection } from "discord.js";
 import { IPlotInfo } from "../../definitions";
@@ -32,16 +32,12 @@ export class GetOverallEnroll extends BaseCommand {
         let display: string;
         switch (searchType) {
             case "wide":
-                coll = MutableConstants.OVERALL_ENROLL_WIDE;
+                coll = Data.OVERALL_ENROLL_WIDE;
                 display = "Wide";
-                break;
-            case "fsp":
-                coll = MutableConstants.OVERALL_ENROLL_FSP;
-                display = "First/Second Pass";
                 break;
             default:
                 // "norm" is the default
-                coll = MutableConstants.OVERALL_ENROLL;
+                coll = Data.OVERALL_ENROLL;
                 display = "Normal";
                 break;
         }

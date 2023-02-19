@@ -1,6 +1,6 @@
 # Rubot 2.0
 
-A bot for the Doomers server, or whatever Tony decided to call it.
+A UCSD-oriented Discord bot. 
 
 ## Features
 
@@ -11,7 +11,7 @@ That being said, rubot does contain a variety of commands that UCSD students may
 -   see course information from the course catalog via the `/courseinfo` command.
 -   get current enrollment counts and course offerings from WebReg via the `/lookuplive` and `/liveseats` commands.
 -   see upcoming meetings via `/viewallclassrooms` and check for free classrooms via the `/freerooms` command.
--   get basic enrollment history information via `/plotoverall` and `/plotsection`.
+-   get basic enrollment history information via `/overallplot` and `/sectionplot`.
 -   get CAPE data via `/getcape`.
 
 ## Depends On
@@ -20,13 +20,13 @@ For UCSD-related components, rubot relies on the following projects/repositories
 
 | Project                                       | Reason                           | (Some) Associated Commands                          |
 | --------------------------------------------- | -------------------------------- | --------------------------------------------------- |
-| [UCSDHistEnrollData](https://bit.ly/ucsdhist) | Historical enrollment data.      | `/plotoverall`, `/plotsection`                      |
-| [ucsd_webreg_rs](https://bit.ly/ucsdwebregrs) | Access to WebReg via web server. | `/lookuplive`, `/liveseats`                         |
+| [UCSDHistEnrollData](https://bit.ly/ucsdhist) | Historical enrollment data.      | `/overallplot`, `/sectionplot`                      |
+| [webreg_scraper](https://bit.ly/ucsdwebregrs) | Access to WebReg via web server. | `/lookuplive`, `/liveseats`                         |
 | [UCSDCapeScraper](https://bit.ly/3G7kKQf)     | CAPE Data.                       | `/getcape`                                          |
 | [uscdcourselist](https://bit.ly/3lwTQHW)      | Course catalog.                  | `/courseinfo`                                       |
 | [wgtools](https://bit.ly/3NxLD2h)             | All offered courses.             | `/checkroom`, `/lookupcached`, `/viewallclassrooms` |
 
-In particular, `ucsd_webreg_rs` (along with the [WebReg library](https://github.com/ewang2002/webweg)) is used to
+In particular, `webreg_scraper` (along with the [WebReg library](https://github.com/ewang2002/webweg)) is used to
 scrape data from WebReg (which then goes to `UCSDHistEnrollData`) while also proving a simple web server so rubot
 can make requests to this application and get the relevant data.
 
@@ -40,10 +40,11 @@ rubot will remain a private bot for the time being, although I have plans to mig
 to a new bot and make that bot public.
 
 While you're free to host rubot on your own, please note that most of the UCSD-related commands will not be usable
-unless you obtain the data files on your own and set up the [web server](https://bit.ly/ucsdwebregrs).
+unless you obtain the data files on your own and set up the [web server](https://bit.ly/ucsdwebregrs). **Note that
+this bot isn't necessarily designed to be hosted by anyone else.**
 
 Aside from what is available [here](https://bit.ly/ucsdhist) (the historical enrollment data), I will not be
-providing any of the other data files due to various reasons. If you need them, obtain them yourself.
+providing any of the other data files. If you need them, obtain them yourself.
 
 ## License
 

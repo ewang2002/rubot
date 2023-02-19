@@ -1,15 +1,15 @@
 // "If it works, don't question it."
 import { ArgumentType, BaseCommand, ICommandContext } from "../BaseCommand";
-import { MutableConstants } from "../../constants/MutableConstants";
+import { Data } from "../../Data";
 import { TimeUtilities } from "../../utilities/TimeUtilities";
 import { Collection, EmbedBuilder } from "discord.js";
-import { EmojiConstants, GeneralConstants } from "../../constants/GeneralConstants";
+import { EmojiConstants, GeneralConstants } from "../../Constants";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { StringUtil } from "../../utilities/StringUtilities";
 import { AdvancedCollector } from "../../utilities/AdvancedCollector";
 import { StringBuilder } from "../../utilities/StringBuilder";
 import { getSelectMenusFromBuildings, getTimeFromObj, getUsedClassrooms } from "./Helpers/Helpers";
-import SECTION_TERM_DATA = MutableConstants.SECTION_TERM_DATA;
+import SECTION_TERM_DATA = Data.SECTION_TERM_DATA;
 import getTimeStr = TimeUtilities.getTimeStr;
 import getDateTime = TimeUtilities.getDateTime;
 
@@ -401,8 +401,8 @@ export class ViewAllClassrooms extends BaseCommand {
                 .setColor("Gold")
                 .setTitle(
                     buildingName
-                        ? `**${key}** - ${buildingName} (Term: ${MutableConstants.CACHED_DATA_TERM})`
-                        : `**${key}** (Term: ${MutableConstants.CACHED_DATA_TERM})`
+                        ? `**${key}** - ${buildingName} (Term: ${Data.CONFIG.ucsdInfo.miscData.currentTermData.term})`
+                        : `**${key}** (Term: ${Data.CONFIG.ucsdInfo.miscData.currentTermData.term})`
                 )
                 .setDescription(
                     time

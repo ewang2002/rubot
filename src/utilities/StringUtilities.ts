@@ -1,4 +1,4 @@
-import { EmojiConstants } from "../constants/GeneralConstants";
+import { EmojiConstants } from "../Constants";
 
 export namespace StringUtil {
     /**

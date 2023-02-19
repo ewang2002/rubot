@@ -1,6 +1,6 @@
 import { ArgumentType, BaseCommand, ICommandContext, ICommandInfo } from "../BaseCommand";
 import { ActivitiesOptions, ActivityType, PresenceData } from "discord.js";
-import { GeneralConstants } from "../../constants/GeneralConstants";
+import { GeneralConstants } from "../../Constants";
 
 export class SetActivity extends BaseCommand {
     public constructor() {

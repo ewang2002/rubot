@@ -3,7 +3,7 @@ import { TimeUtilities } from "../../../utilities/TimeUtilities";
 import { StringSelectMenuBuilder, SelectMenuComponentOptionData } from "discord.js";
 import { ArrayUtilities } from "../../../utilities/ArrayUtilities";
 import getWebRegDateStr = TimeUtilities.getWebRegDateStr;
-import { EmojiConstants } from "../../../constants/GeneralConstants";
+import { EmojiConstants } from "../../../Constants";
 
 type ClassroomSection = {
     // Key

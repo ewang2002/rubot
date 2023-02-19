@@ -1,10 +1,10 @@
 import { ArgumentType, BaseCommand, ICommandContext } from "../BaseCommand";
-import { EmojiConstants } from "../../constants/GeneralConstants";
+import { EmojiConstants } from "../../Constants";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { ButtonBuilder, ButtonStyle, StringSelectMenuBuilder } from "discord.js";
 import { AdvancedCollector } from "../../utilities/AdvancedCollector";
-import { MutableConstants } from "../../constants/MutableConstants";
-import CAPE_DATA = MutableConstants.CAPE_DATA;
+import { Data } from "../../Data";
+import CAPE_DATA = Data.CAPE_DATA;
 import { getCapeSummary, parseCourseSubjCode } from "./helpers/Helper";
 
 export class GetCape extends BaseCommand {

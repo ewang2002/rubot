@@ -1,7 +1,6 @@
 import { EmbedBuilder, embedLength } from "discord.js";
-import { Bot } from "../../Bot";
-import { GeneralConstants } from "../../constants/GeneralConstants";
-import { MutableConstants } from "../../constants/MutableConstants";
+import { GeneralConstants } from "../../Constants";
+import { Data } from "../../Data";
 import { IWebRegSearchResult } from "../../definitions";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { GeneralUtilities } from "../../utilities/GeneralUtilities";
@@ -131,7 +130,7 @@ export class SearchCourse extends BaseCommand {
      */
     public async run(ctx: ICommandContext): Promise<number> {
         const term =
-            ctx.interaction.options.getString("term", false) ?? MutableConstants.DEFAULT_TERM;
+            ctx.interaction.options.getString("term", false) ?? Data.DEFAULT_TERM;
         const subjects =
             ctx.interaction.options
                 .getString("subjects", false)
@@ -301,8 +300,8 @@ export class SearchCourse extends BaseCommand {
         const json: IWebRegSearchResult[] | { error: string } | null =
             await GeneralUtilities.tryExecuteAsync(async () => {
                 // You will need the ucsd_webreg_rs app available
-                const d = await Bot.AxiosClient.get(
-                    `http://127.0.0.1:3000/webreg/search_courses/${term}`,
+                const d = await Data.AXIOS.get(
+                    `${Data.CONFIG.ucsdInfo.apiEndpoint}/webreg/search_courses/${term}`,
                     {
                         data,
                     }

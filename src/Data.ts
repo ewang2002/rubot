@@ -1,208 +1,59 @@
 import { Collection } from "discord.js";
-import { ICapeRow, IPlotInfo, ListedCourse, Meeting, WebRegSection } from "../definitions";
+import { ICapeRow, IConfiguration, IPlotInfo, ListedCourse, Meeting, WebRegSection } from "./definitions";
 import { createReadStream } from "fs";
 import { createInterface } from "readline";
 import * as path from "path";
-import { TimeUtilities } from "../utilities/TimeUtilities";
-import { Bot } from "../Bot";
-import { GeneralUtilities } from "../utilities/GeneralUtilities";
+import { TimeUtilities } from "./utilities/TimeUtilities";
+import { GeneralUtilities } from "./utilities/GeneralUtilities";
+import axios, { AxiosInstance } from "axios";
 
-export namespace MutableConstants {
-    export const ENROLL_DATA_GH: string = "https://github.com/ewang2002/UCSDHistEnrollData";
+/**
+ * A namespace containing a lot of data that the bot will be using.
+ */
+export namespace Data {
+    /**
+     * The HTTP client used to make web requests.
+     * @type {AxiosInstance}
+     */
+    export const AXIOS: AxiosInstance = axios.create();
 
-    // All active webreg terms (accessible on the rocket web server)
-    export const WEBREG_TERMS: {
-        term: string;
-        termName: string;
-        paddedName: string;
-    }[] = [
-        // Default term should be the first one.
-        {
-            term: "SP23",
-            termName: "Spring 2023",
-            paddedName: "Spring 2023            ",
-        },
-    ];
+    /**
+     * Initializes all static data, i.e., data from files. This will not initialize any data that
+     * needs to be requested from the internet.
+     * 
+     * @param {IConfiguration} config The configuration information from the configuration file.
+     */
+    export function initStaticData(config: IConfiguration): void {
+        CONFIG = config;
+        DEFAULT_TERM = config.ucsdInfo.currentWebRegTerms[0].term;
 
-    export const DEFAULT_TERM: string = MutableConstants.WEBREG_TERMS[0].term;
+        if (config.ucsdInfo.miscData.currentTermData.fileName) {
+            initSectionData(config.ucsdInfo.miscData.currentTermData.fileName);
+        }
 
-    // Terms that we have github data for.
-    export const GH_TERMS: {
-        term: string;
-        termName: string;
-        repoName: string;
-        overall: {
-            reg: boolean;
-            fsp: boolean;
-            wide: boolean;
-        };
-        section: {
-            reg: boolean;
-            fsp: boolean;
-            wide: boolean;
-        };
-    }[] = [
-        {
-            term: "SP22",
-            termName: "Spring 2022",
-            repoName: "2022Spring",
-            overall: {
-                reg: true,
-                fsp: true,
-                wide: true,
-            },
-            section: {
-                reg: true,
-                fsp: true,
-                wide: true,
-            },
-        },
-        {
-            term: "SP22D",
-            termName: "Spring 2022 (Post-Enrollment)",
-            repoName: "2022SpringDrop",
-            overall: {
-                reg: true,
-                fsp: false,
-                wide: false,
-            },
-            section: {
-                reg: true,
-                fsp: false,
-                wide: false,
-            },
-        },
-        {
-            term: "S122",
-            termName: "Summer Session I 2022",
-            repoName: "2022Summer1",
-            overall: {
-                reg: true,
-                fsp: false,
-                wide: false,
-            },
-            section: {
-                reg: true,
-                fsp: false,
-                wide: false,
-            },
-        },
-        {
-            term: "S122D",
-            termName: "Summer Session I 2022 (Post-Enrollment)",
-            repoName: "2022Summer1Drop",
-            overall: {
-                reg: true,
-                fsp: false,
-                wide: false,
-            },
-            section: {
-                reg: true,
-                fsp: false,
-                wide: false,
-            },
-        },
-        {
-            term: "S222",
-            termName: "Summer Session II 2022",
-            repoName: "2022Summer2",
-            overall: {
-                reg: true,
-                fsp: false,
-                wide: false,
-            },
-            section: {
-                reg: true,
-                fsp: false,
-                wide: false,
-            },
-        },
-        {
-            term: "S222D",
-            termName: "Summer Session II 2022 (Post-Enrollment)",
-            repoName: "2022Summer2Drop",
-            overall: {
-                reg: true,
-                fsp: false,
-                wide: false,
-            },
-            section: {
-                reg: true,
-                fsp: false,
-                wide: false,
-            },
-        },
-        {
-            term: "FA22G",
-            termName: "Fall 2022 (Graduate)",
-            repoName: "2022FallGrad",
-            overall: {
-                reg: true,
-                fsp: false,
-                wide: true,
-            },
-            section: {
-                reg: true,
-                fsp: false,
-                wide: true,
-            },
-        },
-        {
-            term: "FA22",
-            termName: "Fall 2022 (Undergraduate)",
-            repoName: "2022Fall",
-            overall: {
-                reg: true,
-                fsp: false,
-                wide: true,
-            },
-            section: {
-                reg: true,
-                fsp: false,
-                wide: true,
-            },
-        },
-        {
-            term: "WI23G",
-            termName: "Winter 2023 (Graduate)",
-            repoName: "2023WinterGrad",
-            overall: {
-                reg: true,
-                fsp: false,
-                wide: true,
-            },
-            section: {
-                reg: true,
-                fsp: false,
-                wide: true,
-            },
-        },
-        {
-            term: "WI23",
-            termName: "Winter 2023 (Undergraduate)",
-            repoName: "2023Winter",
-            overall: {
-                reg: true,
-                fsp: false,
-                wide: true,
-            },
-            section: {
-                reg: true,
-                fsp: false,
-                wide: true,
-            },
-        },
-    ].reverse();
+        if (config.ucsdInfo.miscData.capeData.fileName) {
+            initCapeData(config.ucsdInfo.miscData.capeData.fileName);
+        }
+
+        if (config.ucsdInfo.miscData.courseList.fileName) {
+            initCourseListing(config.ucsdInfo.miscData.courseList.fileName);
+        }
+    }
+
+    export let CONFIG: IConfiguration;
+
+    /**
+     * The default term available on WebReg. For example, if two terms are available on
+     * WebReg, we want to set one of those two terms as the default term so the user 
+     * doesn't need to specify it explicitly.
+     */
+    export let DEFAULT_TERM: string;
 
     export const OVERALL_ENROLL: Collection<string, IPlotInfo[]> = new Collection<
         string,
         IPlotInfo[]
     >();
     export const OVERALL_ENROLL_WIDE: Collection<string, IPlotInfo[]> = new Collection<
-        string,
-        IPlotInfo[]
-    >();
-    export const OVERALL_ENROLL_FSP: Collection<string, IPlotInfo[]> = new Collection<
         string,
         IPlotInfo[]
     >();
@@ -214,28 +65,16 @@ export namespace MutableConstants {
         string,
         IPlotInfo[]
     >();
-    export const SECTION_ENROLL_FSP: Collection<string, IPlotInfo[]> = new Collection<
-        string,
-        IPlotInfo[]
-    >();
     export const CAPE_DATA: ICapeRow[] = [];
     export const SECTION_TERM_DATA: WebRegSection[] = [];
     export const COURSE_LISTING: ListedCourse[] = [];
-    export const LISTING_LAST_SCRAPED: string = "August 10, 2022";
-
-    // Term that we have section (cached) data for. We should only have one active term at any point.
-    export let CACHED_DATA_TERM: string = "";
 
     /**
      * Adds the section data to the above array.
-     * @param {string} term The term.
-     * @param {string} [pathToFile] The path to the section file, if any.
+     * @param {string} fileName The file containing the section data.
      */
-    export function initSectionData(term: string, pathToFile?: string): void {
-        CACHED_DATA_TERM = term;
-
-        const pathToRead =
-            pathToFile ?? path.join(__dirname, "..", "..", `${CACHED_DATA_TERM}.tsv`);
+    function initSectionData(fileName: string): void {
+        const pathToRead = path.join(__dirname, "..", fileName);
         const readStream = createReadStream(pathToRead);
         const rl = createInterface(readStream);
         let firstLinePassed = false;
@@ -328,10 +167,10 @@ export namespace MutableConstants {
 
     /**
      * Adds the CAPE data to the above array.
-     * @param {string} [pathToFile] The path to the CAPE file, if any.
+     * @param {string} capeFileName The file name corresponding to the file containing CAPE data.
      */
-    export function initCapeData(pathToFile?: string): void {
-        const pathToRead = pathToFile ?? path.join(__dirname, "..", "..", "cape.tsv");
+    function initCapeData(capeFileName: string): void {
+        const pathToRead = path.join(__dirname, "..", capeFileName);
         const readStream = createReadStream(pathToRead);
         const rl = createInterface(readStream);
 
@@ -386,10 +225,10 @@ export namespace MutableConstants {
 
     /**
      * Adds the course listing data to the above array.
-     * @param {string} pathToFile The path to the course listing file, if any.
+     * @param {string} courseListName The file containing the course listing.
      */
-    export function initCourseListing(pathToFile?: string): void {
-        const pathToRead = pathToFile ?? path.join(__dirname, "..", "..", "courses.tsv");
+    function initCourseListing(courseListName: string): void {
+        const pathToRead = path.join(__dirname, "..", courseListName);
         const readStream = createReadStream(pathToRead);
         const rl = createInterface(readStream);
 
@@ -426,12 +265,20 @@ export namespace MutableConstants {
 
     /**
      * Adds the enrollment graph data to the above collections.
+     * @param {IConfiguration} config The configuration information.
      */
-    export async function initEnrollmentData(): Promise<void> {
-        for await (const { term, repoName, ...o } of GH_TERMS) {
+    export async function initEnrollmentData(config: IConfiguration): Promise<void> {
+        const ucsdInfo = config.ucsdInfo;
+        const orgName = ucsdInfo.enrollDataOrgName;
+
+        if (!orgName || ucsdInfo.githubTerms.length === 0) {
+            return;
+        }
+
+        for await (const { term, repoName, ...o } of ucsdInfo.githubTerms) {
             const allOverallTerms = await GeneralUtilities.tryExecuteAsync<string[]>(async () => {
-                const req = await Bot.AxiosClient.get<Buffer>(
-                    `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/all_courses.txt`,
+                const req = await Data.AXIOS.get<Buffer>(
+                    `https://raw.githubusercontent.com/${orgName}/${repoName}/main/all_courses.txt`,
                     {
                         responseType: "arraybuffer",
                     }
@@ -450,18 +297,7 @@ export namespace MutableConstants {
                     for (const course of allOverallTerms) {
                         OVERALL_ENROLL.get(term)!.push({
                             fileName: course,
-                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_overall/${course}.png`,
-                        });
-                    }
-                }
-
-                if (o.overall.fsp) {
-                    // Overall (first/second pass)
-                    OVERALL_ENROLL_FSP.set(term, []);
-                    for (const course of allOverallTerms) {
-                        OVERALL_ENROLL_FSP.get(term)!.push({
-                            fileName: course,
-                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_overall_fsp/${course}.png`,
+                            fileUrl: `https://raw.githubusercontent.com/${orgName}/${repoName}/main/plot_overall/${course}.png`,
                         });
                     }
                 }
@@ -472,15 +308,15 @@ export namespace MutableConstants {
                     for (const course of allOverallTerms) {
                         OVERALL_ENROLL_WIDE.get(term)!.push({
                             fileName: course,
-                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_overall_wide/${course}.png`,
+                            fileUrl: `https://raw.githubusercontent.com/${orgName}/${repoName}/main/plot_overall_wide/${course}.png`,
                         });
                     }
                 }
             }
 
             const allSectionTerms = await GeneralUtilities.tryExecuteAsync<string[]>(async () => {
-                const req = await Bot.AxiosClient.get<Buffer>(
-                    `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/all_sections.txt`,
+                const req = await Data.AXIOS.get<Buffer>(
+                    `https://raw.githubusercontent.com/${orgName}/${repoName}/main/all_sections.txt`,
                     {
                         responseType: "arraybuffer",
                     }
@@ -499,18 +335,7 @@ export namespace MutableConstants {
                     for (const sec of allSectionTerms) {
                         SECTION_ENROLL.get(term)!.push({
                             fileName: sec,
-                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_section/${sec}.png`,
-                        });
-                    }
-                }
-
-                if (o.section.fsp) {
-                    // Section (first/second pass)
-                    SECTION_ENROLL_FSP.set(term, []);
-                    for (const sec of allSectionTerms) {
-                        SECTION_ENROLL_FSP.get(term)!.push({
-                            fileName: sec,
-                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_section_fsp/${sec}.png`,
+                            fileUrl: `https://raw.githubusercontent.com/${orgName}/${repoName}/main/plot_section/${sec}.png`,
                         });
                     }
                 }
@@ -521,7 +346,7 @@ export namespace MutableConstants {
                     for (const sec of allSectionTerms) {
                         SECTION_ENROLL_WIDE.get(term)!.push({
                             fileName: sec,
-                            fileUrl: `https://raw.githubusercontent.com/${Bot.BotInstance.config.enrollDataOrgName}/${repoName}/main/plot_section_wide/${sec}.png`,
+                            fileUrl: `https://raw.githubusercontent.com/${orgName}/${repoName}/main/plot_section_wide/${sec}.png`,
                         });
                     }
                 }

@@ -1,10 +1,9 @@
-import { IConfiguration } from "./definitions";
 import { Client, Collection, Interaction, Partials } from "discord.js";
-import axios, { AxiosInstance } from "axios";
 import * as Cmds from "./commands";
 import { onErrorEvent, onInteractionEvent, onReadyEvent } from "./events";
 import { REST } from "@discordjs/rest";
 import { RESTPostAPIApplicationCommandsJSONBody, Routes } from "discord-api-types/v10";
+import { Data } from "./Data";
 
 export class Bot {
     /**
@@ -12,12 +11,6 @@ export class Bot {
      * @type {Bot}
      */
     public static BotInstance: Bot;
-
-    /**
-     * The HTTP client used to make web requests.
-     * @type {AxiosInstance}
-     */
-    public static AxiosClient: AxiosInstance = axios.create();
 
     /**
      * All commands. The key is the category name and the value is the array of commands.
@@ -44,7 +37,6 @@ export class Bot {
      */
     public static JsonCommands: RESTPostAPIApplicationCommandsJSONBody[];
     public static Rest: REST;
-    private readonly _config: IConfiguration;
     private readonly _bot: Client;
     private _eventsIsStarted: boolean = false;
     public readonly instanceStarted: Date;
@@ -52,17 +44,12 @@ export class Bot {
     /**
      * Constructs a new Discord bot.
      *
-     * @param {IConfiguration} config The configuration file.
+     * @param {string} token The bot's token.
      * @throws {Error} If a command name was registered twice or if `data.name` is not equal to `botCommandName`.
      */
-    public constructor(config: IConfiguration | null) {
-        if (!config) {
-            throw new Error("No config file given.");
-        }
-
+    public constructor(token: string) {
         Bot.BotInstance = this;
         this.instanceStarted = new Date();
-        this._config = config;
         this._bot = new Client({
             partials: [Partials.Message, Partials.Channel, Partials.GuildMember],
             intents: ["Guilds", "GuildMessages"],
@@ -108,7 +95,7 @@ export class Bot {
 
         Bot.JsonCommands = [];
         Bot.NameCommands = new Collection<string, Cmds.BaseCommand>();
-        Bot.Rest = new REST({ version: "9" }).setToken(config.token.botToken);
+        Bot.Rest = new REST({ version: "10" }).setToken(token);
         for (const command of Array.from(Bot.Commands.values()).flat()) {
             Bot.JsonCommands.push(command.data.toJSON() as RESTPostAPIApplicationCommandsJSONBody);
 
@@ -134,15 +121,6 @@ export class Bot {
     }
 
     /**
-     * Returns the Configuration object.
-     *
-     * @returns {IConfiguration} The configuration object.
-     */
-    public get config(): IConfiguration {
-        return this._config;
-    }
-
-    /**
      * Defines all necessary events for the bot to work.
      */
     public startAllEvents(): void {
@@ -164,17 +142,17 @@ export class Bot {
             this.startAllEvents();
         }
 
-        await this._bot.login(this._config.token.botToken);
+        await this._bot.login(Data.CONFIG.discord.token);
 
-        if (this._config.isProd) {
-            await Bot.Rest.put(Routes.applicationCommands(this._config.clientId), {
+        if (Data.CONFIG.isProd) {
+            await Bot.Rest.put(Routes.applicationCommands(Data.CONFIG.discord.clientId), {
                 body: Bot.JsonCommands,
             });
         } else {
             await Promise.all(
                 this._bot.guilds.cache.map(async (guild) => {
                     await Bot.Rest.put(
-                        Routes.applicationGuildCommands(this._config.clientId, guild.id),
+                        Routes.applicationGuildCommands(Data.CONFIG.discord.clientId, guild.id),
                         { body: Bot.JsonCommands }
                     );
                 })

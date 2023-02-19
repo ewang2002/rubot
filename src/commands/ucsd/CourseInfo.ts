@@ -3,7 +3,7 @@ import { EmbedBuilder } from "discord.js";
 import { StringUtil } from "../../utilities/StringUtilities";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { parseCourseSubjCode } from "../enroll-data/helpers/Helper";
-import { MutableConstants } from "../../constants/MutableConstants";
+import { Data } from "../../Data";
 
 export class CourseInfo extends BaseCommand {
     private static TERMS_ALLOWED: string[] = [18, 19, 20, 21, 22].map((x) => x.toString());
@@ -49,7 +49,7 @@ export class CourseInfo extends BaseCommand {
         }
 
         await ctx.interaction.deferReply();
-        const searchRes = MutableConstants.COURSE_LISTING.find((x) => {
+        const searchRes = Data.COURSE_LISTING.find((x) => {
             const subjCourseSplit = x.subjCourse.split("/");
             // Case where we might have SUBJ1 NUM1/SUBJ2 NUM2/.../SUBJn NUMn
             if (subjCourseSplit.find((z) => z === parsedCode)) {
@@ -66,7 +66,7 @@ export class CourseInfo extends BaseCommand {
         }
 
         const profMap: { [name: string]: Set<string> } = {};
-        MutableConstants.CAPE_DATA.filter(
+        Data.CAPE_DATA.filter(
             (x) =>
                 CourseInfo.TERMS_ALLOWED.some((z) => x.term.endsWith(z)) &&
                 x.subjectCourse === parsedCode
@@ -86,7 +86,7 @@ export class CourseInfo extends BaseCommand {
         ).map((x) => x.join(", "));
 
         const historicalOfferings = ArrayUtilities.removeDuplicates(
-            MutableConstants.CAPE_DATA.filter((x) => x.subjectCourse === parsedCode).map(
+            Data.CAPE_DATA.filter((x) => x.subjectCourse === parsedCode).map(
                 (x) => x.term
             )
         ).join(", ");
@@ -97,7 +97,7 @@ export class CourseInfo extends BaseCommand {
             )
             .setColor("Green")
             .setDescription(">>> " + searchRes.description)
-            .setFooter({ text: `Listings Last Scraped: ${MutableConstants.LISTING_LAST_SCRAPED}` });
+            .setFooter({ text: `Listings Last Scraped: ${Data.CONFIG.ucsdInfo.miscData.courseList.lastUpdated}` });
 
         if (historicalOfferings.length > 0) {
             embed.addFields({ name: "Past Terms Offered", value: StringUtil.codifyString(historicalOfferings) });

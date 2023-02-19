@@ -1,7 +1,6 @@
 import { BaseCommand, ICommandContext } from "../BaseCommand";
-import { Bot } from "../../Bot";
 import { GeneralUtilities } from "../../utilities/GeneralUtilities";
-import { MutableConstants } from "../../constants/MutableConstants";
+import { Data } from "../../Data";
 import { TERM_ARGUMENTS } from "../enroll-data/helpers/Helper";
 import { TimestampType, TimeUtilities } from "../../utilities/TimeUtilities";
 import { EmbedBuilder } from "discord.js";
@@ -30,7 +29,7 @@ export class LoginScriptStats extends BaseCommand {
      */
     public async run(ctx: ICommandContext): Promise<number> {
         const term =
-            ctx.interaction.options.getString("term", false) ?? MutableConstants.DEFAULT_TERM;
+            ctx.interaction.options.getString("term", false) ?? Data.DEFAULT_TERM;
         await ctx.interaction.deferReply();
 
         const [startTime, history, timeHistory]: [
@@ -41,8 +40,8 @@ export class LoginScriptStats extends BaseCommand {
             GeneralUtilities.tryExecuteAsync(
                 async () => {
                     // You will need the ucsd_webreg_rs app available
-                    const d = await Bot.AxiosClient.get(
-                        `http://127.0.0.1:3000/scraper/login_script/${term}/start`
+                    const d = await Data.AXIOS.get(
+                        `${Data.CONFIG.ucsdInfo.apiEndpoint}/scraper/login_script/${term}/start`
                     );
                     return d.data;
                 }
@@ -50,8 +49,8 @@ export class LoginScriptStats extends BaseCommand {
             GeneralUtilities.tryExecuteAsync(
                 async () => {
                     // You will need the ucsd_webreg_rs app available
-                    const d = await Bot.AxiosClient.get(
-                        `http://127.0.0.1:3000/scraper/login_script/${term}/history`
+                    const d = await Data.AXIOS.get(
+                        `${Data.CONFIG.ucsdInfo.apiEndpoint}/scraper/login_script/${term}/history`
                     );
                     return d.data;
                 }
@@ -59,8 +58,8 @@ export class LoginScriptStats extends BaseCommand {
             GeneralUtilities.tryExecuteAsync(
                 async () => {
                     // You will need the ucsd_webreg_rs app available
-                    const d = await Bot.AxiosClient.get(
-                        `http://127.0.0.1:3000/scraper/timing_stats/${term}`
+                    const d = await Data.AXIOS.get(
+                        `${Data.CONFIG.ucsdInfo.apiEndpoint}/scraper/timing_stats/${term}`
                     );
                     return d.data;
                 }

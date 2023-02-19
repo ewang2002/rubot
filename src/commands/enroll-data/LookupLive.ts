@@ -5,7 +5,7 @@ import {
     parseCourseSubjCode,
     requestFromWebRegApi,
 } from "./helpers/Helper";
-import { MutableConstants } from "../../constants/MutableConstants";
+import { Data } from "../../Data";
 
 export class LookupLive extends BaseCommand {
     public constructor() {
@@ -30,7 +30,7 @@ export class LookupLive extends BaseCommand {
      */
     public async run(ctx: ICommandContext): Promise<number> {
         const term =
-            ctx.interaction.options.getString("term", false) ?? MutableConstants.DEFAULT_TERM;
+            ctx.interaction.options.getString("term", false) ?? Data.DEFAULT_TERM;
         const code = ctx.interaction.options.getString("course_subj_num", true);
 
         const json = await requestFromWebRegApi(ctx, term, code);

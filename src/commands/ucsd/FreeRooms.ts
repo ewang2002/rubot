@@ -1,7 +1,7 @@
 import { ArgumentType, BaseCommand, ICommandContext } from "../BaseCommand";
 import { Collection, EmbedBuilder } from "discord.js";
 import { getSelectMenusFromBuildings, getUsedClassrooms } from "./Helpers/Helpers";
-import { MutableConstants } from "../../constants/MutableConstants";
+import { Data } from "../../Data";
 import { StringUtil } from "../../utilities/StringUtilities";
 import { ViewAllClassrooms } from "./ViewAllClassrooms";
 import { AdvancedCollector } from "../../utilities/AdvancedCollector";
@@ -119,8 +119,8 @@ export class FreeRooms extends BaseCommand {
                 .setColor("Gold")
                 .setTitle(
                     buildingName
-                        ? `**${key}** - ${buildingName} (Term: ${MutableConstants.CACHED_DATA_TERM})`
-                        : `**${key}** (Term: ${MutableConstants.CACHED_DATA_TERM})`
+                        ? `**${key}** - ${buildingName} (Term: ${Data.CONFIG.ucsdInfo.miscData.currentTermData.term})`
+                        : `**${key}** (Term: ${Data.CONFIG.ucsdInfo.miscData.currentTermData.term})`
                 )
                 .setDescription(
                     `You are currently viewing all classrooms that are free for the next \`${minAhead}\` minute(s),` +

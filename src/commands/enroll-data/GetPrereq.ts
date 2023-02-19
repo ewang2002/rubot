@@ -1,13 +1,12 @@
 import { EmbedBuilder } from "discord.js";
 import { BaseCommand, ICommandContext } from "../BaseCommand";
 import { LOOKUP_ARGUMENTS, parseCourseSubjCode } from "./helpers/Helper";
-import { MutableConstants } from "../../constants/MutableConstants";
-import { Bot } from "../../Bot";
 import { GeneralUtilities } from "../../utilities/GeneralUtilities";
 import { PrerequisiteInfo } from "../../definitions";
 import { StringUtil } from "../../utilities/StringUtilities";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
-import { GeneralConstants } from "../../constants/GeneralConstants";
+import { GeneralConstants } from "../../Constants";
+import { Data } from "../../Data";
 
 export class GetPrereq extends BaseCommand {
     public constructor() {
@@ -30,7 +29,7 @@ export class GetPrereq extends BaseCommand {
      */
     public async run(ctx: ICommandContext): Promise<number> {
         const term =
-            ctx.interaction.options.getString("term", false) ?? MutableConstants.DEFAULT_TERM;
+            ctx.interaction.options.getString("term", false) ?? Data.DEFAULT_TERM;
         const code = ctx.interaction.options.getString("course_subj_num", true);
 
         const parsedCode = parseCourseSubjCode(code);
@@ -48,8 +47,8 @@ export class GetPrereq extends BaseCommand {
         const json: PrerequisiteInfo | { error: string } | null =
             await GeneralUtilities.tryExecuteAsync(async () => {
                 // You will need the ucsd_webreg_rs app available
-                const d = await Bot.AxiosClient.get(
-                    `http://127.0.0.1:3000/webreg/prereqs/${term}?subject=${subj}&number=${num}`
+                const d = await Data.AXIOS.get(
+                    `${Data.CONFIG.ucsdInfo.apiEndpoint}/webreg/prereqs/${term}?subject=${subj}&number=${num}`
                 );
                 return d.data;
             });

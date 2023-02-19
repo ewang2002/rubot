@@ -1,21 +1,36 @@
 import {
     ChatInputCommandInteraction,
     Collection,
-    DMChannel,
     Guild,
     GuildMember,
-    NewsChannel,
-    PartialDMChannel,
     PermissionsString,
-    TextChannel,
+    StageChannel,
+    TextBasedChannel,
     User,
-    VoiceChannel,
 } from "discord.js";
-import { Bot } from "../Bot";
 import { SlashCommandBuilder, SlashCommandChannelOption } from "@discordjs/builders";
 import { APIApplicationCommandOptionChoice } from "discord-api-types/v10";
+import { Data } from "../Data";
 
-export type ValidTextChannelType = DMChannel | PartialDMChannel | NewsChannel | TextChannel | VoiceChannel; 
+/*
+TODO: Using TypeScript? You may be receiving this or any other text-based-related 
+error on a new or fresh installation of discord.js:
+
+source/index.ts:6:18 - error TS2339: Property 'send' does not exist on type 'DMChannel 
+    | PartialDMChannel | NewsChannel | StageChannel | TextChannel | PrivateThreadChannel 
+    | PublicThreadChannel<...> | VoiceChannel'.
+  Property 'send' does not exist on type 'StageChannel'.
+
+The problem is due to discord.js installing a dependency (discord-api-types) that installs 
+a later version (per npm resolutions) which includes new types that affect ours. discord.js 
+does not handle those types yet. 
+
+For now, we should use the below `ValidTextChannelType` so TypeScript doesn't get mad. Even
+though we're excluding `StageChannel`s, they in reality are `TextChannel`s and thus have
+access to all text channel-related methods.
+*/
+
+export type ValidTextChannelType = Exclude<TextBasedChannel, StageChannel>;
 
 export interface ICommandContext {
     /**
@@ -281,7 +296,7 @@ export abstract class BaseCommand {
         // If the command is bot owner only and the person isn't a bot owner, then this person can't run this command.
         if (
             this.commandInfo.botOwnerOnly &&
-            !Bot.BotInstance.config.botOwnerIds.includes(userToTest.id)
+            !Data.CONFIG.discord.botOwnerIds.includes(userToTest.id)
         )
             return results;
 
@@ -331,7 +346,7 @@ export abstract class BaseCommand {
             return results;
         }
 
-        if (Bot.BotInstance.config.botOwnerIds.includes(userToTest.id)) {
+        if (Data.CONFIG.discord.botOwnerIds.includes(userToTest.id)) {
             results.canRun = results.missingBotPerms.length === 0;
             return results;
         }

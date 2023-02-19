@@ -5,16 +5,15 @@ import {
     parseCourseSubjCode,
     requestFromWebRegApi,
 } from "./helpers/Helper";
-import { EmojiConstants, GeneralConstants } from "../../constants/GeneralConstants";
+import { EmojiConstants, GeneralConstants } from "../../Constants";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { StringUtil } from "../../utilities/StringUtilities";
 import { EmbedBuilder, embedLength } from "discord.js";
-import { MutableConstants } from "../../constants/MutableConstants";
+import { Data } from "../../Data";
 import * as table from "text-table";
 import { StringBuilder } from "../../utilities/StringBuilder";
 import { WebRegSection } from "../../definitions";
 import { GeneralUtilities } from "../../utilities/GeneralUtilities";
-import { Bot } from "../../Bot";
 
 export class LiveSeats extends BaseCommand {
     public constructor() {
@@ -39,7 +38,7 @@ export class LiveSeats extends BaseCommand {
      */
     public async run(ctx: ICommandContext): Promise<number> {
         const term =
-            ctx.interaction.options.getString("term", false) ?? MutableConstants.DEFAULT_TERM;
+            ctx.interaction.options.getString("term", false) ?? Data.DEFAULT_TERM;
         const codeArg = ctx.interaction.options.getString("course_subj_num", true);
         const allCodes = codeArg
             .split(",")
@@ -170,8 +169,8 @@ export class LiveSeats extends BaseCommand {
             const [subj, num] = parsedCode.split(" ");
             const json: WebRegSection[] | { error: string } | null =
                 await GeneralUtilities.tryExecuteAsync(async () => {
-                    const d = await Bot.AxiosClient.get(
-                        `http://127.0.0.1:3000/webreg/course_info/${term}?subject=${subj}&number=${num}`
+                    const d = await Data.AXIOS.get(
+                        `${Data.CONFIG.ucsdInfo.apiEndpoint}/webreg/course_info/${term}?subject=${subj}&number=${num}`
                     );
                     return d.data;
                 });

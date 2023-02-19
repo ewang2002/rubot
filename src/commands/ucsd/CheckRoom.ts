@@ -9,12 +9,12 @@ import {
     ButtonStyle,
 } from "discord.js";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
-import { EmojiConstants, GeneralConstants } from "../../constants/GeneralConstants";
+import { EmojiConstants, GeneralConstants } from "../../Constants";
 import { AdvancedCollector } from "../../utilities/AdvancedCollector";
 import { TimeUtilities } from "../../utilities/TimeUtilities";
 import { StringBuilder } from "../../utilities/StringBuilder";
 import { StringUtil } from "../../utilities/StringUtilities";
-import { MutableConstants } from "../../constants/MutableConstants";
+import { Data } from "../../Data";
 import getTimeStr = TimeUtilities.getTimeStr;
 import getWebRegDateStr = TimeUtilities.getWebRegDateStr;
 
@@ -198,7 +198,7 @@ export class CheckRoom extends BaseCommand {
             const embed = new EmbedBuilder()
                 .setTitle(
                     `**${classroomToUse}**: ${CheckRoom.LONG_DAY_OF_WEEK[i]} Schedule ` +
-                        `(Term: ${MutableConstants.CACHED_DATA_TERM})`
+                        `(Term: ${Data.CONFIG.ucsdInfo.miscData.currentTermData.term})`
                 )
                 .setDescription(`Current Time: **\`${TimeUtilities.getDateTime(currDate)}\`**`)
                 .setColor("Gold");

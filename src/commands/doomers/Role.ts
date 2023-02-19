@@ -1,5 +1,5 @@
 import { ArgumentType, BaseCommand, ICommandContext, ICommandInfo } from "../BaseCommand";
-import { GeneralConstants } from "../../constants/GeneralConstants";
+import { GeneralConstants } from "../../Constants";
 import { GeneralUtilities } from "../../utilities/GeneralUtilities";
 
 export class Role extends BaseCommand {
