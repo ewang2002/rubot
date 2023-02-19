@@ -221,7 +221,7 @@ export class Waitz extends BaseCommand {
                     uniqueId
                 );
 
-                if (!interact || !interact.isSelectMenu()) {
+                if (!interact || !interact.isStringSelectMenu()) {
                     resolve();
                     return;
                 }

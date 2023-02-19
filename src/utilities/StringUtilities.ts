@@ -39,7 +39,7 @@ export namespace StringUtil {
 
         let compEmojiUsed;
         if (percent < 0.5) {
-            compEmojiUsed = EmojiConstants.GREEN_CHECK_EMOJI;
+            compEmojiUsed = EmojiConstants.GREEN_SQUARE_EMOJI;
         } else if (percent < 0.8) {
             compEmojiUsed = EmojiConstants.YELLOW_SQUARE_EMOJI;
         } else {

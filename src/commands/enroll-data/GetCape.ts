@@ -116,7 +116,7 @@ export class GetCape extends BaseCommand {
                     uIdentifier
                 );
 
-                if (!selected || !selected.isSelectMenu()) {
+                if (!selected || !selected.isStringSelectMenu()) {
                     await ctx.interaction.editReply({
                         content: "You either canceled this process or the process timed out.",
                         components: [],
@@ -189,7 +189,7 @@ export class GetCape extends BaseCommand {
                     uIdentifier
                 );
 
-                if (!selected || !selected.isSelectMenu()) {
+                if (!selected || !selected.isStringSelectMenu()) {
                     await ctx.interaction.editReply({
                         content: "You either canceled this process or the process timed out.",
                         components: [],

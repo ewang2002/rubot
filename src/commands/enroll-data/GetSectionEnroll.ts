@@ -123,7 +123,7 @@ export class GetSectionEnroll extends BaseCommand {
             uIdentifier
         );
 
-        if (!selected || !selected.isSelectMenu()) {
+        if (!selected || !selected.isStringSelectMenu()) {
             await ctx.interaction.editReply({
                 content: "You either didn't respond in 30 seconds or you canceled this.",
                 components: [],

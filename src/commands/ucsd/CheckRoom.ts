@@ -141,7 +141,7 @@ export class CheckRoom extends BaseCommand {
                 uniqueId
             );
 
-            if (!interact || !interact.isSelectMenu()) {
+            if (!interact || !interact.isStringSelectMenu()) {
                 return resolve(null);
             }
 

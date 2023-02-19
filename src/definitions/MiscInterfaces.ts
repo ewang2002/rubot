@@ -67,3 +67,9 @@ export interface CoursePrerequisite {
     subj_course_id: string;
     course_title: string;
 }
+
+export interface ScraperTimeStatInfo {
+    recent_requests: number[];
+    ttl_requests:    number;
+    ttl_time_ms:     number;
+}

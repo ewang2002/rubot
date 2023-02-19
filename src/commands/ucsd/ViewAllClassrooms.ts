@@ -483,7 +483,7 @@ export class ViewAllClassrooms extends BaseCommand {
                     uniqueId
                 );
 
-                if (!interact || !interact.isSelectMenu() || interact.values[0] === "END_PROCESS") {
+                if (!interact || !interact.isStringSelectMenu() || interact.values[0] === "END_PROCESS") {
                     resolve();
                     return;
                 }
