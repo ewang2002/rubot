@@ -4,6 +4,7 @@ export namespace GeneralConstants {
 }
 
 export namespace EmojiConstants {
+    export const UPSIDE_DOWN_EMOJI: string = "🙃";
     export const LOCK_EMOJI: string = "🔒";
     export const MINUS_EMOJI: string = "➖";
     export const PLUS_EMOJI: string = "➕";
@@ -31,6 +32,10 @@ export namespace EmojiConstants {
     export const LONG_DOWN_ARROW_EMOJI: string = "⬇️";
     export const ARROW_HEADING_UP_EMOJI: string = "⤴️";
     export const ARROW_HEADING_DOWN_EMOJI: string = "⤵️";
+    export const COUNTERCLOCKWISE_EMOJI: string = "🔄";
     export const INBOX_EMOJI: string = "📥";
     export const OUTBOX_EMOJI: string = "📤";
+
+    export const DATE_EMOJI: string = "📅";
+    export const TIME_EMOJI: string = "🕰️";
 }

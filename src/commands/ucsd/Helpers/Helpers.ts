@@ -1,4 +1,4 @@
-import { IInternalCourseData, ViewAllClassrooms } from "../ViewAllClassrooms";
+import { IInternalCourseData, ViewAllClassrooms } from "../AllClassrooms";
 import { TimeUtilities } from "../../../utilities/TimeUtilities";
 import { StringSelectMenuBuilder, SelectMenuComponentOptionData } from "discord.js";
 import { ArrayUtilities } from "../../../utilities/ArrayUtilities";
@@ -145,6 +145,8 @@ export function getUsedClassrooms(cDateTime: Date, nextTime: number): ClassroomS
         const sharedClasses = allCourses.filter(
             (x) =>
                 x.location === classroom &&
+                // x.startTime >= currTimeNum --> upcoming class
+                // x.endTime >= currTimeNum   --> in progress
                 (x.startTime >= currTimeNum || x.endTime >= currTimeNum) &&
                 (isFinalTime
                     ? x.day[0] === currDateStr

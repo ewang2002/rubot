@@ -1,4 +1,4 @@
-import { SelectMenuBuilder } from "@discordjs/builders";
+import { ModalActionRowComponentBuilder, SelectMenuBuilder } from "@discordjs/builders";
 import {
     GuildMember,
     Message,
@@ -10,9 +10,14 @@ import {
     User,
     ComponentType,
     BaseMessageOptions,
+    ModalSubmitInteraction,
+    ModalBuilder,
+    TextInputBuilder,
+    ChatInputCommandInteraction,
 } from "discord.js";
 import { ValidTextChannelType } from "../commands";
 import { GeneralUtilities } from "./GeneralUtilities";
+import { StringUtil } from "./StringUtilities";
 
 /**
  * A series of helpful collector functions.
@@ -71,6 +76,84 @@ export namespace AdvancedCollector {
          * Whether to delete any messages the author sends (for the collector) after it has been sent or not.
          */
         deleteResponseMessage: boolean;
+    }
+
+    /**
+     * An interface that represents a modal argument for the coollector.
+     */
+    interface ITextModalArgument {
+        /**
+         * The title of the modal.
+         * 
+         * @type {string}
+         */
+        readonly modalTitle: string,
+
+        /**
+         * The inputs that the user should provide.
+         * 
+         * @type {TextInputBuilder[]}
+         */
+        readonly inputs: TextInputBuilder[],
+
+        /**
+         * The duration, in milliseconds.
+         * 
+         * @type {number}
+         */
+        readonly duration: number;
+    }
+
+
+    /**
+     * Sends the text modal to the user, waiting for the user to either provide an answer or for the modal to time out, 
+     * and then returns the result of that. 
+     * 
+     * 
+     * Unlike the other collector helper functions, this one is not asynchronous, but takes a callback which gives you
+     * the result of the modal submission. The reason why this approach was used is because no event is fired if the 
+     * user chooses to press the modal's "Cancel" button. So, if the modal's "Cancel" button is pressed and you had to
+     * await the function call, your program would have to wait until the modal collector timed out. If you're using 
+     * an interaction menu (e.g., buttons for interactions), those interactions would *not* work until the collector
+     * timed out.
+     * 
+     * 
+     * So, with a callback, even if the user presses the "cancel" button, because the function is synchronous, nothing
+     * will be "blocked."
+     * 
+     * 
+     * To reiterate, if the user
+     * - submits the modal, the callback function will be executed.
+     * - presses the "Cancel" button, nothing will happen.
+     * 
+     * @param interaction The interaction that should be replied to.
+     * @param data The modal data. This is the data that will be used in the creation of the modal.
+     * @param cb The callback. This will be called only if the user submits the modal. 
+     */
+    export function sendTextModal(
+        interaction: MessageComponentInteraction | ChatInputCommandInteraction,
+        data: ITextModalArgument,
+        cb: (m: ModalSubmitInteraction) => Promise<void> | void
+    ): void {
+        const customId = StringUtil.generateRandomString(30) + Date.now();
+
+        const modal = new ModalBuilder()
+            .setTitle(data.modalTitle)
+            .setCustomId(customId);
+
+        for (const input of data.inputs) {
+            modal.addComponents(
+                new ActionRowBuilder<ModalActionRowComponentBuilder>()
+                    .addComponents(input)
+            );
+        }
+
+        interaction.showModal(modal).then(() => interaction.awaitModalSubmit({
+            filter: i => i.customId === customId,
+            time: data.duration
+        }).then(cb).catch(() => {
+            // ignore the timeout error here.
+        }));
     }
 
     /**

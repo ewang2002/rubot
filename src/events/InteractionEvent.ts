@@ -12,16 +12,16 @@ import { Data } from "../Data";
  * @param {ChatInputCommandInteraction} interaction The interaction.
  */
 async function slashCommandHandler(interaction: ChatInputCommandInteraction): Promise<void> {
-    if (
-        !Data.CONFIG.isProd &&
-        !Data.CONFIG.discord.botOwnerIds.includes(interaction.user.id)
-    ) {
-        await interaction.reply({
-            content: "The bot is currently in development mode, and cannot be used right now.",
-        });
-
-        return;
-    }
+    //if (
+    //    !Data.CONFIG.isProd &&
+    //    !Data.CONFIG.discord.botOwnerIds.includes(interaction.user.id)
+    //) {
+    //    await interaction.reply({
+    //        content: "The bot is currently in development mode, and cannot be used right now.",
+    //    });
+    //
+    //    return;
+    //}
 
     const foundCommand = Bot.NameCommands.get(interaction.commandName);
     if (!foundCommand) return;

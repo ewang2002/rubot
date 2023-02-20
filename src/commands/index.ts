@@ -16,7 +16,7 @@ export * from "./enroll-data/GetPrereq";
 export * from "./enroll-data/LiveSeatLegends";
 export * from "./enroll-data/SearchCourse";
 
-export * from "./ucsd/ViewAllClassrooms";
+export * from "./ucsd/AllClassrooms";
 export * from "./ucsd/CheckRoom";
 export * from "./ucsd/Waitz";
 export * from "./ucsd/CourseInfo";

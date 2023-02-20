@@ -1,6 +1,26 @@
 import { EmojiConstants } from "../Constants";
+import { ArrayUtilities } from "./ArrayUtilities";
+import { StringBuilder } from "./StringBuilder";
 
 export namespace StringUtil {
+    const ALL_CHARACTERS: string[] = [
+        ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
+        ..."abcdefghijklmnopqrstuvwxyz".split(""),
+        ..."0123456789".split("")
+    ];
+
+    /**
+     * Generates a random string.
+     * @param {number} amt The length of the string.
+     * @return {string} The random string.
+     */
+    export function generateRandomString(amt: number): string {
+        const sb = new StringBuilder();
+        for (let i = 0; i < amt; ++i)
+            sb.append(ArrayUtilities.getRandomElement(ALL_CHARACTERS));
+        return sb.toString();
+    }
+
     /**
      * Adds three backticks (`) to the front and end of the string.
      * @param {T} content The content to add backticks to.

@@ -3,7 +3,7 @@ import { Collection, EmbedBuilder } from "discord.js";
 import { getSelectMenusFromBuildings, getUsedClassrooms } from "./Helpers/Helpers";
 import { Data } from "../../Data";
 import { StringUtil } from "../../utilities/StringUtilities";
-import { ViewAllClassrooms } from "./ViewAllClassrooms";
+import { ViewAllClassrooms } from "./AllClassrooms";
 import { AdvancedCollector } from "../../utilities/AdvancedCollector";
 import { TimeUtilities } from "../../utilities/TimeUtilities";
 import getDateTime = TimeUtilities.getDateTime;
@@ -158,6 +158,8 @@ export class FreeRooms extends BaseCommand {
         }
 
         await ctx.interaction.editReply({
+            content: "*Warning:* `/freerooms` is deprecated and will be removed in a future update. Please"
+                + " use `/allrooms` instead, and let me know if there are any issues.",
             embeds: [embeds[0]],
             components: AdvancedCollector.getActionRowsFromComponents(allBuildings),
         });

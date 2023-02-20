@@ -1,5 +1,5 @@
 import { ArgumentType, BaseCommand, ICommandContext } from "../BaseCommand";
-import { IInternalCourseData, ViewAllClassrooms } from "./ViewAllClassrooms";
+import { IInternalCourseData, ViewAllClassrooms } from "./AllClassrooms";
 import {
     Collection,
     ButtonBuilder,
