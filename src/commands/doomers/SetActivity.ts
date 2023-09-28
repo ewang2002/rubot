@@ -54,7 +54,9 @@ export class SetActivity extends BaseCommand {
 
         const presenceData: PresenceData = {};
         // We have to do this because a string is not an ActivityTypes
-        const fullActivity: ActivitiesOptions = {};
+        const fullActivity: ActivitiesOptions = {
+            name: activity
+        };
         switch (activityType) {
             case "PLAYING": {
                 fullActivity.type = ActivityType.Playing;
@@ -74,10 +76,9 @@ export class SetActivity extends BaseCommand {
             }
         }
 
-        fullActivity.name = activity;
         presenceData.activities = [fullActivity];
 
-        await ctx.user.client.user!.setPresence(presenceData);
+        ctx.user.client.user!.setPresence(presenceData);
         await ctx.interaction.reply({
             ephemeral: true,
             content: "Done!",

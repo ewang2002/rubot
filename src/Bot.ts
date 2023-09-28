@@ -1,4 +1,4 @@
-import { Client, Collection, Interaction, Partials } from "discord.js";
+import { Client, Collection, GatewayIntentBits, Interaction, Partials } from "discord.js";
 import * as Cmds from "./commands";
 import { onErrorEvent, onInteractionEvent, onReadyEvent } from "./events";
 import { REST } from "@discordjs/rest";
@@ -52,13 +52,7 @@ export class Bot {
         this.instanceStarted = new Date();
         this._bot = new Client({
             partials: [Partials.Message, Partials.Channel, Partials.GuildMember],
-            intents: ["Guilds", "GuildMessages"],
-            ws: {
-                properties: {
-                    //$browser: "Discord iOS",
-                    browser: "Discord iOS",
-                },
-            },
+            intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers]
         });
         Bot.Commands = new Collection<string, Cmds.BaseCommand[]>();
         Bot.Commands.set("General", [

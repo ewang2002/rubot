@@ -1,6 +1,3 @@
-# No Longer Supported
-This version of rubot will still be hosted, but will no longer be maintained. I am currently working on rewriting rubot from scratch. 
-
 # Rubot 2.0
 
 A UCSD-oriented Discord bot. 
