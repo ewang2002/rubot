@@ -330,15 +330,11 @@ export namespace DataRegistry {
 
         for await (const { term, repoName, ...o } of ucsdInfo.githubTerms) {
             const allOverallTerms = await GeneralUtilities.tryExecuteAsync<string[]>(async () => {
-                const req = await DataRegistry.AXIOS.get<Buffer>(
-                    `https://raw.githubusercontent.com/${orgName}/${repoName}/main/all_courses.txt`,
-                    {
-                        responseType: "arraybuffer",
-                    }
+                const req = await DataRegistry.AXIOS.get<string>(
+                    `https://raw.githubusercontent.com/${orgName}/${repoName}/main/all_courses.txt`
                 );
 
                 return req.data
-                    .toString("utf16le")
                     .split("\n")
                     .map((x) => x.trim())
                     .filter((x) => x.length > 0);

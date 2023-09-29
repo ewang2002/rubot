@@ -1,4 +1,3 @@
-// First, load all static data.
 import * as fs from "fs";
 import * as path from "path";
 import { DataRegistry } from "./DataRegistry";
