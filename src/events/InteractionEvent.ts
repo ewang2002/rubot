@@ -1,18 +1,19 @@
 import { ChatInputCommandInteraction, Interaction } from "discord.js";
-import { Bot } from "../Bot";
+
 import { StringUtil } from "../utilities/StringUtilities";
 import { TimeUtilities } from "../utilities/TimeUtilities";
 import { StringBuilder } from "../utilities/StringBuilder";
 import { ICommandContext } from "../commands";
 import { GeneralUtilities } from "../utilities/GeneralUtilities";
 import { Data } from "../Data";
+import { CommandRegistry } from "../commands/CommandRegistry";
 
 /**
  * Executes the slash command, if any.
  * @param {ChatInputCommandInteraction} interaction The interaction.
  */
 async function slashCommandHandler(interaction: ChatInputCommandInteraction): Promise<void> {
-    const foundCommand = new Map().get(interaction.commandName);
+    const foundCommand = CommandRegistry.getCommandByName(interaction.commandName);
     if (!foundCommand) {
         return;
     }

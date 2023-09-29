@@ -4,11 +4,12 @@ import BaseCommand, {
     ICommandContext,
     ICommandConf,
 } from "../BaseCommand";
-import { Bot } from "../../Bot";
+
 import { StringUtil } from "../../utilities/StringUtilities";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { StringBuilder } from "../../utilities/StringBuilder";
 import { GeneralUtilities } from "../../utilities/GeneralUtilities";
+import { CommandRegistry } from "../CommandRegistry";
 
 export default class Help extends BaseCommand {
     public constructor() {
@@ -45,7 +46,7 @@ export default class Help extends BaseCommand {
         let showCmdHelp = false;
 
         if (cmdName) {
-            const command = new Map().get(cmdName);
+            const command = CommandRegistry.getCommandByName(cmdName);
             if (command) {
                 const cmdHelpEmbed = GeneralUtilities.generateBlankEmbed(ctx.user, "Green")
                     .setTitle(`Command Help: **${command.commandInfo.formalCommandName}**`)
@@ -128,7 +129,7 @@ export default class Help extends BaseCommand {
                     : "Below is a list of all supported commands."
             );
 
-        for (const [category, commands] of new Map<string, BaseCommand[]>()) {
+        for (const [category, commands] of CommandRegistry.getAllCommands()) {
             helpEmbed.addFields({
                 name: category,
                 value: StringUtil.codifyString(
