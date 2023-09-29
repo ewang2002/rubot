@@ -68,7 +68,7 @@ export class Bot {
     }
 
     /**
-     * Logs into the bot, making it usable.
+     * Loads and registers all commands, and logs into the bot, making it usable.
      * 
      * @param {string[]} [guildIds] Whether to load commands for the specified guilds only.
      */

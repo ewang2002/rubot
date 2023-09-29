@@ -26,7 +26,7 @@ export namespace CommandRegistry {
         const foldersToProcess = await fsp.readdir(outPath, { withFileTypes: true })
             .then(allItems => allItems
                 .filter(item => item.isDirectory())
-                .map(dir => path.join(dir.path, dir.name)));
+                .map(dir => path.join(outPath, dir.name)));
 
         for (const folder of foldersToProcess) {
             const contentOfCategory: ICategoryConf = await import(path.join(folder, GeneralConstants.CONFIG_JS_FILE)).then(obj => obj.default);
@@ -36,7 +36,7 @@ export namespace CommandRegistry {
             const allFiles = await fsp.readdir(folder, { withFileTypes: true })
                 .then(allItems => allItems
                     .filter(item => item.isFile() && item.name !== GeneralConstants.CONFIG_JS_FILE)
-                    .map(file => path.join(file.path, file.name)));
+                    .map(file => path.join(folder, file.name)));
             for (const file of allFiles) {
                 const cmd: BaseCommand = new (await import(file).then(obj => obj.default));
 
@@ -50,6 +50,7 @@ export namespace CommandRegistry {
                     throw new Error(`Command '${cmd.commandInfo.botCommandName}' initialized several times.`);
                 }
                 NAME_TO_COMMAND.set(cmd.commandInfo.botCommandName, cmd);
+                commands.push(cmd);
             }
 
             MAPPED_COMMANDS.set(contentOfCategory.categoryName, commands);

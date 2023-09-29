@@ -1,1 +1,1 @@
-rm -r out && clear && npm run compile && clear && npm run start
+Remove-Item -r out; Clear-Host; npm run compile; Clear-Host; npm run start
