@@ -3,7 +3,7 @@ import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
 import { Data } from "../../Data";
 import { TimeUtilities } from "../../utilities/TimeUtilities";
 import { ButtonBuilder, ButtonStyle, Collection, EmbedBuilder, StringSelectMenuBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
-import { EmojiConstants, GeneralConstants } from "../../Constants";
+import { EmojiConstants, GeneralConstants, RegexConstants } from "../../Constants";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { StringUtil } from "../../utilities/StringUtilities";
 import { AdvancedCollector } from "../../utilities/AdvancedCollector";
@@ -191,7 +191,7 @@ export default class ViewAllClassrooms extends BaseCommand {
                     subjCourseId: x.subj_course_id,
                     meetingType: m.meeting_type,
                     startHr: m.start_hr,
-                    sectionFamily: /^\d+$/.test(x.section_code)
+                    sectionFamily: RegexConstants.ONLY_DIGITS_REGEX.test(x.section_code)
                         ? x.section_code.substring(x.section_code.length - 2)
                         : x.section_code[0],
                     startMin: m.start_min,

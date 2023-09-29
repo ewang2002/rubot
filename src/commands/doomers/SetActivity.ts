@@ -53,7 +53,6 @@ export default class SetActivity extends BaseCommand {
         const activityType = ctx.interaction.options.getString("activity_type", true);
 
         const presenceData: PresenceData = {};
-        // We have to do this because a string is not an ActivityTypes
         const fullActivity: ActivitiesOptions = {
             name: activity
         };

@@ -1,7 +1,11 @@
 export namespace GeneralConstants {
     export const ZERO_WIDTH_SPACE: string = "\u200b";
     export const PERMITTED_SERVER_IDS: string[] = ["778738941443440640", "533476850421202944"];
-    export const CONFIG_JS_FILE: string = "_C.js";
+    export const CONFIG_JS_FILE: string = "_.js";
+}
+
+export namespace RegexConstants {
+    export const ONLY_DIGITS_REGEX: RegExp = /^\d+$/;
 }
 
 export namespace EmojiConstants {

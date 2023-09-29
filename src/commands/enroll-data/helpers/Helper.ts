@@ -6,7 +6,7 @@ import { StringBuilder } from "../../../utilities/StringBuilder";
 import { StringUtil } from "../../../utilities/StringUtilities";
 import { ArgumentType, IArgumentInfo, ICommandContext } from "../../BaseCommand";
 import { GeneralUtilities } from "../../../utilities/GeneralUtilities";
-import { EmojiConstants } from "../../../Constants";
+import { EmojiConstants, RegexConstants } from "../../../Constants";
 import { AdvancedCollector } from "../../../utilities/AdvancedCollector";
 import { TimeUtilities } from "../../../utilities/TimeUtilities";
 import CAPE_DATA = Data.CAPE_DATA;
@@ -167,10 +167,9 @@ export async function displayInteractiveWebregData(
 ): Promise<void> {
     const [subj, num] = parsedCode.split(" ");
     const map: Collection<string, WebRegSection[]> = new Collection<string, WebRegSection[]>();
-    // /^\d+$/ is a regex to test if the string contains only digits.
     // Some sections have numerical section codes, e.g. instead of A01, you have 001. These sections generally
     // only have lectures (no discussion, no final).
-    if (sections[0].section_code.length > 0 && /^\d+$/.test(sections[0].section_code[0])) {
+    if (sections[0].section_code.length > 0 && RegexConstants.ONLY_DIGITS_REGEX.test(sections[0].section_code[0])) {
         map.set("0", sections);
     }
     else {
@@ -434,7 +433,7 @@ export function parseCourseSubjCode(code: string): string {
     let i = 0;
     for (; i < code.length; i++) {
         // Regex to see if it's a number
-        if (/^\d+$/.test(code[i])) {
+        if (RegexConstants.ONLY_DIGITS_REGEX.test(code[i])) {
             break;
         }
 
