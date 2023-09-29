@@ -1,7 +1,7 @@
 import { GeneralUtilities } from "../../utilities/GeneralUtilities";
-import { BaseCommand, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ICommandContext } from "../BaseCommand";
 
-export class LiveSeatLegends extends BaseCommand {
+export default class LiveSeatLegends extends BaseCommand {
     public constructor() {
         super({
             cmdCode: "LIVE_SEAT_LEGENDS",

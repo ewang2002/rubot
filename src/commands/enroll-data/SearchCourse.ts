@@ -5,13 +5,13 @@ import { IWebRegSearchResult } from "../../definitions";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { GeneralUtilities } from "../../utilities/GeneralUtilities";
 import { StringBuilder } from "../../utilities/StringBuilder";
-import { ArgumentType, BaseCommand, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
 import { TERM_ARGUMENTS } from "./helpers/Helper";
 import * as table from "text-table";
 import { StringUtil } from "../../utilities/StringUtilities";
 import { TimeUtilities } from "../../utilities/TimeUtilities";
 
-export class SearchCourse extends BaseCommand {
+export default class SearchCourse extends BaseCommand {
     public constructor() {
         super({
             cmdCode: "SEARCH_COURSE",

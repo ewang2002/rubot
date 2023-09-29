@@ -1,4 +1,4 @@
-import { BaseCommand, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { GeneralUtilities } from "../../utilities/GeneralUtilities";
 import { Data } from "../../Data";
 import { TERM_ARGUMENTS } from "../enroll-data/helpers/Helper";
@@ -8,7 +8,7 @@ import { ScraperTimeStatInfo } from "../../definitions";
 import * as table from "text-table";
 import { StringUtil } from "../../utilities/StringUtilities";
 
-export class LoginScriptStats extends BaseCommand {
+export default class LoginScriptStats extends BaseCommand {
     public constructor() {
         super({
             cmdCode: "SCRAPER_STATS",

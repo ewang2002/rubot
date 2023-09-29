@@ -1,4 +1,4 @@
-import { ArgumentType, BaseCommand, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
 import { EmojiConstants } from "../../Constants";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { ButtonBuilder, ButtonStyle, StringSelectMenuBuilder } from "discord.js";
@@ -7,7 +7,7 @@ import { Data } from "../../Data";
 import CAPE_DATA = Data.CAPE_DATA;
 import { getCapeSummary, parseCourseSubjCode } from "./helpers/Helper";
 
-export class GetCape extends BaseCommand {
+export default class GetCape extends BaseCommand {
     public constructor() {
         super({
             cmdCode: "GET_CAPE",

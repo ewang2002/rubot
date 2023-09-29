@@ -138,7 +138,7 @@ function addArgument(scb: SlashCommandBuilder, argInfo: IArgumentInfo): void {
     }
 }
 
-export abstract class BaseCommand {
+export default abstract class BaseCommand {
     /**
      * The command info object.
      */

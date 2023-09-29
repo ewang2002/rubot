@@ -1,0 +1,1 @@
+rm -r out && clear && npm run compile && clear && npm run start

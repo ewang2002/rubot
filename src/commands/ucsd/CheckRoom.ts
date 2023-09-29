@@ -1,5 +1,5 @@
-import { ArgumentType, BaseCommand, ICommandContext } from "../BaseCommand";
-import { IInternalCourseData, ViewAllClassrooms } from "./AllClassrooms";
+import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
+import ViewAllClassrooms, { IInternalCourseData } from "./AllClassrooms";
 import {
     Collection,
     ButtonBuilder,
@@ -18,7 +18,7 @@ import { Data } from "../../Data";
 import getTimeStr = TimeUtilities.getTimeStr;
 import getWebRegDateStr = TimeUtilities.getWebRegDateStr;
 
-export class CheckRoom extends BaseCommand {
+export default class CheckRoom extends BaseCommand {
     public static LONG_DAY_OF_WEEK: string[] = [
         "Sunday",
         "Monday",

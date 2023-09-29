@@ -1,4 +1,4 @@
-import { BaseCommand, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ICommandContext } from "../BaseCommand";
 import {
     displayInteractiveWebregData,
     LOOKUP_ARGUMENTS,
@@ -7,7 +7,7 @@ import {
 } from "./helpers/Helper";
 import { Data } from "../../Data";
 
-export class LookupLive extends BaseCommand {
+export default class LookupLive extends BaseCommand {
     public constructor() {
         super({
             cmdCode: "LOOKUP_COURSE",

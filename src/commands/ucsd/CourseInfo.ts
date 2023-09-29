@@ -1,11 +1,11 @@
-import { ArgumentType, BaseCommand, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
 import { EmbedBuilder } from "discord.js";
 import { StringUtil } from "../../utilities/StringUtilities";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { parseCourseSubjCode } from "../enroll-data/helpers/Helper";
 import { Data } from "../../Data";
 
-export class CourseInfo extends BaseCommand {
+export default class CourseInfo extends BaseCommand {
     private static TERMS_ALLOWED: string[] = [18, 19, 20, 21, 22].map((x) => x.toString());
 
     public constructor() {

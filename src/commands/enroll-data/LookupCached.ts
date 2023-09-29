@@ -1,8 +1,8 @@
-import { ArgumentType, BaseCommand, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
 import { displayInteractiveWebregData, parseCourseSubjCode } from "./helpers/Helper";
 import { Data } from "../../Data";
 
-export class LookupCached extends BaseCommand {
+export default class LookupCached extends BaseCommand {
     public constructor() {
         super({
             cmdCode: "LOOKUP_CACHED",

@@ -14,8 +14,8 @@ import {
     ModalBuilder,
     TextInputBuilder,
     ChatInputCommandInteraction,
+    TextBasedChannel,
 } from "discord.js";
-import { ValidTextChannelType } from "../commands";
 import { GeneralUtilities } from "./GeneralUtilities";
 import { StringUtil } from "./StringUtilities";
 
@@ -26,7 +26,7 @@ export namespace AdvancedCollector {
     const MAX_ACTION_ROWS: number = 5;
 
     interface ICollectorBaseArgument {
-        readonly targetChannel: ValidTextChannelType;
+        readonly targetChannel: TextBasedChannel;
         readonly targetAuthor: User | GuildMember;
         readonly duration: number;
 

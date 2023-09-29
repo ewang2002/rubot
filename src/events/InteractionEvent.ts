@@ -12,7 +12,7 @@ import { Data } from "../Data";
  * @param {ChatInputCommandInteraction} interaction The interaction.
  */
 async function slashCommandHandler(interaction: ChatInputCommandInteraction): Promise<void> {
-    const foundCommand = Bot.NameCommands.get(interaction.commandName);
+    const foundCommand = new Map().get(interaction.commandName);
     if (!foundCommand) {
         return;
     }

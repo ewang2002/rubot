@@ -1,9 +1,7 @@
-import { Client, Collection, GatewayIntentBits, Interaction, Partials } from "discord.js";
-import * as Cmds from "./commands";
+import { Client, GatewayIntentBits, Interaction, Partials } from "discord.js";
 import { onErrorEvent, onInteractionEvent, onReadyEvent } from "./events";
 import { REST } from "@discordjs/rest";
-import { RESTPostAPIApplicationCommandsJSONBody, Routes } from "discord-api-types/v10";
-import { Data } from "./Data";
+import { CommandRegistry } from "./commands/CommandRegistry";
 
 export class Bot {
     /**
@@ -13,33 +11,20 @@ export class Bot {
     public static BotInstance: Bot;
 
     /**
-     * All commands. The key is the category name and the value is the array of commands.
-     * @type {Collection<string, BaseCommand[]>}
+     * The REST client used to make requests to Discord's API.
      */
-    public static Commands: Collection<string, Cmds.BaseCommand[]>;
-
-    /**
-     * All commands. The key is the name of the command (essentially, the slash command name) and the value is the
-     * command object.
-     *
-     * **DO NOT MANUALLY POPULATE THIS OBJECT.**
-     *
-     * @type {Collection<string, BaseCommand>}
-     */
-    public static NameCommands: Collection<string, Cmds.BaseCommand>;
-
-    /**
-     * All commands. This is sent to Discord for the purpose of slash commands.
-     *
-     * **DO NOT MANUALLY POPULATE THIS OBJECT.**
-     *
-     * @type {object[]}
-     */
-    public static JsonCommands: RESTPostAPIApplicationCommandsJSONBody[];
     public static Rest: REST;
+
+    /**
+     * When the bot was started.
+     */
+    public readonly instanceStarted: Date;
+
     private readonly _bot: Client;
     private _eventsIsStarted: boolean = false;
-    public readonly instanceStarted: Date;
+    private readonly _token: string;
+    private readonly _clientId: string;
+
 
     /**
      * Constructs a new Discord bot.
@@ -47,64 +32,16 @@ export class Bot {
      * @param {string} token The bot's token.
      * @throws {Error} If a command name was registered twice or if `data.name` is not equal to `botCommandName`.
      */
-    public constructor(token: string) {
+    public constructor(clientId: string, token: string) {
+        this._token = token;
+        this._clientId = clientId;
+        Bot.Rest = new REST({ version: "10" }).setToken(token);
         Bot.BotInstance = this;
         this.instanceStarted = new Date();
         this._bot = new Client({
             partials: [Partials.Message, Partials.Channel, Partials.GuildMember],
             intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers]
         });
-        Bot.Commands = new Collection<string, Cmds.BaseCommand[]>();
-        Bot.Commands.set("General", [
-            new Cmds.Help(),
-            new Cmds.Ping(),
-            new Cmds.Status(),
-            new Cmds.DidItBreak(),
-            new Cmds.LoginScriptStats(),
-        ]);
-
-        Bot.Commands.set("Doomers Only", [new Cmds.SetActivity(), new Cmds.Role()]);
-
-        Bot.Commands.set("Enrollment Data", [
-            new Cmds.GetOverallEnroll(),
-            new Cmds.GetSectionEnroll(),
-            new Cmds.LookupLive(),
-            new Cmds.GetCape(),
-            new Cmds.LookupCached(),
-            new Cmds.LiveSeats(),
-            new Cmds.GetPrereq(),
-            new Cmds.LiveSeatLegends(),
-            new Cmds.SearchCourse(),
-        ]);
-
-        Bot.Commands.set("UCSD", [
-            new Cmds.ViewAllClassrooms(),
-            new Cmds.CheckRoom(),
-            new Cmds.Waitz(),
-            new Cmds.CourseInfo(),
-            new Cmds.FreeRooms(),
-        ]);
-
-        Bot.Commands.set("Owner Only", [new Cmds.Exec()]);
-
-        Bot.JsonCommands = [];
-        Bot.NameCommands = new Collection<string, Cmds.BaseCommand>();
-        Bot.Rest = new REST({ version: "10" }).setToken(token);
-        for (const command of Array.from(Bot.Commands.values()).flat()) {
-            Bot.JsonCommands.push(command.data.toJSON() as RESTPostAPIApplicationCommandsJSONBody);
-
-            if (command.data.name !== command.commandInfo.botCommandName) {
-                throw new Error(
-                    `Names not matched: "${command.data.name}" - "${command.commandInfo.botCommandName}"`
-                );
-            }
-
-            if (Bot.NameCommands.has(command.data.name)) {
-                throw new Error(`Duplicate command "${command.data.name}" registered.`);
-            }
-
-            Bot.NameCommands.set(command.data.name, command);
-        }
     }
 
     /**
@@ -131,29 +68,17 @@ export class Bot {
     }
 
     /**
-     * Logs into the bot and connects to the database.
+     * Logs into the bot, making it usable.
+     * 
+     * @param {string[]} [guildIds] Whether to load commands for the specified guilds only.
      */
-    public async login(): Promise<void> {
+    public async login(guildIds?: string[]): Promise<void> {
         if (!this._eventsIsStarted) {
             this.startAllEvents();
         }
 
-        await this._bot.login(Data.CONFIG.discord.token);
-
-        if (Data.CONFIG.isProd) {
-            await Bot.Rest.put(Routes.applicationCommands(Data.CONFIG.discord.clientId), {
-                body: Bot.JsonCommands,
-            });
-        }
-        else {
-            await Promise.all(
-                this._bot.guilds.cache.map(async (guild) => {
-                    await Bot.Rest.put(
-                        Routes.applicationGuildCommands(Data.CONFIG.discord.clientId, guild.id),
-                        { body: Bot.JsonCommands }
-                    );
-                })
-            );
-        }
+        await CommandRegistry.loadCommands();
+        await CommandRegistry.registerCommands(this._bot, Bot.Rest, this._clientId, guildIds);
+        await this._bot.login(this._token);
     }
 }

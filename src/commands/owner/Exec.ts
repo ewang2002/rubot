@@ -3,9 +3,9 @@ import { AttachmentBuilder } from "discord.js";
 import { promisify } from "util";
 import { EmojiConstants } from "../../Constants";
 import { StringUtil } from "../../utilities/StringUtilities";
-import { ArgumentType, BaseCommand, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
 
-export class Exec extends BaseCommand {
+export default class Exec extends BaseCommand {
     public constructor() {
         super({
             cmdCode: "EXEC",

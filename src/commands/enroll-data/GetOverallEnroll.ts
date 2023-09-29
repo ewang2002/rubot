@@ -1,10 +1,10 @@
-import { BaseCommand, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { Data } from "../../Data";
 import { PLOT_ARGUMENTS, parseCourseSubjCode } from "./helpers/Helper";
 import { Collection } from "discord.js";
 import { IPlotInfo } from "../../definitions";
 
-export class GetOverallEnroll extends BaseCommand {
+export default class GetOverallEnroll extends BaseCommand {
     public constructor() {
         super({
             cmdCode: "GET_OVERALL_ENROLL",

@@ -1,14 +1,14 @@
-import { ArgumentType, BaseCommand, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
 import { Collection, EmbedBuilder } from "discord.js";
 import { getSelectMenusFromBuildings, getUsedClassrooms } from "./Helpers/Helpers";
 import { Data } from "../../Data";
 import { StringUtil } from "../../utilities/StringUtilities";
-import { ViewAllClassrooms } from "./AllClassrooms";
+import ViewAllClassrooms from "./AllClassrooms";
 import { AdvancedCollector } from "../../utilities/AdvancedCollector";
 import { TimeUtilities } from "../../utilities/TimeUtilities";
 import getDateTime = TimeUtilities.getDateTime;
 
-export class FreeRooms extends BaseCommand {
+export default class FreeRooms extends BaseCommand {
     public constructor() {
         super({
             cmdCode: "FREE_ROOMS",

@@ -1,5 +1,5 @@
 import { EmbedBuilder } from "discord.js";
-import { BaseCommand, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { LOOKUP_ARGUMENTS, parseCourseSubjCode } from "./helpers/Helper";
 import { GeneralUtilities } from "../../utilities/GeneralUtilities";
 import { PrerequisiteInfo } from "../../definitions";
@@ -8,7 +8,7 @@ import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { GeneralConstants } from "../../Constants";
 import { Data } from "../../Data";
 
-export class GetPrereq extends BaseCommand {
+export default class GetPrereq extends BaseCommand {
     public constructor() {
         super({
             cmdCode: "GET_PREREQ",

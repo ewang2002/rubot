@@ -1,4 +1,4 @@
-import { BaseCommand, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { Data } from "../../Data";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { Collection, ButtonBuilder, StringSelectMenuBuilder, ButtonStyle } from "discord.js";
@@ -7,7 +7,7 @@ import { EmojiConstants } from "../../Constants";
 import { PLOT_ARGUMENTS, parseCourseSubjCode } from "./helpers/Helper";
 import { IPlotInfo } from "../../definitions";
 
-export class GetSectionEnroll extends BaseCommand {
+export default class GetSectionEnroll extends BaseCommand {
     public constructor() {
         super({
             cmdCode: "GET_SECTION_ENROLL",

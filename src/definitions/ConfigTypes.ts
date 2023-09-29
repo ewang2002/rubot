@@ -44,3 +44,8 @@ export interface IConfiguration {
         };
     };
 }
+
+
+export interface ICategoryConf {
+    categoryName: string;
+}

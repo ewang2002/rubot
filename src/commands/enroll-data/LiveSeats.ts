@@ -1,4 +1,4 @@
-import { BaseCommand, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ICommandContext } from "../BaseCommand";
 import {
     getColorByPercent,
     LOOKUP_ARGUMENTS,
@@ -15,7 +15,7 @@ import { StringBuilder } from "../../utilities/StringBuilder";
 import { WebRegSection } from "../../definitions";
 import { GeneralUtilities } from "../../utilities/GeneralUtilities";
 
-export class LiveSeats extends BaseCommand {
+export default class LiveSeats extends BaseCommand {
     public constructor() {
         super({
             cmdCode: "LIVE_SEATS",

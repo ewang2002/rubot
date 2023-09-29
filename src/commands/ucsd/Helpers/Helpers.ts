@@ -1,4 +1,4 @@
-import { IInternalCourseData, ViewAllClassrooms } from "../AllClassrooms";
+import ViewAllClassrooms, { IInternalCourseData } from "../AllClassrooms";
 import { TimeUtilities } from "../../../utilities/TimeUtilities";
 import { StringSelectMenuBuilder, SelectMenuComponentOptionData } from "discord.js";
 import { ArrayUtilities } from "../../../utilities/ArrayUtilities";

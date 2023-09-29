@@ -1,6 +1,6 @@
-import { BaseCommand, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { GeneralUtilities } from "../../utilities/GeneralUtilities";
-import { WaitzCompareData, WaitzLiveData } from "../../definitions/WaitzInterfaces";
+import { WaitzCompareData, WaitzLiveData } from "../../definitions/WaitzTypes";
 import {
     ButtonBuilder,
     EmbedBuilder,
@@ -15,7 +15,7 @@ import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { AdvancedCollector } from "../../utilities/AdvancedCollector";
 import { Data } from "../../Data";
 
-export class Waitz extends BaseCommand {
+export default class Waitz extends BaseCommand {
     private static NUM_SQUARES: number = 12;
 
     public constructor() {

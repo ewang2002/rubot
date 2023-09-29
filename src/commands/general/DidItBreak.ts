@@ -1,9 +1,9 @@
-import { BaseCommand, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { WebRegSection } from "../../definitions";
 import { GeneralUtilities } from "../../utilities/GeneralUtilities";
 import { Data } from "../../Data";
 
-export class DidItBreak extends BaseCommand {
+export default class DidItBreak extends BaseCommand {
     public constructor() {
         super({
             cmdCode: "DID_IT_BREAK",

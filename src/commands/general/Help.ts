@@ -1,6 +1,5 @@
-import {
+import BaseCommand, {
     ArgumentType,
-    BaseCommand,
     IArgumentInfo,
     ICommandContext,
     ICommandConf,
@@ -11,7 +10,7 @@ import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { StringBuilder } from "../../utilities/StringBuilder";
 import { GeneralUtilities } from "../../utilities/GeneralUtilities";
 
-export class Help extends BaseCommand {
+export default class Help extends BaseCommand {
     public constructor() {
         const cmi: ICommandConf = {
             cmdCode: "HELP",
@@ -46,7 +45,7 @@ export class Help extends BaseCommand {
         let showCmdHelp = false;
 
         if (cmdName) {
-            const command = Bot.NameCommands.get(cmdName);
+            const command = new Map().get(cmdName);
             if (command) {
                 const cmdHelpEmbed = GeneralUtilities.generateBlankEmbed(ctx.user, "Green")
                     .setTitle(`Command Help: **${command.commandInfo.formalCommandName}**`)
@@ -129,7 +128,7 @@ export class Help extends BaseCommand {
                     : "Below is a list of all supported commands."
             );
 
-        for (const [category, commands] of Bot.Commands) {
+        for (const [category, commands] of new Map<string, BaseCommand[]>()) {
             helpEmbed.addFields({
                 name: category,
                 value: StringUtil.codifyString(

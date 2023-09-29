@@ -1,2 +1,3 @@
-export * from "./ConfigInterfaces";
-export * from "./MiscInterfaces";
+export * from "./ConfigTypes";
+export * from "./WaitzTypes";
+export * from "./UCSDTypes";

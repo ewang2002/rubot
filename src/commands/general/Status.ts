@@ -1,4 +1,4 @@
-import { BaseCommand, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { EmbedBuilder } from "discord.js";
 import { TimeUtilities } from "../../utilities/TimeUtilities";
 import { Bot } from "../../Bot";
@@ -10,7 +10,7 @@ import { EmojiConstants } from "../../Constants";
 import { StringUtil } from "../../utilities/StringUtilities";
 import * as table from "text-table";
 
-export class Status extends BaseCommand {
+export default class Status extends BaseCommand {
     public constructor() {
         super({
             cmdCode: "STATUS",

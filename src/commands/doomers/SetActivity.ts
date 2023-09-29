@@ -1,8 +1,8 @@
-import { ArgumentType, BaseCommand, ICommandContext, ICommandConf } from "../BaseCommand";
+import BaseCommand, { ArgumentType, ICommandContext, ICommandConf } from "../BaseCommand";
 import { ActivitiesOptions, ActivityType, PresenceData } from "discord.js";
 import { GeneralConstants } from "../../Constants";
 
-export class SetActivity extends BaseCommand {
+export default class SetActivity extends BaseCommand {
     public constructor() {
         const cmi: ICommandConf = {
             cmdCode: "SET_ACTIVITY",

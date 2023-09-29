@@ -1,5 +1,5 @@
 // "If it works, don't question it."
-import { ArgumentType, BaseCommand, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
 import { Data } from "../../Data";
 import { TimeUtilities } from "../../utilities/TimeUtilities";
 import { ButtonBuilder, ButtonStyle, Collection, EmbedBuilder, StringSelectMenuBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
@@ -27,7 +27,7 @@ export interface IInternalCourseData {
     instructor: string[];
 }
 
-export class ViewAllClassrooms extends BaseCommand {
+export default class ViewAllClassrooms extends BaseCommand {
     public static FINAL_DURATION_TO_MS: number = 179 * 60 * 1000;
 
     public static DAY_OF_WEEK: string[] = ["Su", "M", "Tu", "W", "Th", "F", "Sa"];
