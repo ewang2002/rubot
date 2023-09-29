@@ -1,7 +1,7 @@
 import { Client, GatewayIntentBits, Interaction, Partials } from "discord.js";
 import { onErrorEvent, onInteractionEvent, onReadyEvent } from "./events";
 import { REST } from "@discordjs/rest";
-import { CommandRegistry } from "./commands/CommandRegistry";
+import { CommandRegistry } from "./commands";
 
 export class Bot {
     /**

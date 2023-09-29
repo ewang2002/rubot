@@ -9,7 +9,7 @@ import { StringUtil } from "../../utilities/StringUtilities";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { StringBuilder } from "../../utilities/StringBuilder";
 import { GeneralUtilities } from "../../utilities/GeneralUtilities";
-import { CommandRegistry } from "../CommandRegistry";
+import { CommandRegistry } from "..";
 
 export default class Help extends BaseCommand {
     public constructor() {

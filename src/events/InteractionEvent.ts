@@ -6,7 +6,7 @@ import { StringBuilder } from "../utilities/StringBuilder";
 import { ICommandContext } from "../commands";
 import { GeneralUtilities } from "../utilities/GeneralUtilities";
 import { Data } from "../Data";
-import { CommandRegistry } from "../commands/CommandRegistry";
+import { CommandRegistry } from "../commands";
 
 /**
  * Executes the slash command, if any.
