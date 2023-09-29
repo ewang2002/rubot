@@ -1,5 +1,5 @@
 import BaseCommand, { ICommandContext } from "../BaseCommand";
-import { Data } from "../../Data";
+import { DataRegistry } from "../../DataRegistry";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { Collection, ButtonBuilder, StringSelectMenuBuilder, ButtonStyle } from "discord.js";
 import { AdvancedCollector } from "../../utilities/AdvancedCollector";
@@ -36,12 +36,12 @@ export default class GetSectionEnroll extends BaseCommand {
         let display: string;
         switch (searchType) {
             case "wide":
-                coll = Data.SECTION_ENROLL_WIDE;
+                coll = DataRegistry.SECTION_ENROLL_WIDE;
                 display = "Wide";
                 break;
             default:
                 // "norm" is the default
-                coll = Data.SECTION_ENROLL;
+                coll = DataRegistry.SECTION_ENROLL;
                 display = "Normal";
                 break;
         }

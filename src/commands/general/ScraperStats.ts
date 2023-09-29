@@ -1,6 +1,6 @@
 import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { GeneralUtilities } from "../../utilities/GeneralUtilities";
-import { Data } from "../../Data";
+import { DataRegistry } from "../../DataRegistry";
 import { TERM_ARGUMENTS } from "../enroll-data/helpers/Helper";
 import { TimestampType, TimeUtilities } from "../../utilities/TimeUtilities";
 import { EmbedBuilder } from "discord.js";
@@ -29,7 +29,7 @@ export default class LoginScriptStats extends BaseCommand {
      */
     public async run(ctx: ICommandContext): Promise<number> {
         const term =
-            ctx.interaction.options.getString("term", false) ?? Data.DEFAULT_TERM;
+            ctx.interaction.options.getString("term", false) ?? DataRegistry.DEFAULT_TERM;
         await ctx.interaction.deferReply();
 
         const [startTime, history, timeHistory]: [
@@ -40,8 +40,8 @@ export default class LoginScriptStats extends BaseCommand {
             GeneralUtilities.tryExecuteAsync(
                 async () => {
                     // You will need the ucsd_webreg_rs app available
-                    const d = await Data.AXIOS.get(
-                        `${Data.CONFIG.ucsdInfo.apiEndpoint}/scraper/login_script/${term}/start`
+                    const d = await DataRegistry.AXIOS.get(
+                        `${DataRegistry.CONFIG.ucsdInfo.apiEndpoint}/scraper/login_script/${term}/start`
                     );
                     return d.data;
                 }
@@ -49,8 +49,8 @@ export default class LoginScriptStats extends BaseCommand {
             GeneralUtilities.tryExecuteAsync(
                 async () => {
                     // You will need the ucsd_webreg_rs app available
-                    const d = await Data.AXIOS.get(
-                        `${Data.CONFIG.ucsdInfo.apiEndpoint}/scraper/login_script/${term}/history`
+                    const d = await DataRegistry.AXIOS.get(
+                        `${DataRegistry.CONFIG.ucsdInfo.apiEndpoint}/scraper/login_script/${term}/history`
                     );
                     return d.data;
                 }
@@ -58,8 +58,8 @@ export default class LoginScriptStats extends BaseCommand {
             GeneralUtilities.tryExecuteAsync(
                 async () => {
                     // You will need the ucsd_webreg_rs app available
-                    const d = await Data.AXIOS.get(
-                        `${Data.CONFIG.ucsdInfo.apiEndpoint}/scraper/timing_stats/${term}`
+                    const d = await DataRegistry.AXIOS.get(
+                        `${DataRegistry.CONFIG.ucsdInfo.apiEndpoint}/scraper/timing_stats/${term}`
                     );
                     return d.data;
                 }

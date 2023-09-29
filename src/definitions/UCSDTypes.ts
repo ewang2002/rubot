@@ -73,3 +73,18 @@ export interface ScraperTimeStatInfo {
     ttl_requests:    number;
     ttl_time_ms:     number;
 }
+
+export interface IInternalCourseData {
+    location: string;
+    startTime: number;
+    endTime: number;
+    day: string[];
+    subjCourseId: string;
+    meetingType: string;
+    startHr: number;
+    sectionFamily: string;
+    startMin: number;
+    endHr: number;
+    endMin: number;
+    instructor: string[];
+}

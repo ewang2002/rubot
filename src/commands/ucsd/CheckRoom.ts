@@ -1,5 +1,4 @@
 import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
-import ViewAllClassrooms, { IInternalCourseData } from "./AllClassrooms";
 import {
     Collection,
     ButtonBuilder,
@@ -9,14 +8,15 @@ import {
     ButtonStyle,
 } from "discord.js";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
-import { EmojiConstants, GeneralConstants } from "../../Constants";
+import { EmojiConstants, GeneralConstants, UCSDConstants } from "../../Constants";
 import { AdvancedCollector } from "../../utilities/AdvancedCollector";
 import { TimeUtilities } from "../../utilities/TimeUtilities";
 import { StringBuilder } from "../../utilities/StringBuilder";
 import { StringUtil } from "../../utilities/StringUtilities";
-import { Data } from "../../Data";
+import { DataRegistry } from "../../DataRegistry";
 import getTimeStr = TimeUtilities.getTimeStr;
 import getWebRegDateStr = TimeUtilities.getWebRegDateStr;
+import { IInternalCourseData } from "../../definitions";
 
 export default class CheckRoom extends BaseCommand {
     public static LONG_DAY_OF_WEEK: string[] = [
@@ -59,7 +59,7 @@ export default class CheckRoom extends BaseCommand {
     public async run(ctx: ICommandContext): Promise<number> {
         await ctx.interaction.deferReply();
         const roomToCheck = ctx.interaction.options.getString("room", true).toUpperCase().trim();
-        const [allCourses, classrooms] = ViewAllClassrooms.getCoursesClassrooms();
+        const [allCourses, classrooms] = DataRegistry.getCoursesAndClassrooms();
 
         const roomsToConsider: string[] = [];
         for (const c of classrooms) {
@@ -95,7 +95,7 @@ export default class CheckRoom extends BaseCommand {
             const possibleRooms: StringSelectMenuBuilder[] = ArrayUtilities.breakArrayIntoSubsets(
                 roomsToConsider.map((x) => {
                     const [building] = x.split(" ");
-                    const b = ViewAllClassrooms.BUILDING_CODES[building];
+                    const b = UCSDConstants.BUILDING_CODES[building];
                     return { room: x, name: b ? b : x };
                 }),
                 25
@@ -167,7 +167,7 @@ export default class CheckRoom extends BaseCommand {
         for (let i = 0; i < CheckRoom.LONG_DAY_OF_WEEK.length; i++) {
             const coursesToConsider = coursesToUse.filter(
                 (x) =>
-                    x.day.includes(currDateStr) || x.day.includes(ViewAllClassrooms.DAY_OF_WEEK[i])
+                    x.day.includes(currDateStr) || x.day.includes(GeneralConstants.DAYS_OF_WEEK[i])
             );
 
             // Categorize the courses into this collection based on timestamp. Also remove any duplicates.
@@ -198,7 +198,7 @@ export default class CheckRoom extends BaseCommand {
             const embed = new EmbedBuilder()
                 .setTitle(
                     `**${classroomToUse}**: ${CheckRoom.LONG_DAY_OF_WEEK[i]} Schedule ` +
-                        `(Term: ${Data.CONFIG.ucsdInfo.miscData.currentTermData.term})`
+                    `(Term: ${DataRegistry.CONFIG.ucsdInfo.miscData.currentTermData.term})`
                 )
                 .setDescription(`Current Time: **\`${TimeUtilities.getDateTime(currDate)}\`**`)
                 .setColor("Gold");

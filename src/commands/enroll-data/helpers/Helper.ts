@@ -1,5 +1,5 @@
 import { Collection, ButtonBuilder, EmbedBuilder, embedLength, ButtonStyle } from "discord.js";
-import { Data } from "../../../Data";
+import { DataRegistry } from "../../../DataRegistry";
 import { ICapeRow, Meeting, WebRegSection } from "../../../definitions";
 import { ArrayUtilities } from "../../../utilities/ArrayUtilities";
 import { StringBuilder } from "../../../utilities/StringBuilder";
@@ -9,7 +9,7 @@ import { GeneralUtilities } from "../../../utilities/GeneralUtilities";
 import { EmojiConstants, RegexConstants } from "../../../Constants";
 import { AdvancedCollector } from "../../../utilities/AdvancedCollector";
 import { TimeUtilities } from "../../../utilities/TimeUtilities";
-import CAPE_DATA = Data.CAPE_DATA;
+import CAPE_DATA = DataRegistry.CAPE_DATA;
 import padTimeDigit = TimeUtilities.padTimeDigit;
 import getTimeStr = TimeUtilities.getTimeStr;
 import WARNING_EMOJI = EmojiConstants.WARNING_EMOJI;
@@ -19,9 +19,9 @@ export const TERM_ARGUMENTS: IArgumentInfo[] = [
         displayName: "Term",
         argName: "term",
         type: ArgumentType.String,
-        desc: `The term to check. Defaults to ${Data.DEFAULT_TERM}`,
+        desc: `The term to check. Defaults to ${DataRegistry.DEFAULT_TERM}`,
         restrictions: {
-            stringChoices: Data.CONFIG.ucsdInfo.currentWebRegTerms.map((x) => {
+            stringChoices: DataRegistry.CONFIG.ucsdInfo.currentWebRegTerms.map((x) => {
                 return { name: x.termName, value: x.term };
             }),
         },
@@ -48,7 +48,7 @@ export const PLOT_ARGUMENTS: IArgumentInfo[] = [
         argName: "term",
         type: ArgumentType.String,
         restrictions: {
-            stringChoices: Data.CONFIG.ucsdInfo.githubTerms.map((x) => {
+            stringChoices: DataRegistry.CONFIG.ucsdInfo.githubTerms.map((x) => {
                 return { name: x.termName, value: x.term };
             }),
         },
@@ -119,8 +119,8 @@ export async function requestFromWebRegApi(
     const json: WebRegSection[] | { error: string } | null = await GeneralUtilities.tryExecuteAsync(
         async () => {
             // You will need the ucsd_webreg_rs app available
-            const d = await Data.AXIOS.get(
-                `${Data.CONFIG.ucsdInfo.apiEndpoint}/webreg/course_info/${term}?subject=${subj}&number=${num}`
+            const d = await DataRegistry.AXIOS.get(
+                `${DataRegistry.CONFIG.ucsdInfo.apiEndpoint}/webreg/course_info/${term}?subject=${subj}&number=${num}`
             );
             return d.data;
         }

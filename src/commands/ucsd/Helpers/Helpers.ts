@@ -1,9 +1,10 @@
-import ViewAllClassrooms, { IInternalCourseData } from "../AllClassrooms";
 import { TimeUtilities } from "../../../utilities/TimeUtilities";
 import { StringSelectMenuBuilder, SelectMenuComponentOptionData } from "discord.js";
 import { ArrayUtilities } from "../../../utilities/ArrayUtilities";
 import getWebRegDateStr = TimeUtilities.getWebRegDateStr;
-import { EmojiConstants } from "../../../Constants";
+import { EmojiConstants, GeneralConstants, UCSDConstants } from "../../../Constants";
+import { DataRegistry } from "../../../DataRegistry";
+import { IInternalCourseData } from "../../../definitions";
 
 type ClassroomSection = {
     // Key
@@ -53,7 +54,7 @@ export const getSelectMenusFromBuildings = (
 ): StringSelectMenuBuilder[] | null => {
     const selectMenus = ArrayUtilities.breakArrayIntoSubsets(
         buildings.map((x) => {
-            const b = ViewAllClassrooms.BUILDING_CODES[x];
+            const b = UCSDConstants.BUILDING_CODES[x];
             return { code: x, name: b ? b : x };
         }),
         25
@@ -124,9 +125,9 @@ export const getSelectMenusFromBuildings = (
  * @returns {ClassroomSection} All classrooms and their status.
  */
 export function getUsedClassrooms(cDateTime: Date, nextTime: number): ClassroomSection {
-    const [allCourses, classrooms] = ViewAllClassrooms.getCoursesClassrooms();
+    const [allCourses, classrooms] = DataRegistry.getCoursesAndClassrooms();
     const currTimeNum = cDateTime.getHours() * 100 + cDateTime.getMinutes();
-    const currDayOfWk = ViewAllClassrooms.DAY_OF_WEEK[cDateTime.getDay()];
+    const currDayOfWk = GeneralConstants.DAYS_OF_WEEK[cDateTime.getDay()];
     const currDateStr = getWebRegDateStr(cDateTime);
 
     // Assume that, if the day is a finals day, then there must be at least ONE course
@@ -135,8 +136,8 @@ export function getUsedClassrooms(cDateTime: Date, nextTime: number): ClassroomS
         (x) =>
             x.day[0] === currDateStr &&
             new Date(2022, 0, 1, x.endHr, x.endMin).getTime() -
-                new Date(2022, 0, 1, x.startHr, x.startMin).getTime() ===
-                ViewAllClassrooms.FINAL_DURATION_TO_MS
+            new Date(2022, 0, 1, x.startHr, x.startMin).getTime() ===
+            UCSDConstants.FINAL_DURATION_TO_MS
     );
 
     const coll: ClassroomSection = {};

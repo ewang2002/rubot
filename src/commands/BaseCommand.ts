@@ -9,7 +9,7 @@ import {
 } from "discord.js";
 import { SlashCommandBuilder, SlashCommandChannelOption } from "@discordjs/builders";
 import { APIApplicationCommandOptionChoice } from "discord-api-types/v10";
-import { Data } from "../Data";
+import { DataRegistry } from "../DataRegistry";
 
 export interface ICommandContext {
     /**
@@ -273,7 +273,7 @@ export default abstract class BaseCommand {
         // If the command is bot owner only and the person isn't a bot owner, then this person can't run this command.
         if (
             this.commandInfo.botOwnerOnly &&
-            !Data.CONFIG.discord.botOwnerIds.includes(userToTest.id)
+            !DataRegistry.CONFIG.discord.botOwnerIds.includes(userToTest.id)
         ) {
             return results;
         }
@@ -330,7 +330,7 @@ export default abstract class BaseCommand {
             return results;
         }
 
-        if (Data.CONFIG.discord.botOwnerIds.includes(userToTest.id)) {
+        if (DataRegistry.CONFIG.discord.botOwnerIds.includes(userToTest.id)) {
             results.canRun = results.missingBotPerms.length === 0;
             return results;
         }

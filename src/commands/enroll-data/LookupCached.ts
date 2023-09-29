@@ -1,6 +1,6 @@
 import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
 import { displayInteractiveWebregData, parseCourseSubjCode } from "./helpers/Helper";
-import { Data } from "../../Data";
+import { DataRegistry } from "../../DataRegistry";
 
 export default class LookupCached extends BaseCommand {
     public constructor() {
@@ -45,13 +45,13 @@ export default class LookupCached extends BaseCommand {
         }
 
         await ctx.interaction.deferReply();
-        const data = Data.SECTION_TERM_DATA.filter(
+        const data = DataRegistry.SECTION_TERM_DATA.filter(
             (x) => x.subj_course_id === parsedCode
         );
         if (data.length === 0) {
             await ctx.interaction.editReply({
                 content: `No data was found for **\`${parsedCode}\`** `
-                    + `(Term: \`${Data.CONFIG.ucsdInfo.miscData.currentTermData.term}\`).`,
+                    + `(Term: \`${DataRegistry.CONFIG.ucsdInfo.miscData.currentTermData.term}\`).`,
             });
 
             return 0;
@@ -60,7 +60,7 @@ export default class LookupCached extends BaseCommand {
         await displayInteractiveWebregData(
             ctx,
             data,
-            Data.CONFIG.ucsdInfo.miscData.currentTermData.term,
+            DataRegistry.CONFIG.ucsdInfo.miscData.currentTermData.term,
             parsedCode,
             false
         );

@@ -1,16 +1,17 @@
 import { Collection } from "discord.js";
-import { ICapeRow, IConfiguration, IPlotInfo, ListedCourse, Meeting, WebRegSection } from "./definitions";
+import { ICapeRow, IConfiguration, IInternalCourseData, IPlotInfo, ListedCourse, Meeting, WebRegSection } from "./definitions";
 import { createReadStream } from "fs";
 import { createInterface } from "readline";
 import * as path from "path";
 import { TimeUtilities } from "./utilities/TimeUtilities";
 import { GeneralUtilities } from "./utilities/GeneralUtilities";
 import axios, { AxiosInstance } from "axios";
+import { RegexConstants } from "./Constants";
 
 /**
  * A namespace containing a lot of data that the bot will be using.
  */
-export namespace Data {
+export namespace DataRegistry {
     /**
      * The HTTP client used to make web requests.
      * 
@@ -69,6 +70,9 @@ export namespace Data {
     export const CAPE_DATA: ICapeRow[] = [];
     export const SECTION_TERM_DATA: WebRegSection[] = [];
     export const COURSE_LISTING: ListedCourse[] = [];
+
+    let ALL_IN_PERSON_COURSES: IInternalCourseData[] = [];
+    let ALL_CLASSROOMS: string[] = [];
 
     /**
      * Adds the section data to the above array.
@@ -166,6 +170,52 @@ export namespace Data {
 
         rl.on("close", () => {
             console.info(`Done reading SECTION. Data length: ${CAPE_DATA.length}`);
+
+            ALL_IN_PERSON_COURSES = SECTION_TERM_DATA.flatMap((x) =>
+                x.meetings.map((m) => {
+                    return {
+                        location: `${m.building} ${m.room}`,
+                        startTime: m.start_hr * 100 + m.start_min,
+                        endTime: m.end_hr * 100 + m.end_min,
+                        // This should never be null since, in the cached file, it's already defined as "n/a"
+                        day: (typeof m.meeting_days === "string"
+                            ? [m.meeting_days]
+                            : m.meeting_days) as string[],
+                        subjCourseId: x.subj_course_id,
+                        meetingType: m.meeting_type,
+                        startHr: m.start_hr,
+                        sectionFamily: RegexConstants.ONLY_DIGITS_REGEX.test(x.section_code)
+                            ? x.section_code.substring(x.section_code.length - 2)
+                            : x.section_code[0],
+                        startMin: m.start_min,
+                        endHr: m.end_hr,
+                        endMin: m.end_min,
+                        instructor: x.all_instructors,
+                    };
+                })
+            ).filter((x) => {
+                if (x.location.trim() === "") {
+                    return false;
+                }
+
+                // If start/end time is 0, then invalid section
+                if (x.startTime === 0 || x.endTime === 0) {
+                    return false;
+                }
+
+                // If day of week, must have at least one day.
+                // If it is a date, must not be empty string
+                if (x.day.length === 0 || (x.day.length === 1 && x.day[0].trim().length === 0)) {
+                    return false;
+                }
+
+                const [building] = x.location.split(" ");
+                return building !== "RCLAS" && building !== "TBA";
+            }).sort((a, b) => a.location.localeCompare(b.location));
+
+            ALL_CLASSROOMS = Array.from(
+                new Set(ALL_IN_PERSON_COURSES.map((x) => x.location))
+            );
         });
     }
 
@@ -281,7 +331,7 @@ export namespace Data {
 
         for await (const { term, repoName, ...o } of ucsdInfo.githubTerms) {
             const allOverallTerms = await GeneralUtilities.tryExecuteAsync<string[]>(async () => {
-                const req = await Data.AXIOS.get<Buffer>(
+                const req = await DataRegistry.AXIOS.get<Buffer>(
                     `https://raw.githubusercontent.com/${orgName}/${repoName}/main/all_courses.txt`,
                     {
                         responseType: "arraybuffer",
@@ -319,7 +369,7 @@ export namespace Data {
             }
 
             const allSectionTerms = await GeneralUtilities.tryExecuteAsync<string[]>(async () => {
-                const req = await Data.AXIOS.get<Buffer>(
+                const req = await DataRegistry.AXIOS.get<Buffer>(
                     `https://raw.githubusercontent.com/${orgName}/${repoName}/main/all_sections.txt`,
                     {
                         responseType: "arraybuffer",
@@ -356,5 +406,13 @@ export namespace Data {
                 }
             }
         }
+    }
+
+    /**
+     * Gets all in-person courses and classrooms. 
+     * @returns {[IInternalCourseData[], string[]]} The in-person courses and classrooms.
+     */
+    export function getCoursesAndClassrooms(): [IInternalCourseData[], string[]] {
+        return [ALL_IN_PERSON_COURSES, ALL_CLASSROOMS];
     }
 }

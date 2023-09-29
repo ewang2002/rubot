@@ -9,7 +9,7 @@ import { EmojiConstants, GeneralConstants } from "../../Constants";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { StringUtil } from "../../utilities/StringUtilities";
 import { EmbedBuilder, embedLength } from "discord.js";
-import { Data } from "../../Data";
+import { DataRegistry } from "../../DataRegistry";
 import * as table from "text-table";
 import { StringBuilder } from "../../utilities/StringBuilder";
 import { WebRegSection } from "../../definitions";
@@ -38,7 +38,7 @@ export default class LiveSeats extends BaseCommand {
      */
     public async run(ctx: ICommandContext): Promise<number> {
         const term =
-            ctx.interaction.options.getString("term", false) ?? Data.DEFAULT_TERM;
+            ctx.interaction.options.getString("term", false) ?? DataRegistry.DEFAULT_TERM;
         const codeArg = ctx.interaction.options.getString("course_subj_num", true);
         const allCodes = codeArg
             .split(",")
@@ -169,8 +169,8 @@ export default class LiveSeats extends BaseCommand {
             const [subj, num] = parsedCode.split(" ");
             const json: WebRegSection[] | { error: string } | null =
                 await GeneralUtilities.tryExecuteAsync(async () => {
-                    const d = await Data.AXIOS.get(
-                        `${Data.CONFIG.ucsdInfo.apiEndpoint}/webreg/course_info/${term}?subject=${subj}&number=${num}`
+                    const d = await DataRegistry.AXIOS.get(
+                        `${DataRegistry.CONFIG.ucsdInfo.apiEndpoint}/webreg/course_info/${term}?subject=${subj}&number=${num}`
                     );
                     return d.data;
                 });

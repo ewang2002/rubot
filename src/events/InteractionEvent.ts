@@ -5,7 +5,7 @@ import { TimeUtilities } from "../utilities/TimeUtilities";
 import { StringBuilder } from "../utilities/StringBuilder";
 import { ICommandContext } from "../commands";
 import { GeneralUtilities } from "../utilities/GeneralUtilities";
-import { Data } from "../Data";
+import { DataRegistry } from "../DataRegistry";
 import { CommandRegistry } from "../commands";
 
 /**
@@ -49,7 +49,7 @@ async function slashCommandHandler(interaction: ChatInputCommandInteraction): Pr
 
     // Check permissions
     const canRunInfo = foundCommand.hasPermissionToRun(ctx.member!, ctx.guild);
-    if (!Data.CONFIG.discord.botOwnerIds.includes(ctx.user.id) && !canRunInfo.hasAdmin) {
+    if (!DataRegistry.CONFIG.discord.botOwnerIds.includes(ctx.user.id) && !canRunInfo.hasAdmin) {
         foundCommand.addToCooldown(ctx.user);
     }
 

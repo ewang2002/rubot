@@ -1,5 +1,5 @@
 import BaseCommand, { ICommandContext } from "../BaseCommand";
-import { Data } from "../../Data";
+import { DataRegistry } from "../../DataRegistry";
 import { PLOT_ARGUMENTS, parseCourseSubjCode } from "./helpers/Helper";
 import { Collection } from "discord.js";
 import { IPlotInfo } from "../../definitions";
@@ -32,12 +32,12 @@ export default class GetOverallEnroll extends BaseCommand {
         let display: string;
         switch (searchType) {
             case "wide":
-                coll = Data.OVERALL_ENROLL_WIDE;
+                coll = DataRegistry.OVERALL_ENROLL_WIDE;
                 display = "Wide";
                 break;
             default:
                 // "norm" is the default
-                coll = Data.OVERALL_ENROLL;
+                coll = DataRegistry.OVERALL_ENROLL;
                 display = "Normal";
                 break;
         }

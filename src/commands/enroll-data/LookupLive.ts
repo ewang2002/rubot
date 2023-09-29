@@ -5,7 +5,7 @@ import {
     parseCourseSubjCode,
     requestFromWebRegApi,
 } from "./helpers/Helper";
-import { Data } from "../../Data";
+import { DataRegistry } from "../../DataRegistry";
 
 export default class LookupLive extends BaseCommand {
     public constructor() {
@@ -30,7 +30,7 @@ export default class LookupLive extends BaseCommand {
      */
     public async run(ctx: ICommandContext): Promise<number> {
         const term =
-            ctx.interaction.options.getString("term", false) ?? Data.DEFAULT_TERM;
+            ctx.interaction.options.getString("term", false) ?? DataRegistry.DEFAULT_TERM;
         const code = ctx.interaction.options.getString("course_subj_num", true);
 
         const json = await requestFromWebRegApi(ctx, term, code);

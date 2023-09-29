@@ -13,7 +13,7 @@ import { StringBuilder } from "../../utilities/StringBuilder";
 import { EmojiConstants } from "../../Constants";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { AdvancedCollector } from "../../utilities/AdvancedCollector";
-import { Data } from "../../Data";
+import { DataRegistry } from "../../DataRegistry";
 
 export default class Waitz extends BaseCommand {
     private static NUM_SQUARES: number = 12;
@@ -86,11 +86,11 @@ export default class Waitz extends BaseCommand {
     public async run(ctx: ICommandContext): Promise<number> {
         await ctx.interaction.deferReply();
         const liveResp = await GeneralUtilities.tryExecuteAsync(async () => {
-            return await Data.AXIOS.get<WaitzLiveData>("https://waitz.io/live/ucsd");
+            return await DataRegistry.AXIOS.get<WaitzLiveData>("https://waitz.io/live/ucsd");
         });
 
         const compResp = await GeneralUtilities.tryExecuteAsync(async () => {
-            return await Data.AXIOS.get<WaitzCompareData>("https://waitz.io/compare/ucsd");
+            return await DataRegistry.AXIOS.get<WaitzCompareData>("https://waitz.io/compare/ucsd");
         });
 
         if (!liveResp || !compResp) {

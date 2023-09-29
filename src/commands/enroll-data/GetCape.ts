@@ -3,8 +3,8 @@ import { EmojiConstants } from "../../Constants";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { ButtonBuilder, ButtonStyle, StringSelectMenuBuilder } from "discord.js";
 import { AdvancedCollector } from "../../utilities/AdvancedCollector";
-import { Data } from "../../Data";
-import CAPE_DATA = Data.CAPE_DATA;
+import { DataRegistry } from "../../DataRegistry";
+import CAPE_DATA = DataRegistry.CAPE_DATA;
 import { getCapeSummary, parseCourseSubjCode } from "./helpers/Helper";
 
 export default class GetCape extends BaseCommand {

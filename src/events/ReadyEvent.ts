@@ -1,5 +1,5 @@
 import { Bot } from "../Bot";
-import { Data } from "../Data";
+import { DataRegistry } from "../DataRegistry";
 
 export async function onReadyEvent(): Promise<void> {
     const botUser = Bot.BotInstance.client.user;
@@ -10,5 +10,5 @@ export async function onReadyEvent(): Promise<void> {
     }
 
     console.info(`${botUser.tag} has started successfully.`);
-    console.info("\tMode: " + (Data.CONFIG.isProd ? "Production" : "Testing"));
+    console.info("\tMode: " + (DataRegistry.CONFIG.isProd ? "Production" : "Testing"));
 }

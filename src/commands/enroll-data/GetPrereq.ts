@@ -6,7 +6,7 @@ import { PrerequisiteInfo } from "../../definitions";
 import { StringUtil } from "../../utilities/StringUtilities";
 import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { GeneralConstants } from "../../Constants";
-import { Data } from "../../Data";
+import { DataRegistry } from "../../DataRegistry";
 
 export default class GetPrereq extends BaseCommand {
     public constructor() {
@@ -29,7 +29,7 @@ export default class GetPrereq extends BaseCommand {
      */
     public async run(ctx: ICommandContext): Promise<number> {
         const term =
-            ctx.interaction.options.getString("term", false) ?? Data.DEFAULT_TERM;
+            ctx.interaction.options.getString("term", false) ?? DataRegistry.DEFAULT_TERM;
         const code = ctx.interaction.options.getString("course_subj_num", true);
 
         const parsedCode = parseCourseSubjCode(code);
@@ -47,8 +47,8 @@ export default class GetPrereq extends BaseCommand {
         const json: PrerequisiteInfo | { error: string } | null =
             await GeneralUtilities.tryExecuteAsync(async () => {
                 // You will need the ucsd_webreg_rs app available
-                const d = await Data.AXIOS.get(
-                    `${Data.CONFIG.ucsdInfo.apiEndpoint}/webreg/prereqs/${term}?subject=${subj}&number=${num}`
+                const d = await DataRegistry.AXIOS.get(
+                    `${DataRegistry.CONFIG.ucsdInfo.apiEndpoint}/webreg/prereqs/${term}?subject=${subj}&number=${num}`
                 );
                 return d.data;
             });
