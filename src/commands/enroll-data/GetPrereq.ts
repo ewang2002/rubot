@@ -2,7 +2,7 @@ import { EmbedBuilder } from "discord.js";
 import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { LOOKUP_ARGUMENTS, parseCourseSubjCode } from "./helpers/Helper";
 import { PrerequisiteInfo } from "../../definitions";
-import { StringUtil, ArrayUtilities, ScraperApiWrapper, ScraperResponse } from "../../utilities";
+import { ArrayUtilities, ScraperApiWrapper, ScraperResponse, StringUtil } from "../../utilities";
 import { GeneralConstants } from "../../Constants";
 import { DataRegistry } from "../../DataRegistry";
 

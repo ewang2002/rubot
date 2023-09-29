@@ -1,9 +1,9 @@
 import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { DataRegistry } from "../../DataRegistry";
-import { Collection, ButtonBuilder, StringSelectMenuBuilder, ButtonStyle } from "discord.js";
+import { ButtonBuilder, ButtonStyle, Collection, StringSelectMenuBuilder } from "discord.js";
 import { AdvancedCollector, ArrayUtilities } from "../../utilities";
 import { EmojiConstants } from "../../Constants";
-import { PLOT_ARGUMENTS, parseCourseSubjCode } from "./helpers/Helper";
+import { parseCourseSubjCode, PLOT_ARGUMENTS } from "./helpers/Helper";
 import { IPlotInfo } from "../../definitions";
 
 export default class GetSectionEnroll extends BaseCommand {

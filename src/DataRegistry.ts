@@ -1,9 +1,17 @@
 import { Collection } from "discord.js";
-import { ICapeRow, IConfiguration, IInternalCourseData, IPlotInfo, ListedCourse, Meeting, WebRegSection } from "./definitions";
+import {
+    ICapeRow,
+    IConfiguration,
+    IInternalCourseData,
+    IPlotInfo,
+    ListedCourse,
+    Meeting,
+    WebRegSection
+} from "./definitions";
 import { createReadStream } from "fs";
 import { createInterface } from "readline";
 import * as path from "path";
-import { TimeUtilities, GeneralUtilities } from "./utilities";
+import { GeneralUtilities, TimeUtilities } from "./utilities";
 import axios, { AxiosInstance } from "axios";
 import { RegexConstants } from "./Constants";
 
@@ -13,7 +21,7 @@ import { RegexConstants } from "./Constants";
 export namespace DataRegistry {
     /**
      * The HTTP client used to make web requests.
-     * 
+     *
      * @type {AxiosInstance}
      */
     export const AXIOS: AxiosInstance = axios.create();
@@ -21,7 +29,7 @@ export namespace DataRegistry {
     /**
      * Initializes all static data, i.e., data from files. This will not initialize any data that
      * needs to be requested from the internet.
-     * 
+     *
      * @param {IConfiguration} config The configuration information from the configuration file.
      */
     export function initStaticData(config: IConfiguration): void {
@@ -45,7 +53,7 @@ export namespace DataRegistry {
 
     /**
      * The default term available on WebReg. For example, if two terms are available on
-     * WebReg, we want to set one of those two terms as the default term so the user 
+     * WebReg, we want to set one of those two terms as the default term so the user
      * doesn't need to specify it explicitly.
      */
     export let DEFAULT_TERM: string;
@@ -404,7 +412,7 @@ export namespace DataRegistry {
     }
 
     /**
-     * Gets all in-person courses and classrooms. 
+     * Gets all in-person courses and classrooms.
      * @returns {[IInternalCourseData[], string[]]} The in-person courses and classrooms.
      */
     export function getCoursesAndClassrooms(): [IInternalCourseData[], string[]] {

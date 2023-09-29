@@ -103,7 +103,10 @@ export default class LoginScriptStats extends BaseCommand {
             .addFields({
                 name: "Login History",
                 value: history.length > 0
-                    ? history.map((x, i) => `@ \`[${i + 1}]\` ${TimeUtilities.getDiscordTime({ time: x, style: TimestampType.FullDate })}`)
+                    ? history.map((x, i) => `@ \`[${i + 1}]\` ${TimeUtilities.getDiscordTime({
+                        time: x,
+                        style: TimestampType.FullDate
+                    })}`)
                         .join("\n")
                     : "N/A"
             });

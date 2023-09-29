@@ -1,6 +1,6 @@
 export enum TimestampType {
     /**
-     * Formats the time so that it's displayed relative to the 
+     * Formats the time so that it's displayed relative to the
      * current time. For example, `in 23 days`.
      */
     Relative = "R",
@@ -13,7 +13,7 @@ export enum TimestampType {
 
     /**
      * Formats the time so that the full timestamp is given
-     * except for the day of the week. For example, 
+     * except for the day of the week. For example,
      * `November 4, 2022 8:43 PM`.
      */
     FullDateNoDay = "f",
@@ -290,13 +290,13 @@ export namespace TimeUtilities {
         return finalDate;
     }
 
-    /** 
+    /**
      * Creates a Discord timestamp
-     * @param {DiscordTimestampOptions} [options={}] Options to create the timestamp
+     * @param [options={}] Options to create the timestamp
      * @returns {string} The Discord timestamp
      */
     export function getDiscordTime({ time = Date.now(), style = TimestampType.Relative } = {}): string {
         // Truncate and divide by 1000 to transform  ms to seconds
-        return `<t:${Math.trunc(time / 1000)}:${style}>`; 
+        return `<t:${Math.trunc(time / 1000)}:${style}>`;
     }
 }

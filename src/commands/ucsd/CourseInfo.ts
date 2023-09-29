@@ -1,6 +1,6 @@
 import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
 import { EmbedBuilder } from "discord.js";
-import { StringUtil, ArrayUtilities } from "../../utilities";
+import { ArrayUtilities, StringUtil } from "../../utilities";
 import { parseCourseSubjCode } from "../enroll-data/helpers/Helper";
 import { DataRegistry } from "../../DataRegistry";
 

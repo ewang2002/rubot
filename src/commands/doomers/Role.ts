@@ -1,4 +1,4 @@
-import BaseCommand, { ArgumentType, ICommandContext, ICommandConf } from "../BaseCommand";
+import BaseCommand, { ArgumentType, ICommandConf, ICommandContext } from "../BaseCommand";
 import { GeneralConstants } from "../../Constants";
 import { GeneralUtilities } from "../../utilities";
 

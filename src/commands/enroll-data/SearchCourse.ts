@@ -2,7 +2,14 @@ import { EmbedBuilder, embedLength } from "discord.js";
 import { GeneralConstants } from "../../Constants";
 import { DataRegistry } from "../../DataRegistry";
 import { ISearchQuery, IWebRegSearchResult } from "../../definitions";
-import { ArrayUtilities, GeneralUtilities, ScraperApiWrapper, ScraperResponse, StringBuilder, StringUtil, TimeUtilities } from "../../utilities";
+import {
+    ArrayUtilities,
+    ScraperApiWrapper,
+    ScraperResponse,
+    StringBuilder,
+    StringUtil,
+    TimeUtilities
+} from "../../utilities";
 import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
 import { TERM_ARGUMENTS } from "./helpers/Helper";
 import * as table from "text-table";
@@ -204,7 +211,7 @@ export default class SearchCourse extends BaseCommand {
                 return null;
             }
 
-            let hrToReturn = 0;
+            let hrToReturn;
             if (isAm) {
                 hrToReturn = parsedHr === 12 ? 0 : parsedHr;
             }

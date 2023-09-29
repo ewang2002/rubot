@@ -29,6 +29,7 @@ export class Bot {
     /**
      * Constructs a new Discord bot.
      *
+     * @param {string} clientId The client ID.
      * @param {string} token The bot's token.
      * @throws {Error} If a command name was registered twice or if `data.name` is not equal to `botCommandName`.
      */
@@ -69,7 +70,7 @@ export class Bot {
 
     /**
      * Loads and registers all commands, and logs into the bot, making it usable.
-     * 
+     *
      * @param {string[]} [guildIds] Whether to load commands for the specified guilds only.
      */
     public async login(guildIds?: string[]): Promise<void> {

@@ -1,6 +1,6 @@
 import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { DataRegistry } from "../../DataRegistry";
-import { PLOT_ARGUMENTS, parseCourseSubjCode } from "./helpers/Helper";
+import { parseCourseSubjCode, PLOT_ARGUMENTS } from "./helpers/Helper";
 import { Collection } from "discord.js";
 import { IPlotInfo } from "../../definitions";
 

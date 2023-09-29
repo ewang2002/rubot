@@ -1,15 +1,15 @@
-import { Collection, ButtonBuilder, EmbedBuilder, embedLength, ButtonStyle } from "discord.js";
+import { ButtonBuilder, ButtonStyle, Collection, EmbedBuilder, embedLength } from "discord.js";
 import { DataRegistry } from "../../../DataRegistry";
 import { ICapeRow, Meeting, WebRegSection } from "../../../definitions";
 import {
+    AdvancedCollector,
     ArrayUtilities,
-    StringBuilder,
-    StringUtil, 
-    GeneralUtilities, 
-    AdvancedCollector, 
-    TimeUtilities,
+    GeneralUtilities,
     ScraperApiWrapper,
-    ScraperResponse
+    ScraperResponse,
+    StringBuilder,
+    StringUtil,
+    TimeUtilities
 } from "../../../utilities";
 import { ArgumentType, IArgumentInfo, ICommandContext } from "../../BaseCommand";
 import { EmojiConstants, RegexConstants } from "../../../Constants";

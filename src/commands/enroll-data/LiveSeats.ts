@@ -1,12 +1,7 @@
 import BaseCommand, { ICommandContext } from "../BaseCommand";
-import {
-    getColorByPercent,
-    LOOKUP_ARGUMENTS,
-    parseCourseSubjCode,
-    requestFromWebRegApi,
-} from "./helpers/Helper";
+import { getColorByPercent, LOOKUP_ARGUMENTS, parseCourseSubjCode, requestFromWebRegApi, } from "./helpers/Helper";
 import { EmojiConstants, GeneralConstants } from "../../Constants";
-import { ArrayUtilities, StringUtil, StringBuilder, ScraperResponse, ScraperApiWrapper } from "../../utilities";
+import { ArrayUtilities, ScraperApiWrapper, ScraperResponse, StringBuilder, StringUtil } from "../../utilities";
 import { EmbedBuilder, embedLength } from "discord.js";
 import { DataRegistry } from "../../DataRegistry";
 import * as table from "text-table";

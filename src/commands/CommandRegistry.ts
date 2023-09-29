@@ -12,15 +12,15 @@ export namespace CommandRegistry {
     let isLoaded: boolean = false;
 
     /**
-     * Searches for, and loads all, commands that have been defined. 
-     * 
+     * Searches for, and loads all, commands that have been defined.
+     *
      * @returns {Promise<number>} The number of commmands loaded.
      */
     export async function loadCommands(): Promise<number> {
         if (isLoaded) {
             return 0;
         }
-        
+
         isLoaded = true;
         const outPath = path.join(__dirname, "..", "..", "out", "commands");
         const foldersToProcess = await fsp.readdir(outPath, { withFileTypes: true })
@@ -61,7 +61,7 @@ export namespace CommandRegistry {
 
     /**
      * Calls Discord's API to register these commands through Discord's API.
-     * 
+     *
      * @param {Client} client The discord.js client.
      * @param {REST} rest An instance of the endpoint manager for Discord's API.
      * @param {string} clientId The client ID.
@@ -103,7 +103,7 @@ export namespace CommandRegistry {
 
     /**
      * Gets the command object by its name.
-     * 
+     *
      * @param {string} commandName The command name.
      * @returns {BaseCommand | null} The command object, if found.
      */
@@ -113,7 +113,7 @@ export namespace CommandRegistry {
 
     /**
      * Gets all commands.
-     * 
+     *
      * @returns {ReadonlyMap} The commands.
      */
     export function getAllCommands(): ReadonlyMap<string, BaseCommand[]> {

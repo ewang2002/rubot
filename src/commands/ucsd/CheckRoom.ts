@@ -1,18 +1,18 @@
 import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
 import {
-    Collection,
     ButtonBuilder,
-    EmbedBuilder,
-    StringSelectMenuBuilder,
-    SelectMenuComponentOptionData,
     ButtonStyle,
+    Collection,
+    EmbedBuilder,
+    SelectMenuComponentOptionData,
+    StringSelectMenuBuilder,
 } from "discord.js";
-import { ArrayUtilities, AdvancedCollector, TimeUtilities, StringBuilder, StringUtil } from "../../utilities";
+import { AdvancedCollector, ArrayUtilities, StringBuilder, StringUtil, TimeUtilities } from "../../utilities";
 import { EmojiConstants, GeneralConstants, UCSDConstants } from "../../Constants";
 import { DataRegistry } from "../../DataRegistry";
+import { IInternalCourseData } from "../../definitions";
 import getTimeStr = TimeUtilities.getTimeStr;
 import getWebRegDateStr = TimeUtilities.getWebRegDateStr;
-import { IInternalCourseData } from "../../definitions";
 
 export default class CheckRoom extends BaseCommand {
     public static LONG_DAY_OF_WEEK: string[] = [

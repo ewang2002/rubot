@@ -1,4 +1,4 @@
-import BaseCommand, { ArgumentType, ICommandContext, ICommandConf } from "../BaseCommand";
+import BaseCommand, { ArgumentType, ICommandConf, ICommandContext } from "../BaseCommand";
 import { ActivitiesOptions, ActivityType, PresenceData } from "discord.js";
 import { GeneralConstants } from "../../Constants";
 

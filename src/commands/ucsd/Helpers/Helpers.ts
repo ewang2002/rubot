@@ -1,9 +1,9 @@
-import { TimeUtilities, ArrayUtilities } from "../../../utilities";
-import { StringSelectMenuBuilder, SelectMenuComponentOptionData } from "discord.js";
-import getWebRegDateStr = TimeUtilities.getWebRegDateStr;
+import { ArrayUtilities, TimeUtilities } from "../../../utilities";
+import { SelectMenuComponentOptionData, StringSelectMenuBuilder } from "discord.js";
 import { EmojiConstants, GeneralConstants, UCSDConstants } from "../../../Constants";
 import { DataRegistry } from "../../../DataRegistry";
 import { IInternalCourseData } from "../../../definitions";
+import getWebRegDateStr = TimeUtilities.getWebRegDateStr;
 
 type ClassroomSection = {
     // Key

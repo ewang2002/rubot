@@ -70,8 +70,8 @@ export interface CoursePrerequisite {
 
 export interface ScraperTimeStatInfo {
     recent_requests: number[];
-    ttl_requests:    number;
-    ttl_time_ms:     number;
+    ttl_requests: number;
+    ttl_time_ms: number;
 }
 
 export interface IInternalCourseData {

@@ -124,8 +124,8 @@ function addArgument(scb: SlashCommandBuilder, argInfo: IArgumentInfo): void {
                 o.setName(argInfo.argName).setRequired(argInfo.required).setDescription(desc);
 
                 restrictions?.stringChoices &&
-                    restrictions.stringChoices.length > 0 &&
-                    o.addChoices(...restrictions.stringChoices);
+                restrictions.stringChoices.length > 0 &&
+                o.addChoices(...restrictions.stringChoices);
 
                 return o;
             });
@@ -246,10 +246,10 @@ export default abstract class BaseCommand {
      * @param {User | GuildMember} userToAdd The user to add.
      */
     public addToCooldown(userToAdd: User | GuildMember): void {
-        if (this.commandInfo.commandCooldown <= 0 || this.onCooldown.has(userToAdd.id)) { 
+        if (this.commandInfo.commandCooldown <= 0 || this.onCooldown.has(userToAdd.id)) {
             return;
         }
-    
+
         this.onCooldown.set(userToAdd.id, Date.now() + this.commandInfo.commandCooldown);
         setTimeout(() => this.onCooldown.delete(userToAdd.id), this.commandInfo.commandCooldown);
     }
@@ -452,7 +452,7 @@ export interface IArgumentInfo {
 
         /**
          * A function to modify the slash channel options; a common use would be to specify the types of channels that
-         * this command can run under. 
+         * this command can run under.
          * @param {SlashCommandChannelOption} o The slash command channel options.
          * @returns {SlashCommandChannelOption} The slash command channel options.
          */

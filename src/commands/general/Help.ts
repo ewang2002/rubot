@@ -1,11 +1,6 @@
-import BaseCommand, {
-    ArgumentType,
-    IArgumentInfo,
-    ICommandContext,
-    ICommandConf,
-} from "../BaseCommand";
+import BaseCommand, { ArgumentType, IArgumentInfo, ICommandConf, ICommandContext, } from "../BaseCommand";
 
-import { StringUtil, ArrayUtilities, StringBuilder, GeneralUtilities } from "../../utilities";
+import { ArrayUtilities, GeneralUtilities, StringBuilder, StringUtil } from "../../utilities";
 import { CommandRegistry } from "..";
 
 export default class Help extends BaseCommand {

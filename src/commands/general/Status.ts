@@ -1,6 +1,13 @@
 import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { EmbedBuilder } from "discord.js";
-import { TimeUtilities, GeneralUtilities, StringBuilder, StringUtil, ScraperApiWrapper, ScraperResponse } from "../../utilities";
+import {
+    GeneralUtilities,
+    ScraperApiWrapper,
+    ScraperResponse,
+    StringBuilder,
+    StringUtil,
+    TimeUtilities
+} from "../../utilities";
 import { Bot } from "../../Bot";
 import { WebRegSection } from "../../definitions";
 import { DataRegistry } from "../../DataRegistry";

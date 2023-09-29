@@ -19,7 +19,7 @@ export class ScraperApiWrapper {
 
     /**
      * Gets or creates an instance of this wrapper.
-     * 
+     *
      * @returns {ScraperApiWrapper} The instance.
      */
     public static getInstance(): ScraperApiWrapper {
@@ -31,8 +31,8 @@ export class ScraperApiWrapper {
     }
 
     /**
-     * Initializes the information needed to make calls to the API. 
-     * 
+     * Initializes the information needed to make calls to the API.
+     *
      * @param {string} apiBase The base URL for the API.
      * @param {string} apiKey The API key, if any.
      * @throws {Error} If this function is called before initialization.

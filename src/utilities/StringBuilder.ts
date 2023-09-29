@@ -40,7 +40,7 @@ export class StringBuilder {
      */
     public appendLine(times: number = 1): this {
         for (let i = 0; i < times; i++) {
-            this._str += EOL; 
+            this._str += EOL;
         }
         return this;
     }

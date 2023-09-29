@@ -1,20 +1,20 @@
 import { ModalActionRowComponentBuilder, SelectMenuBuilder } from "@discordjs/builders";
 import {
+    ActionRowBuilder,
+    BaseMessageOptions,
+    ButtonBuilder,
+    ChatInputCommandInteraction,
+    ComponentType,
     GuildMember,
     Message,
-    ActionRowBuilder,
-    ButtonBuilder,
     MessageCollector,
     MessageComponentInteraction,
-    StringSelectMenuBuilder,
-    User,
-    ComponentType,
-    BaseMessageOptions,
-    ModalSubmitInteraction,
     ModalBuilder,
-    TextInputBuilder,
-    ChatInputCommandInteraction,
+    ModalSubmitInteraction,
+    StringSelectMenuBuilder,
     TextBasedChannel,
+    TextInputBuilder,
+    User,
 } from "discord.js";
 import { GeneralUtilities } from "./GeneralUtilities";
 import { StringUtil } from "./StringUtilities";
@@ -84,21 +84,21 @@ export namespace AdvancedCollector {
     interface ITextModalArgument {
         /**
          * The title of the modal.
-         * 
+         *
          * @type {string}
          */
         readonly modalTitle: string,
 
         /**
          * The inputs that the user should provide.
-         * 
+         *
          * @type {TextInputBuilder[]}
          */
         readonly inputs: TextInputBuilder[],
 
         /**
          * The duration, in milliseconds.
-         * 
+         *
          * @type {number}
          */
         readonly duration: number;
@@ -106,29 +106,29 @@ export namespace AdvancedCollector {
 
 
     /**
-     * Sends the text modal to the user, waiting for the user to either provide an answer or for the modal to time out, 
-     * and then returns the result of that. 
-     * 
-     * 
+     * Sends the text modal to the user, waiting for the user to either provide an answer or for the modal to time out,
+     * and then returns the result of that.
+     *
+     *
      * Unlike the other collector helper functions, this one is not asynchronous, but takes a callback which gives you
-     * the result of the modal submission. The reason why this approach was used is because no event is fired if the 
+     * the result of the modal submission. The reason why this approach was used is because no event is fired if the
      * user chooses to press the modal's "Cancel" button. So, if the modal's "Cancel" button is pressed and you had to
-     * await the function call, your program would have to wait until the modal collector timed out. If you're using 
+     * await the function call, your program would have to wait until the modal collector timed out. If you're using
      * an interaction menu (e.g., buttons for interactions), those interactions would *not* work until the collector
      * timed out.
-     * 
-     * 
+     *
+     *
      * So, with a callback, even if the user presses the "cancel" button, because the function is synchronous, nothing
      * will be "blocked."
-     * 
-     * 
+     *
+     *
      * To reiterate, if the user
      * - submits the modal, the callback function will be executed.
      * - presses the "Cancel" button, nothing will happen.
-     * 
+     *
      * @param interaction The interaction that should be replied to.
      * @param data The modal data. This is the data that will be used in the creation of the modal.
-     * @param cb The callback. This will be called only if the user submits the modal. 
+     * @param cb The callback. This will be called only if the user submits the modal.
      */
     export function sendTextModal(
         interaction: MessageComponentInteraction | ChatInputCommandInteraction,
@@ -255,7 +255,7 @@ export namespace AdvancedCollector {
      * Starts a general interaction collector. This will wait for the user to interact with one component and then
      * return the result of that component.
      * @param {IInteractionBase} options The collector options.
-     * @return {Promise<ButtonInteraction | null>} The interaction, if available. `null` otherwise.
+     * @return {Promise<MessageComponentInteraction | null>} The interaction, if available. `null` otherwise.
      */
     export async function startInteractionCollector(
         options: IInteractionBase
@@ -297,7 +297,7 @@ export namespace AdvancedCollector {
      * Starts an interaction and message collector. The first collector to receive something will end both collectors.
      * @param {IInteractionBase & IMessageCollectorArgument} options The collector options.
      * @param {Function} func The function used to filter the message.
-     * @return {Promise<ButtonInteraction | T | null>} A `MessageComponentInteraction` if a button is pressed. `T`
+     * @return {Promise<MessageComponentInteraction | T | null>} A `MessageComponentInteraction` if a button is pressed. `T`
      * if the `MessageCollector` is fired. `null` otherwise.
      */
     export async function startDoubleCollector<T>(
@@ -408,7 +408,7 @@ export namespace AdvancedCollector {
 
     /**
      * Gets an array of `ActionRowBuilder` from an array of components.
-     * @param {BaseMessageComponent[]} options The components.
+     * @param {(ButtonBuilder | SelectMenuBuilder)[]} options The components.
      * @return {ActionRowBuilder[]} The array of `ActionRowBuilder`.
      */
     export function getActionRowsFromComponents(

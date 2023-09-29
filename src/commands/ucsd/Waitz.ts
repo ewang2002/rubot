@@ -1,12 +1,12 @@
 import BaseCommand, { ICommandContext } from "../BaseCommand";
-import { GeneralUtilities, StringUtil, StringBuilder, ArrayUtilities, AdvancedCollector } from "../../utilities";
-import { WaitzCompareData, WaitzLiveData } from "../../definitions/WaitzTypes";
+import { AdvancedCollector, ArrayUtilities, GeneralUtilities, StringBuilder, StringUtil } from "../../utilities";
+import { WaitzCompareData, WaitzLiveData } from "../../definitions";
 import {
     ButtonBuilder,
-    EmbedBuilder,
-    StringSelectMenuBuilder,
     ButtonStyle,
+    EmbedBuilder,
     SelectMenuComponentOptionData,
+    StringSelectMenuBuilder,
 } from "discord.js";
 import { EmojiConstants } from "../../Constants";
 import { DataRegistry } from "../../DataRegistry";

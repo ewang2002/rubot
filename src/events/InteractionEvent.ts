@@ -1,9 +1,8 @@
 import { ChatInputCommandInteraction, Interaction } from "discord.js";
 
-import { StringUtil, GeneralUtilities, TimeUtilities, StringBuilder } from "../utilities";
-import { ICommandContext } from "../commands";
+import { GeneralUtilities, StringBuilder, StringUtil, TimeUtilities } from "../utilities";
+import { CommandRegistry, ICommandContext } from "../commands";
 import { DataRegistry } from "../DataRegistry";
-import { CommandRegistry } from "../commands";
 
 /**
  * Executes the slash command, if any.
