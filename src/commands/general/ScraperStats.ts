@@ -41,7 +41,7 @@ export default class LoginScriptStats extends BaseCommand {
                 async () => {
                     // You will need the ucsd_webreg_rs app available
                     const d = await DataRegistry.AXIOS.get(
-                        `${DataRegistry.CONFIG.ucsdInfo.apiEndpoint}/scraper/login_script/${term}/start`
+                        `${DataRegistry.CONFIG.ucsdInfo.apiBase}/scraper/login_script/${term}/start`
                     );
                     return d.data;
                 }
@@ -50,7 +50,7 @@ export default class LoginScriptStats extends BaseCommand {
                 async () => {
                     // You will need the ucsd_webreg_rs app available
                     const d = await DataRegistry.AXIOS.get(
-                        `${DataRegistry.CONFIG.ucsdInfo.apiEndpoint}/scraper/login_script/${term}/history`
+                        `${DataRegistry.CONFIG.ucsdInfo.apiBase}/scraper/login_script/${term}/history`
                     );
                     return d.data;
                 }
@@ -59,7 +59,7 @@ export default class LoginScriptStats extends BaseCommand {
                 async () => {
                     // You will need the ucsd_webreg_rs app available
                     const d = await DataRegistry.AXIOS.get(
-                        `${DataRegistry.CONFIG.ucsdInfo.apiEndpoint}/scraper/timing_stats/${term}`
+                        `${DataRegistry.CONFIG.ucsdInfo.apiBase}/scraper/timing_stats/${term}`
                     );
                     return d.data;
                 }

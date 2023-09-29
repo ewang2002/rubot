@@ -49,7 +49,7 @@ export default class Status extends BaseCommand {
             const json: WebRegSection[] | { error: string; } | null = await GeneralUtilities.tryExecuteAsync(async () => {
                 // You will need the ucsd_webreg_rs app available
                 const d = await DataRegistry.AXIOS.get(
-                    `${DataRegistry.CONFIG.ucsdInfo.apiEndpoint}/webreg/course_info/${data.term}?subject=CSE&number=8A`
+                    `${DataRegistry.CONFIG.ucsdInfo.apiBase}/webreg/course_info/${data.term}?subject=CSE&number=8A`
                 );
                 return d.data;
             });

@@ -170,7 +170,7 @@ export default class LiveSeats extends BaseCommand {
             const json: WebRegSection[] | { error: string } | null =
                 await GeneralUtilities.tryExecuteAsync(async () => {
                     const d = await DataRegistry.AXIOS.get(
-                        `${DataRegistry.CONFIG.ucsdInfo.apiEndpoint}/webreg/course_info/${term}?subject=${subj}&number=${num}`
+                        `${DataRegistry.CONFIG.ucsdInfo.apiBase}/webreg/course_info/${term}?subject=${subj}&number=${num}`
                     );
                     return d.data;
                 });

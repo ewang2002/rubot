@@ -48,7 +48,7 @@ export default class GetPrereq extends BaseCommand {
             await GeneralUtilities.tryExecuteAsync(async () => {
                 // You will need the ucsd_webreg_rs app available
                 const d = await DataRegistry.AXIOS.get(
-                    `${DataRegistry.CONFIG.ucsdInfo.apiEndpoint}/webreg/prereqs/${term}?subject=${subj}&number=${num}`
+                    `${DataRegistry.CONFIG.ucsdInfo.apiBase}/webreg/prereqs/${term}?subject=${subj}&number=${num}`
                 );
                 return d.data;
             });

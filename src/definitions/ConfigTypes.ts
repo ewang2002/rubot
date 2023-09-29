@@ -10,7 +10,8 @@ export interface IConfiguration {
     };
     ucsdInfo: {
         enrollDataOrgName: string;
-        apiEndpoint: string;
+        apiBase: string;
+        apiKey?: string;
         currentWebRegTerms: {
             term: string;
             termName: string;

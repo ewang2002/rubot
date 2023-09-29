@@ -120,7 +120,7 @@ export async function requestFromWebRegApi(
         async () => {
             // You will need the ucsd_webreg_rs app available
             const d = await DataRegistry.AXIOS.get(
-                `${DataRegistry.CONFIG.ucsdInfo.apiEndpoint}/webreg/course_info/${term}?subject=${subj}&number=${num}`
+                `${DataRegistry.CONFIG.ucsdInfo.apiBase}/webreg/course_info/${term}?subject=${subj}&number=${num}`
             );
             return d.data;
         }
