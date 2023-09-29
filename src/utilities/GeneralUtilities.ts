@@ -21,7 +21,8 @@ export namespace GeneralUtilities {
     export function tryExecute<T = void>(func: () => T | null): T | null {
         try {
             return func();
-        } catch (e) {
+        }
+        catch (e) {
             return null;
         }
     }
@@ -37,7 +38,8 @@ export namespace GeneralUtilities {
     ): Promise<T | null> {
         try {
             return await func();
-        } catch (e) {
+        }
+        catch (e) {
             return null;
         }
     }
@@ -54,14 +56,20 @@ export namespace GeneralUtilities {
         color: ColorResolvable = "Random"
     ): EmbedBuilder {
         const embed = new EmbedBuilder().setTimestamp().setColor(color);
-        if (obj instanceof User)
+        if (obj instanceof User) {
             embed.setAuthor({ name: obj.tag, iconURL: obj.displayAvatarURL() });
-        else if (obj instanceof GuildMember)
+        }
+        else if (obj instanceof GuildMember) {
             embed.setAuthor({ name: obj.displayName, iconURL: obj.user.displayAvatarURL() });
+        }
         else {
             const icon = obj.iconURL();
-            if (icon) embed.setAuthor({ name: obj.name, iconURL: icon });
-            else embed.setAuthor({ name: obj.name });
+            if (icon) {
+                embed.setAuthor({ name: obj.name, iconURL: icon });
+            }
+            else {
+                embed.setAuthor({ name: obj.name });
+            }
         }
 
         return embed;
@@ -80,11 +88,21 @@ export namespace GeneralUtilities {
         const obj: MessageEditOptions & { split?: false | undefined } = {
             components: [],
         };
-        if (msg.content) obj.content = msg.content;
-        if (msg.embeds.length !== 0) obj.embeds = msg.embeds;
-        if (msg.attachments.size !== 0) obj.files = Array.from(msg.attachments.values());
-        if (msg.components.length === 0) obj.components = components;
-        else obj.components = msg.components;
+        if (msg.content) {
+            obj.content = msg.content;
+        }
+        if (msg.embeds.length !== 0) {
+            obj.embeds = msg.embeds;
+        }
+        if (msg.attachments.size !== 0) {
+            obj.files = Array.from(msg.attachments.values());
+        }
+        if (msg.components.length === 0) {
+            obj.components = components;
+        }
+        else {
+            obj.components = msg.components;
+        }
 
         return obj;
     }

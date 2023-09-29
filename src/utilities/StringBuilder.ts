@@ -39,7 +39,9 @@ export class StringBuilder {
      * @returns {StringBuilder} This object.
      */
     public appendLine(times: number = 1): this {
-        for (let i = 0; i < times; i++) this._str += EOL;
+        for (let i = 0; i < times; i++) {
+            this._str += EOL; 
+        }
         return this;
     }
 

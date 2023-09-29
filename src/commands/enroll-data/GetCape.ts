@@ -126,7 +126,8 @@ export class GetCape extends BaseCommand {
                 }
 
                 courseToSearch = selected.values[0];
-            } else {
+            }
+            else {
                 courseToSearch = allCoursesInCapes[0];
             }
         }
@@ -199,7 +200,8 @@ export class GetCape extends BaseCommand {
                 }
 
                 instructorToSearch = selected.values[0];
-            } else {
+            }
+            else {
                 instructorToSearch = allInstructors[0];
             }
         }

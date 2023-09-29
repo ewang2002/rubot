@@ -60,7 +60,9 @@ export namespace ArrayUtilities {
     ): number {
         let l: number = array.length;
         while (l >= 0) {
-            if (predicate(array[l], l, array)) return l;
+            if (predicate(array[l], l, array)) {
+                return l;
+            }
             l--;
         }
         return -1;
@@ -83,7 +85,9 @@ export namespace ArrayUtilities {
         func: (i: number, element: T) => string,
         maxLenPerElement: number = 1016
     ): string[] {
-        if (maxLenPerElement < 300) maxLenPerElement = 300;
+        if (maxLenPerElement < 300) {
+            maxLenPerElement = 300;
+        }
 
         const returnArr: string[] = [];
         let str: string = "";
@@ -95,7 +99,8 @@ export namespace ArrayUtilities {
                 if (str.length + tempString.length > maxLenPerElement) {
                     returnArr.push(str);
                     str = tempString;
-                } else {
+                }
+                else {
                     str += tempString;
                 }
             }
@@ -137,7 +142,8 @@ export namespace ArrayUtilities {
             if (val === func(returnData[lastIndexOfData][1])) {
                 returnData.push([place, data[i]]);
                 diff++;
-            } else {
+            }
+            else {
                 place += diff + 1;
                 diff = 0;
                 returnData.push([place, data[i]]);

@@ -199,9 +199,11 @@ export class SearchCourse extends BaseCommand {
             let isAm: boolean;
             if (amOrPm === "am") {
                 isAm = true;
-            } else if (amOrPm === "pm") {
+            }
+            else if (amOrPm === "pm") {
                 isAm = false;
-            } else {
+            }
+            else {
                 // must not be valid
                 return null;
             }
@@ -209,7 +211,8 @@ export class SearchCourse extends BaseCommand {
             let hrToReturn = 0;
             if (isAm) {
                 hrToReturn = parsedHr === 12 ? 0 : parsedHr;
-            } else {
+            }
+            else {
                 hrToReturn = parsedHr === 12 ? 12 : parsedHr + 12;
             }
 
@@ -376,7 +379,8 @@ export class SearchCourse extends BaseCommand {
             if (!addedAll) {
                 footerText += " Some fields were omitted.";
             }
-        } else {
+        }
+        else {
             const fields = ArrayUtilities.arrayToStringFields(
                 json.map((x) => `${x.SUBJ_CODE.trim()} ${x.CRSE_CODE.trim()}, `),
                 (_, elem) => elem

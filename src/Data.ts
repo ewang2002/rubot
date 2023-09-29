@@ -108,7 +108,8 @@ export namespace Data {
                 let meetingDays: string[] | string;
                 if (rawMeetingDays.includes("-")) {
                     meetingDays = rawMeetingDays;
-                } else {
+                }
+                else {
                     meetingDays = TimeUtilities.getAllDays(rawMeetingDays);
                 }
 
@@ -125,10 +126,12 @@ export namespace Data {
                 if (splitLocation.length === 2) {
                     building = splitLocation[0];
                     room = splitLocation[1];
-                } else if (splitLocation.length < 2) {
+                }
+                else if (splitLocation.length < 2) {
                     building = splitLocation[0];
                     console.warn(`Weird location - ${sectionId}`);
-                } else {
+                }
+                else {
                     building = splitLocation.shift()!;
                     room = splitLocation.join(" ");
                 }

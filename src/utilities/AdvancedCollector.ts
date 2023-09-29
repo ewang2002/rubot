@@ -179,25 +179,33 @@ export namespace AdvancedCollector {
             });
 
             msgCollector.on("collect", async (c: Message) => {
-                if (options.deleteResponseMessage) await c.delete().catch();
+                if (options.deleteResponseMessage) {
+                    await c.delete().catch();
+                }
 
-                if (cancelFlag && cancelFlag.toLowerCase() === c.content.toLowerCase())
+                if (cancelFlag && cancelFlag.toLowerCase() === c.content.toLowerCase()) {
                     return resolve(null);
+                }
 
                 const info: T | null = await new Promise(async (res) => {
                     const attempt = await func(c);
                     return res(attempt ? attempt : null);
                 });
 
-                if (!info) return;
+                if (!info) {
+                    return;
+                }
                 msgCollector.stop();
                 resolve(info);
             });
 
             msgCollector.on("end", (c, r) => {
-                if (options.deleteBaseMsgAfterComplete && botMsg && botMsg.deletable)
+                if (options.deleteBaseMsgAfterComplete && botMsg && botMsg.deletable) {
                     botMsg.delete().catch();
-                if (r === "time") return resolve(null);
+                }
+                if (r === "time") {
+                    return resolve(null);
+                }
             });
         });
     }
@@ -232,8 +240,11 @@ export namespace AdvancedCollector {
                 time: options.duration,
             });
 
-            if (options.acknowledgeImmediately) await returnInteraction.deferUpdate();
-        } catch (e) {
+            if (options.acknowledgeImmediately) {
+                await returnInteraction.deferUpdate();
+            }
+        }
+        catch (e) {
             // Ignore the error; this is because the collector timed out.
         }
 
@@ -250,7 +261,9 @@ export namespace AdvancedCollector {
         options: IInteractionBase
     ): Promise<MessageComponentInteraction | null> {
         const botMsg = await initSendCollectorMessage(options);
-        if (!botMsg) return null;
+        if (!botMsg) {
+            return null;
+        }
 
         let returnInteraction: MessageComponentInteraction | null = null;
         try {
@@ -259,15 +272,22 @@ export namespace AdvancedCollector {
                 time: options.duration,
             });
 
-            if (options.acknowledgeImmediately) await returnInteraction.deferUpdate();
-        } catch (e) {
+            if (options.acknowledgeImmediately) {
+                await returnInteraction.deferUpdate();
+            }
+        }
+        catch (e) {
             // Ignore the error; this is because the collector timed out.
-        } finally {
-            if (options.deleteBaseMsgAfterComplete) await botMsg.delete().catch();
-            else if (options.clearInteractionsAfterComplete && botMsg.editable)
+        }
+        finally {
+            if (options.deleteBaseMsgAfterComplete) {
+                await botMsg.delete().catch();
+            }
+            else if (options.clearInteractionsAfterComplete && botMsg.editable) {
                 await botMsg
                     .edit(GeneralUtilities.getMessageOptionsFromMessage(botMsg, []))
                     .catch();
+            }
         }
 
         return returnInteraction;
@@ -286,7 +306,9 @@ export namespace AdvancedCollector {
     ): Promise<T | MessageComponentInteraction | null> {
         const cancelFlag = options.cancelFlag;
         const botMsg = await initSendCollectorMessage(options);
-        if (!botMsg) return null;
+        if (!botMsg) {
+            return null;
+        }
 
         return new Promise(async (resolve) => {
             const msgCollector = new MessageCollector(options.targetChannel, {
@@ -317,14 +339,18 @@ export namespace AdvancedCollector {
                     return res(attempt ?? null);
                 });
 
-                if (info === null) return;
+                if (info === null) {
+                    return;
+                }
                 resolve(info);
                 interactionCollector.stop();
                 msgCollector.stop();
             });
 
             interactionCollector.on("collect", async (i) => {
-                if (options.acknowledgeImmediately) await i.deferUpdate();
+                if (options.acknowledgeImmediately) {
+                    await i.deferUpdate();
+                }
                 resolve(i);
                 msgCollector.stop();
             });
@@ -341,13 +367,19 @@ export namespace AdvancedCollector {
             let hasCalled = false;
 
             function acknowledgeDeletion(r: string): void {
-                if (hasCalled) return;
+                if (hasCalled) {
+                    return;
+                }
                 hasCalled = true;
-                if (options.deleteBaseMsgAfterComplete && botMsg?.deletable)
+                if (options.deleteBaseMsgAfterComplete && botMsg?.deletable) {
                     botMsg?.delete().catch();
-                else if (options.clearInteractionsAfterComplete && botMsg?.editable)
+                }
+                else if (options.clearInteractionsAfterComplete && botMsg?.editable) {
                     botMsg?.edit(GeneralUtilities.getMessageOptionsFromMessage(botMsg, [])).catch();
-                if (r === "time") return resolve(null);
+                }
+                if (r === "time") {
+                    return resolve(null);
+                }
             }
         });
     }
@@ -366,7 +398,8 @@ export namespace AdvancedCollector {
             botMsg = await GeneralUtilities.tryExecuteAsync<Message>(async () => {
                 return await options.targetChannel.send(options.msgOptions!);
             });
-        } else if (options.oldMsg) {
+        }
+        else if (options.oldMsg) {
             botMsg = options.oldMsg;
         }
 
@@ -393,8 +426,9 @@ export namespace AdvancedCollector {
         const buttons = options.filter((x) => x.data.type === ComponentType.Button) as ButtonBuilder[];
         for (let i = 0; i < Math.min(buttons.length, 5 * (MAX_ACTION_ROWS - rowsUsed)); i += 5) {
             const actionRow = new ActionRowBuilder<ButtonBuilder>();
-            for (let j = 0; j < 5 && i + j < buttons.length; j++)
+            for (let j = 0; j < 5 && i + j < buttons.length; j++) {
                 actionRow.addComponents(buttons[i + j]);
+            }
 
             rows.push(actionRow);
         }

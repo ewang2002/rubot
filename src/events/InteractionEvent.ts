@@ -3,7 +3,7 @@ import { Bot } from "../Bot";
 import { StringUtil } from "../utilities/StringUtilities";
 import { TimeUtilities } from "../utilities/TimeUtilities";
 import { StringBuilder } from "../utilities/StringBuilder";
-import { ICommandContext, ValidTextChannelType } from "../commands";
+import { ICommandContext } from "../commands";
 import { GeneralUtilities } from "../utilities/GeneralUtilities";
 import { Data } from "../Data";
 
@@ -12,26 +12,16 @@ import { Data } from "../Data";
  * @param {ChatInputCommandInteraction} interaction The interaction.
  */
 async function slashCommandHandler(interaction: ChatInputCommandInteraction): Promise<void> {
-    //if (
-    //    !Data.CONFIG.isProd &&
-    //    !Data.CONFIG.discord.botOwnerIds.includes(interaction.user.id)
-    //) {
-    //    await interaction.reply({
-    //        content: "The bot is currently in development mode, and cannot be used right now.",
-    //    });
-    //
-    //    return;
-    //}
-
     const foundCommand = Bot.NameCommands.get(interaction.commandName);
-    if (!foundCommand) return;
+    if (!foundCommand) {
+        return;
+    }
 
     const ctx: ICommandContext = {
         user: interaction.user,
         guild: interaction.guild,
         interaction: interaction,
-        // TODO remove cast once new discord.js release comes out
-        channel: interaction.channel! as ValidTextChannelType,
+        channel: interaction.channel!,
         member: (await interaction.guild?.members.fetch(interaction.user.id)) ?? null,
     };
 
@@ -58,8 +48,9 @@ async function slashCommandHandler(interaction: ChatInputCommandInteraction): Pr
 
     // Check permissions
     const canRunInfo = foundCommand.hasPermissionToRun(ctx.member!, ctx.guild);
-    if (!Data.CONFIG.discord.botOwnerIds.includes(ctx.user.id) && !canRunInfo.hasAdmin)
+    if (!Data.CONFIG.discord.botOwnerIds.includes(ctx.user.id) && !canRunInfo.hasAdmin) {
         foundCommand.addToCooldown(ctx.user);
+    }
 
     if (canRunInfo.canRun) {
         await foundCommand.run(ctx);

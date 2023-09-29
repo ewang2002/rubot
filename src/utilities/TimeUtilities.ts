@@ -204,7 +204,8 @@ export namespace TimeUtilities {
         try {
             Intl.DateTimeFormat(undefined, { timeZone: tz.trim() });
             return true;
-        } catch (ex) {
+        }
+        catch (ex) {
             return false;
         }
     }
@@ -233,11 +234,21 @@ export namespace TimeUtilities {
         dur %= 1000;
 
         const finalArr: string[] = [];
-        if (days > 0) finalArr.push(`${days}D`);
-        if (hours > 0) finalArr.push(`${hours}H`);
-        if (minutes > 0) finalArr.push(`${minutes}M`);
-        if (seconds > 0 && includeSeconds) finalArr.push(`${seconds}S`);
-        if (dur > 0 && includeMs) finalArr.push(`${dur}MS`);
+        if (days > 0) {
+            finalArr.push(`${days}D`);
+        }
+        if (hours > 0) {
+            finalArr.push(`${hours}H`);
+        }
+        if (minutes > 0) {
+            finalArr.push(`${minutes}M`);
+        }
+        if (seconds > 0 && includeSeconds) {
+            finalArr.push(`${seconds}S`);
+        }
+        if (dur > 0 && includeMs) {
+            finalArr.push(`${dur}MS`);
+        }
         return finalArr.length > 0 ? finalArr.join(" ") : "0S";
     }
 
@@ -257,8 +268,12 @@ export namespace TimeUtilities {
         dayOfWeek: number,
         militaryTime: number
     ): Date {
-        if (dayOfWeek > 6 || dayOfWeek < 0) throw new Error("invalid day of week");
-        if (militaryTime > 2359 || militaryTime < 0) throw new Error("invalid time");
+        if (dayOfWeek > 6 || dayOfWeek < 0) {
+            throw new Error("invalid day of week");
+        }
+        if (militaryTime > 2359 || militaryTime < 0) {
+            throw new Error("invalid time");
+        }
         const hr = Math.floor(militaryTime / 100);
         const min = militaryTime % 100;
 

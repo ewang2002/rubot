@@ -3,7 +3,7 @@ import {
     BaseCommand,
     IArgumentInfo,
     ICommandContext,
-    ICommandInfo,
+    ICommandConf,
 } from "../BaseCommand";
 import { Bot } from "../../Bot";
 import { StringUtil } from "../../utilities/StringUtilities";
@@ -13,7 +13,7 @@ import { GeneralUtilities } from "../../utilities/GeneralUtilities";
 
 export class Help extends BaseCommand {
     public constructor() {
-        const cmi: ICommandInfo = {
+        const cmi: ICommandConf = {
             cmdCode: "HELP",
             formalCommandName: "Help",
             botCommandName: "help",

@@ -93,13 +93,15 @@ export class Bot {
         for (const command of Array.from(Bot.Commands.values()).flat()) {
             Bot.JsonCommands.push(command.data.toJSON() as RESTPostAPIApplicationCommandsJSONBody);
 
-            if (command.data.name !== command.commandInfo.botCommandName)
+            if (command.data.name !== command.commandInfo.botCommandName) {
                 throw new Error(
                     `Names not matched: "${command.data.name}" - "${command.commandInfo.botCommandName}"`
                 );
+            }
 
-            if (Bot.NameCommands.has(command.data.name))
+            if (Bot.NameCommands.has(command.data.name)) {
                 throw new Error(`Duplicate command "${command.data.name}" registered.`);
+            }
 
             Bot.NameCommands.set(command.data.name, command);
         }
@@ -142,7 +144,8 @@ export class Bot {
             await Bot.Rest.put(Routes.applicationCommands(Data.CONFIG.discord.clientId), {
                 body: Bot.JsonCommands,
             });
-        } else {
+        }
+        else {
             await Promise.all(
                 this._bot.guilds.cache.map(async (guild) => {
                     await Bot.Rest.put(

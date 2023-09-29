@@ -4,7 +4,6 @@ import {
     Guild,
     GuildMember,
     PermissionsString,
-    StageChannel,
     TextBasedChannel,
     User,
 } from "discord.js";
@@ -12,59 +11,29 @@ import { SlashCommandBuilder, SlashCommandChannelOption } from "@discordjs/build
 import { APIApplicationCommandOptionChoice } from "discord-api-types/v10";
 import { Data } from "../Data";
 
-/*
-TODO: Using TypeScript? You may be receiving this or any other text-based-related 
-error on a new or fresh installation of discord.js:
-
-source/index.ts:6:18 - error TS2339: Property 'send' does not exist on type 'DMChannel 
-    | PartialDMChannel | NewsChannel | StageChannel | TextChannel | PrivateThreadChannel 
-    | PublicThreadChannel<...> | VoiceChannel'.
-  Property 'send' does not exist on type 'StageChannel'.
-
-The problem is due to discord.js installing a dependency (discord-api-types) that installs 
-a later version (per npm resolutions) which includes new types that affect ours. discord.js 
-does not handle those types yet. 
-
-For now, we should use the below `ValidTextChannelType` so TypeScript doesn't get mad. Even
-though we're excluding `StageChannel`s, they in reality are `TextChannel`s and thus have
-access to all text channel-related methods.
-*/
-
-export type ValidTextChannelType = Exclude<TextBasedChannel, StageChannel>;
-
 export interface ICommandContext {
     /**
      * The guild member that initiated this interaction, if any.
-     *
-     * @type {GuildMember | null}
      */
     member: GuildMember | null;
 
     /**
      * The user that initiated this interaction.
-     *
-     * @type {User}
      */
     user: User;
 
     /**
      * The guild, if any.
-     *
-     * @type {Guild | null}
      */
     guild: Guild | null;
 
     /**
      * The channel where this command was executed.
-     *
-     * @type {ValidTextChannelType}
      */
-    channel: ValidTextChannelType;
+    channel: TextBasedChannel;
 
     /**
      * The interaction that led to this command.
-     *
-     * @type {CommandInteraction}
      */
     interaction: ChatInputCommandInteraction;
 }
@@ -78,6 +47,7 @@ export enum ArgumentType {
     Number,
     Role,
     User,
+    Attachment
 }
 
 /**
@@ -161,8 +131,9 @@ function addArgument(scb: SlashCommandBuilder, argInfo: IArgumentInfo): void {
             });
             break;
         }
-        default: {
-            throw new Error("invalid option.");
+        case ArgumentType.Attachment: {
+            scb.addAttachmentOption((o) => o.setName(argInfo.argName).setRequired(argInfo.required).setDescription(desc));
+            break;
         }
     }
 }
@@ -170,24 +141,23 @@ function addArgument(scb: SlashCommandBuilder, argInfo: IArgumentInfo): void {
 export abstract class BaseCommand {
     /**
      * The command info object.
-     * @type {ICommandInfo}
      */
-    public readonly commandInfo: ICommandInfo;
+    public readonly commandInfo: ICommandConf;
+
     /**
      * The slash command object. Used for slash commands.
-     * @type {SlashCommandBuilder}
      */
     public readonly data: SlashCommandBuilder;
+
     /**
      * A collection of people that are in cooldown for this command. The K represents the ID; the V represents the
      * the time when the cooldown expires.
-     * @type {Collection<string, number>}
      */
     protected readonly onCooldown: Collection<string, number>;
 
     /**
      * Creates a new `BaseCommand` object.
-     * @param {ICommandInfo} cmi The command information object.
+     * @param {ICommandConf} cmi The command information object.
      * @param {SlashCommandBuilder} [slashCmdBuilder] The slash command object. If none is specified, this will
      * create a new `SlashCommandBuilder` instance with the specified name, description, and arguments (specified by
      * the `argumentInfo` array). If you need more control over the arguments (e.g. maximum/minimum), pass your own
@@ -198,26 +168,30 @@ export abstract class BaseCommand {
      * `botCommandName` or `description`, respectively.
      * @protected
      */
-    protected constructor(cmi: ICommandInfo, slashCmdBuilder?: SlashCommandBuilder) {
-        if (!cmi.botCommandName || !cmi.formalCommandName || !cmi.description)
+    protected constructor(cmi: ICommandConf, slashCmdBuilder?: SlashCommandBuilder) {
+        if (!cmi.botCommandName || !cmi.formalCommandName || !cmi.description) {
             throw new Error(`"${cmi.formalCommandName}" does not have any way to be called.`);
+        }
 
         if (slashCmdBuilder) {
-            if (slashCmdBuilder.name !== cmi.botCommandName)
+            if (slashCmdBuilder.name !== cmi.botCommandName) {
                 throw new Error(
-                    `"${cmi.botCommandName}" does not have matching command names w/ slash command.`
+                    `"${cmi.botCommandName}" does not have matching command names with slash command.`
                 );
+            }
 
-            if (slashCmdBuilder.description !== cmi.description)
+            if (slashCmdBuilder.description !== cmi.description) {
                 throw new Error(
                     `"${cmi.botCommandName}" does not have matching description w/ slash command.`
                 );
+            }
         }
 
         this.commandInfo = cmi;
         if (slashCmdBuilder) {
             this.data = slashCmdBuilder;
-        } else {
+        }
+        else {
             this.data = new SlashCommandBuilder()
                 .setName(cmi.botCommandName)
                 .setDescription(
@@ -259,8 +233,9 @@ export abstract class BaseCommand {
      */
     public checkCooldownFor(userToTest: User | GuildMember): number {
         // Check if the person is on cooldown.
-        if (this.commandInfo.commandCooldown > 0 && this.onCooldown.has(userToTest.id))
+        if (this.commandInfo.commandCooldown > 0 && this.onCooldown.has(userToTest.id)) {
             return (this.onCooldown.get(userToTest.id) as number) - Date.now();
+        }
 
         return -1;
     }
@@ -271,8 +246,10 @@ export abstract class BaseCommand {
      * @param {User | GuildMember} userToAdd The user to add.
      */
     public addToCooldown(userToAdd: User | GuildMember): void {
-        if (this.commandInfo.commandCooldown <= 0) return;
-        if (this.onCooldown.has(userToAdd.id)) return;
+        if (this.commandInfo.commandCooldown <= 0 || this.onCooldown.has(userToAdd.id)) { 
+            return;
+        }
+    
         this.onCooldown.set(userToAdd.id, Date.now() + this.commandInfo.commandCooldown);
         setTimeout(() => this.onCooldown.delete(userToAdd.id), this.commandInfo.commandCooldown);
     }
@@ -297,14 +274,17 @@ export abstract class BaseCommand {
         if (
             this.commandInfo.botOwnerOnly &&
             !Data.CONFIG.discord.botOwnerIds.includes(userToTest.id)
-        )
+        ) {
             return results;
+        }
 
         // The person tried to run the command in DMs. See if the person can do so.
         // If a command can be run in DMs, then there should not be any permission requirements, so we don't check
         // those at all.
         if (!guild) {
-            if (this.commandInfo.guildOnly) return results;
+            if (this.commandInfo.guildOnly) {
+                return results;
+            }
 
             results.canRun = true;
             return results;
@@ -312,7 +292,9 @@ export abstract class BaseCommand {
 
         // At this point, we know we are in a guild.
         // So userToTest better be a GuildMember.
-        if (userToTest instanceof User) return results;
+        if (userToTest instanceof User) {
+            return results;
+        }
 
         if (
             this.commandInfo.allowOnServers &&
@@ -333,7 +315,9 @@ export abstract class BaseCommand {
                 for (const perm of this.commandInfo.botPermissions) {
                     // If the bot doesn't have the specified permission, then add it to the list of missing
                     // permissions.
-                    if (!botPerms.includes(perm)) results.missingBotPerms.push(perm);
+                    if (!botPerms.includes(perm)) {
+                        results.missingBotPerms.push(perm);
+                    }
                 }
             }
         }
@@ -379,40 +363,34 @@ interface ICanRunResult {
     reason: string;
 }
 
-export interface ICommandInfo {
+export interface ICommandConf {
     /**
      * An identifier for this command.
-     * @type {string}
      */
     cmdCode: string;
 
     /**
      * The formal, human-readable, command name.
-     * @type {string}
      */
     formalCommandName: string;
 
     /**
      * The way a user would call this command.
-     * @type {string}
      */
     botCommandName: string;
 
     /**
      * A description of what this command does.
-     * @type {string}
      */
     description: string;
 
     /**
      * Information about the arguments.
-     * @type {IArgumentInfo[]}
      */
     argumentInfo: IArgumentInfo[];
 
     /**
      * A cooldown, in milliseconds, that users will have to wait out after executing a command.
-     * @type {number}
      */
     commandCooldown: number;
 
@@ -421,32 +399,26 @@ export interface ICommandInfo {
      * executed in a server whose ID doesn't appear in this array, then the command will not run.
      *
      * Set this to undefined if the command should be allowed to run on all servers.
-     *
-     * @type {string[]}
      */
     allowOnServers?: string[];
 
     /**
      * The general permissions that the user must have to execute the command.
-     * @type {PermissionsString[]}
      */
     generalPermissions: PermissionsString[];
 
     /**
      * The permissions that a bot must have to execute this command.
-     * @type {PermissionsString[]}
      */
     botPermissions: PermissionsString[];
 
     /**
      * Whether the command is for a server only.
-     * @type {boolean}
      */
     guildOnly: boolean;
 
     /**
      * Whether the command is for the bot owner only.
-     * @type {boolean}
      */
     botOwnerOnly: boolean;
 }
@@ -459,33 +431,28 @@ export interface IArgumentInfo {
 
     /**
      * The displayed name (what is shown in Discord's slash command) of the argument.
-     * @type {string}
      */
     argName: string;
 
     /**
      * The argument type.
-     * @type {string}
      */
     type: ArgumentType;
 
     /**
      * Any restrictions. This depends on the `type`.
-     * @type {object}
      */
     restrictions?: {
         /**
          * What choices should be available if the type is String. This is a tuple where:
          * - the first value is the displayed value.
          * - the second value is the actual value.
-         *
-         * @type {[string, string][]}
          */
         stringChoices?: APIApplicationCommandOptionChoice<string>[];
 
         /**
          * A function to modify the slash channel options; a common use would be to specify the types of channels that
-         * this command can run under. Note that because this library sucks, I have to do this.
+         * this command can run under. 
          * @param {SlashCommandChannelOption} o The slash command channel options.
          * @returns {SlashCommandChannelOption} The slash command channel options.
          */
@@ -493,27 +460,23 @@ export interface IArgumentInfo {
 
         /**
          * The minimum number, if the type is Integer.
-         * @type {number}
          */
         integerMin?: number;
 
         /**
          * The maximum number, if the type is Integer.
-         * @type {number}
          */
         integerMax?: number;
     };
 
     /**
      * The description of this argument.
-     * @type {string}
      */
     desc: string;
 
     /**
      * A shortened description of this argument. If none is provided, this defaults to the first 100 characters of
      * the specified description.
-     * @type {string}
      */
     shortDesc?: string;
 
@@ -524,7 +487,6 @@ export interface IArgumentInfo {
 
     /**
      * Whether the argument is required.
-     * @type {boolean}
      */
     required: boolean;
 }

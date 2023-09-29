@@ -57,7 +57,8 @@ export class Status extends BaseCommand {
             webregStatus.append(data.term).append(" - ");
             if (!json || "error" in json) {
                 webregStatus.append(EmojiConstants.X_EMOJI);
-            } else {
+            }
+            else {
                 webregStatus.append(EmojiConstants.GREEN_CHECK_EMOJI);
             }
 

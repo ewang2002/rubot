@@ -16,8 +16,9 @@ export namespace StringUtil {
      */
     export function generateRandomString(amt: number): string {
         const sb = new StringBuilder();
-        for (let i = 0; i < amt; ++i)
+        for (let i = 0; i < amt; ++i) {
             sb.append(ArrayUtilities.getRandomElement(ALL_CHARACTERS));
+        }
         return sb.toString();
     }
 
@@ -41,7 +42,9 @@ export namespace StringUtil {
         const numChunks = Math.ceil(str.length / size);
         const chunks = new Array(numChunks);
 
-        for (let i = 0, o = 0; i < numChunks; ++i, o += size) chunks[i] = str.substr(o, size);
+        for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
+            chunks[i] = str.substr(o, size);
+        }
 
         return chunks;
     }
@@ -60,9 +63,11 @@ export namespace StringUtil {
         let compEmojiUsed;
         if (percent < 0.5) {
             compEmojiUsed = EmojiConstants.GREEN_SQUARE_EMOJI;
-        } else if (percent < 0.8) {
+        }
+        else if (percent < 0.8) {
             compEmojiUsed = EmojiConstants.YELLOW_SQUARE_EMOJI;
-        } else {
+        }
+        else {
             compEmojiUsed = EmojiConstants.RED_SQUARE_EMOJI;
         }
 

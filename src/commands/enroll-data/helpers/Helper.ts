@@ -172,7 +172,8 @@ export async function displayInteractiveWebregData(
     // only have lectures (no discussion, no final).
     if (sections[0].section_code.length > 0 && /^\d+$/.test(sections[0].section_code[0])) {
         map.set("0", sections);
-    } else {
+    }
+    else {
         for (const entry of sections) {
             if (!map.has(entry.section_code[0])) {
                 map.set(entry.section_code[0], []);
@@ -260,7 +261,8 @@ export async function displayInteractiveWebregData(
                         }`
                     )
                     .toString();
-            } else {
+            }
+            else {
                 fieldTitle = `[${entry.section_id}] Section ${entry.section_code}`;
             }
 
@@ -280,7 +282,8 @@ export async function displayInteractiveWebregData(
             .appendLine();
         if (sectionsAdded === entries.length) {
             descSb.append(`Sections: **\`${entries.length}\`**`).appendLine();
-        } else {
+        }
+        else {
             descSb
                 .append(
                     `Sections: **\`${entries.length}\`** (${WARNING_EMOJI} Only **\`${sectionsAdded}\`** Displayed)`
@@ -311,9 +314,11 @@ function meetingToString(x: Meeting): string {
     let meetingDay: string;
     if (Array.isArray(x.meeting_days)) {
         meetingDay = x.meeting_days.join("");
-    } else if (x.meeting_days === null) {
+    }
+    else if (x.meeting_days === null) {
         meetingDay = "N/A";
-    } else {
+    }
+    else {
         const [year, month, day] = x.meeting_days.split("-").map((x) => Number.parseInt(x, 10));
         meetingDay = `${padTimeDigit(month)}/${padTimeDigit(day)}/${padTimeDigit(year)}`;
     }
@@ -501,7 +506,8 @@ export function getCapeSummary(args: {
                     b.append(
                         `${elem.evaluationsMade}/${elem.enrollmentCount} Evaluations`
                     ).appendLine();
-                } else {
+                }
+                else {
                     b.append(type === "instructor" ? elem.subjectCourse : elem.instructor)
                         .append(` (${elem.evaluationsMade}/${elem.enrollmentCount} Evaluations)`)
                         .appendLine();

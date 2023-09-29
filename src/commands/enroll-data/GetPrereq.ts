@@ -120,7 +120,8 @@ export class GetPrereq extends BaseCommand {
 
         if (json.exam_prerequisites.length === 0) {
             prereqEmbed.setDescription("The following course prerequisites must be satisfied.");
-        } else {
+        }
+        else {
             const exams = json.exam_prerequisites.map((x) => `- ${x}`).join("\n");
             let str = `A satisfactory score on one of the following exam(s):\n${StringUtil.codifyString(
                 exams

@@ -53,7 +53,8 @@ export class Exec extends BaseCommand {
                 ],
                 content: `Command Executed: ${StringUtil.codifyString(rawCmd)}`,
             });
-        } catch (e) {
+        }
+        catch (e) {
             if (typeof e === "object" && e && "stdout" in e && "stderr" in e) {
                 const { stdout, stderr } = e as { stdout: string; stderr: string };
                 await ctx.interaction.editReply({
@@ -66,7 +67,8 @@ export class Exec extends BaseCommand {
                         EmojiConstants.WARNING_EMOJI
                     } Command Executed: ${StringUtil.codifyString(rawCmd)}`,
                 });
-            } else {
+            }
+            else {
                 await ctx.interaction.editReply({
                     files: [new AttachmentBuilder(Buffer.from(e + "", "utf8"), { name: "error.txt" })],
                     content: `Command Executed: ${StringUtil.codifyString(rawCmd)}`,

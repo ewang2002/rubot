@@ -43,13 +43,17 @@ export class Waitz extends BaseCommand {
     private static getColor(percent: number): number {
         if (percent < 0.15) {
             return 0x0bd604;
-        } else if (percent < 0.3) {
+        }
+        else if (percent < 0.3) {
             return 0x40b53c;
-        } else if (percent < 0.5) {
+        }
+        else if (percent < 0.5) {
             return 0xc6cc1b;
-        } else if (percent < 0.7) {
+        }
+        else if (percent < 0.7) {
             return 0xcc7921;
-        } else {
+        }
+        else {
             return 0xd61111;
         }
     }

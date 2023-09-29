@@ -97,7 +97,8 @@ export const getSelectMenusFromBuildings = (
                     .setCustomId(`${uniqueId}_select_123`)
             );
         }
-    } else {
+    }
+    else {
         selectMenus.at(-1)!.addOptions([
             {
                 emoji: EmojiConstants.X_EMOJI,

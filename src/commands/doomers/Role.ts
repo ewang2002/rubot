@@ -1,10 +1,10 @@
-import { ArgumentType, BaseCommand, ICommandContext, ICommandInfo } from "../BaseCommand";
+import { ArgumentType, BaseCommand, ICommandContext, ICommandConf } from "../BaseCommand";
 import { GeneralConstants } from "../../Constants";
 import { GeneralUtilities } from "../../utilities/GeneralUtilities";
 
 export class Role extends BaseCommand {
     public constructor() {
-        const cmi: ICommandInfo = {
+        const cmi: ICommandConf = {
             cmdCode: "ROLE",
             formalCommandName: "Role",
             botCommandName: "role",

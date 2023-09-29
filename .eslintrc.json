@@ -57,6 +57,8 @@
         "eqeqeq": [
             "error",
             "always"
-        ]
+        ],
+        "curly": ["error", "all"],
+        "brace-style": ["error", "stroustrup"]
     }
 }
