@@ -1,4 +1,4 @@
-import { Client, Collection, REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from "discord.js";
+import { Collection, REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from "discord.js";
 import BaseCommand from "./BaseCommand";
 
 import * as fsp from "fs/promises";
@@ -62,14 +62,13 @@ export namespace CommandRegistry {
     /**
      * Calls Discord's API to register these commands through Discord's API.
      *
-     * @param {Client} client The discord.js client.
      * @param {REST} rest An instance of the endpoint manager for Discord's API.
      * @param {string} clientId The client ID.
      * @param {string[]} [guildIds] The guild IDs. If this is provided, then commands will be loaded ONLY
      *                              for those guilds. If it's not provided, or it's empty, then commands
      *                              will be loaded globally.
      */
-    export async function registerCommands(client: Client, rest: REST, clientId: string, guildIds?: string[]) {
+    export async function registerCommands(rest: REST, clientId: string, guildIds?: string[]) {
         const jsonCommands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
         for (const command of NAME_TO_COMMAND.values()) {
             jsonCommands.push(command.data.toJSON());
@@ -77,9 +76,9 @@ export namespace CommandRegistry {
 
         if (guildIds && guildIds.length > 0) {
             await Promise.all(
-                client.guilds.cache.map(async (guild) => {
+                guildIds.map(async (guild) => {
                     await rest.put(
-                        Routes.applicationGuildCommands(clientId, guild.id),
+                        Routes.applicationGuildCommands(clientId, guild),
                         { body: jsonCommands }
                     );
                 })
@@ -87,7 +86,7 @@ export namespace CommandRegistry {
         }
         else {
             await rest.put(Routes.applicationCommands(clientId), {
-                body: jsonCommands,
+                body: jsonCommands
             });
         }
     }

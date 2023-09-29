@@ -1,6 +1,5 @@
 import BaseCommand, { ArgumentType, ICommandConf, ICommandContext } from "../BaseCommand";
 import { ActivitiesOptions, ActivityType, PresenceData } from "discord.js";
-import { GeneralConstants } from "../../Constants";
 
 export default class SetActivity extends BaseCommand {
     public constructor() {
@@ -38,8 +37,7 @@ export default class SetActivity extends BaseCommand {
             ],
             botPermissions: [],
             guildOnly: false,
-            botOwnerOnly: false,
-            allowOnServers: GeneralConstants.PERMITTED_SERVER_IDS,
+            botOwnerOnly: true
         };
 
         super(cmi);

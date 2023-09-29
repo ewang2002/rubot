@@ -1,9 +1,9 @@
 {
-    "isProd": true,
     "discord": {
         "token": "",
         "clientId": "",
-        "botOwnerIds": []
+        "botOwnerIds": [],
+        "debugGuildIds": []
     },
     "ucsdInfo": {
         "enrollDataOrgName": "",

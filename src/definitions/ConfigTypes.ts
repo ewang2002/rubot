@@ -2,11 +2,11 @@
  * An interface that represents a configuration file for this bot.
  */
 export interface IConfiguration {
-    isProd: boolean;
     discord: {
         token: string;
         clientId: string;
         botOwnerIds: string[];
+        debugGuildIds: string[];
     };
     ucsdInfo: {
         enrollDataOrgName: string;

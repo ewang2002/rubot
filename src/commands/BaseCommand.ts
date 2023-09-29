@@ -296,14 +296,6 @@ export default abstract class BaseCommand {
             return results;
         }
 
-        if (
-            this.commandInfo.allowOnServers &&
-            !this.commandInfo.allowOnServers.includes(guild.id)
-        ) {
-            results.reason = "Your server is not allowed to run this command.";
-            return results;
-        }
-
         // Command was executed in the server. We need to check permissions.
         const bot = guild.members.me;
 
@@ -393,14 +385,6 @@ export interface ICommandConf {
      * A cooldown, in milliseconds, that users will have to wait out after executing a command.
      */
     commandCooldown: number;
-
-    /**
-     * An array of server IDs for which this command should be allowed to run on. In other words, if a command is
-     * executed in a server whose ID doesn't appear in this array, then the command will not run.
-     *
-     * Set this to undefined if the command should be allowed to run on all servers.
-     */
-    allowOnServers?: string[];
 
     /**
      * The general permissions that the user must have to execute the command.

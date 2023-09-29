@@ -1,6 +1,5 @@
 export namespace GeneralConstants {
     export const ZERO_WIDTH_SPACE: string = "\u200b";
-    export const PERMITTED_SERVER_IDS: string[] = ["778738941443440640", "533476850421202944"];
     export const CONFIG_JS_FILE: string = "_.js";
     export const DAYS_OF_WEEK: string[] = ["Su", "M", "Tu", "W", "Th", "F", "Sa"];
 }

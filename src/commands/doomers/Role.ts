@@ -1,5 +1,4 @@
 import BaseCommand, { ArgumentType, ICommandConf, ICommandContext } from "../BaseCommand";
-import { GeneralConstants } from "../../Constants";
 import { GeneralUtilities } from "../../utilities";
 
 export default class Role extends BaseCommand {
@@ -23,8 +22,7 @@ export default class Role extends BaseCommand {
             ],
             botPermissions: ["ManageRoles"],
             guildOnly: true,
-            botOwnerOnly: false,
-            allowOnServers: GeneralConstants.PERMITTED_SERVER_IDS,
+            botOwnerOnly: false
         };
 
         super(cmi);

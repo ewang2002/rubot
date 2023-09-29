@@ -4,7 +4,6 @@ import { DataRegistry } from "./DataRegistry";
 import { Bot } from "./Bot";
 import { IConfiguration } from "./definitions";
 import { ScraperApiWrapper } from "./utilities";
-import { GeneralConstants } from "./Constants";
 
 const content = fs.readFileSync(path.join(__dirname, "..", "config.production.json"));
 const config: IConfiguration = JSON.parse(content.toString());
@@ -19,10 +18,10 @@ ScraperApiWrapper.init(config.ucsdInfo.apiBase, config.ucsdInfo.apiKey);
     const bot = new Bot(config.discord.clientId, config.discord.token);
     bot.startAllEvents();
 
-    if (config.isProd) {
+    if (config.discord.debugGuildIds.length === 0) {
         await bot.login();
     }
     else {
-        await bot.login(GeneralConstants.PERMITTED_SERVER_IDS);
+        await bot.login(config.discord.debugGuildIds);
     }
 })();

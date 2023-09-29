@@ -79,7 +79,7 @@ export class Bot {
         }
 
         await CommandRegistry.loadCommands();
-        await CommandRegistry.registerCommands(this._bot, Bot.Rest, this._clientId, guildIds);
+        await CommandRegistry.registerCommands(Bot.Rest, this._clientId, guildIds);
         await this._bot.login(this._token);
     }
 }
