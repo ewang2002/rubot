@@ -1,6 +1,6 @@
 import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { EmbedBuilder } from "discord.js";
-import { TimeUtilities, GeneralUtilities, StringBuilder, StringUtil } from "../../utilities";
+import { TimeUtilities, GeneralUtilities, StringBuilder, StringUtil, ScraperApiWrapper, ScraperResponse } from "../../utilities";
 import { Bot } from "../../Bot";
 import { WebRegSection } from "../../definitions";
 import { DataRegistry } from "../../DataRegistry";
@@ -43,13 +43,8 @@ export default class Status extends BaseCommand {
 
         const webregStatus = new StringBuilder();
         for await (const data of DataRegistry.CONFIG.ucsdInfo.currentWebRegTerms) {
-            const json: WebRegSection[] | { error: string; } | null = await GeneralUtilities.tryExecuteAsync(async () => {
-                // You will need the ucsd_webreg_rs app available
-                const d = await DataRegistry.AXIOS.get(
-                    `${DataRegistry.CONFIG.ucsdInfo.apiBase}/webreg/course_info/${data.term}?subject=CSE&number=8A`
-                );
-                return d.data;
-            });
+            const json: ScraperResponse<WebRegSection[]> = await ScraperApiWrapper.getInstance()
+                .getCourseInfo(data.term, "CSE", "8A");
 
             webregStatus.append(data.term).append(" - ");
             if (!json || "error" in json) {

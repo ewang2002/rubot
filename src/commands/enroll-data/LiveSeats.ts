@@ -6,7 +6,7 @@ import {
     requestFromWebRegApi,
 } from "./helpers/Helper";
 import { EmojiConstants, GeneralConstants } from "../../Constants";
-import { ArrayUtilities, GeneralUtilities, StringUtil, StringBuilder } from "../../utilities";
+import { ArrayUtilities, StringUtil, StringBuilder, ScraperResponse, ScraperApiWrapper } from "../../utilities";
 import { EmbedBuilder, embedLength } from "discord.js";
 import { DataRegistry } from "../../DataRegistry";
 import * as table from "text-table";
@@ -164,13 +164,8 @@ export default class LiveSeats extends BaseCommand {
             processedCodes.add(parsedCode);
 
             const [subj, num] = parsedCode.split(" ");
-            const json: WebRegSection[] | { error: string } | null =
-                await GeneralUtilities.tryExecuteAsync(async () => {
-                    const d = await DataRegistry.AXIOS.get(
-                        `${DataRegistry.CONFIG.ucsdInfo.apiBase}/webreg/course_info/${term}?subject=${subj}&number=${num}`
-                    );
-                    return d.data;
-                });
+            const json: ScraperResponse<WebRegSection[]> = await ScraperApiWrapper.getInstance()
+                .getCourseInfo(term, subj, num);
 
             if (!json || "error" in json) {
                 desc.append(

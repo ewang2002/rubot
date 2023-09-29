@@ -7,7 +7,9 @@ import {
     StringUtil, 
     GeneralUtilities, 
     AdvancedCollector, 
-    TimeUtilities
+    TimeUtilities,
+    ScraperApiWrapper,
+    ScraperResponse
 } from "../../../utilities";
 import { ArgumentType, IArgumentInfo, ICommandContext } from "../../BaseCommand";
 import { EmojiConstants, RegexConstants } from "../../../Constants";
@@ -118,15 +120,8 @@ export async function requestFromWebRegApi(
 
     const [subj, num] = parsedCode.split(" ");
     await ctx.interaction.deferReply();
-    const json: WebRegSection[] | { error: string } | null = await GeneralUtilities.tryExecuteAsync(
-        async () => {
-            // You will need the ucsd_webreg_rs app available
-            const d = await DataRegistry.AXIOS.get(
-                `${DataRegistry.CONFIG.ucsdInfo.apiBase}/webreg/course_info/${term}?subject=${subj}&number=${num}`
-            );
-            return d.data;
-        }
-    );
+    const json: ScraperResponse<WebRegSection[]> = await ScraperApiWrapper.getInstance()
+        .getCourseInfo(term, subj, num);
 
     if (!json || "error" in json) {
         await ctx.interaction.editReply({

@@ -1,8 +1,8 @@
 import { EmbedBuilder, embedLength } from "discord.js";
 import { GeneralConstants } from "../../Constants";
 import { DataRegistry } from "../../DataRegistry";
-import { IWebRegSearchResult } from "../../definitions";
-import { ArrayUtilities, GeneralUtilities, StringBuilder, StringUtil, TimeUtilities } from "../../utilities";
+import { ISearchQuery, IWebRegSearchResult } from "../../definitions";
+import { ArrayUtilities, GeneralUtilities, ScraperApiWrapper, ScraperResponse, StringBuilder, StringUtil, TimeUtilities } from "../../utilities";
 import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
 import { TERM_ARGUMENTS } from "./helpers/Helper";
 import * as table from "text-table";
@@ -220,7 +220,7 @@ export default class SearchCourse extends BaseCommand {
 
         await ctx.interaction.deferReply();
 
-        const data: SearchQuery = {
+        const data: ISearchQuery = {
             subjects,
             courses,
             departments,
@@ -296,17 +296,8 @@ export default class SearchCourse extends BaseCommand {
                 .appendLine();
         }
 
-        const json: IWebRegSearchResult[] | { error: string } | null =
-            await GeneralUtilities.tryExecuteAsync(async () => {
-                // You will need the ucsd_webreg_rs app available
-                const d = await DataRegistry.AXIOS.get(
-                    `${DataRegistry.CONFIG.ucsdInfo.apiBase}/webreg/search_courses/${term}`,
-                    {
-                        data,
-                    }
-                );
-                return d.data;
-            });
+        const json: ScraperResponse<IWebRegSearchResult[]> = await ScraperApiWrapper.getInstance()
+            .searchCourse(term, data);
 
         if (!json || "error" in json) {
             await ctx.interaction.editReply({
@@ -412,20 +403,4 @@ export default class SearchCourse extends BaseCommand {
 
         return 0;
     }
-}
-
-interface SearchQuery {
-    subjects: string[];
-    courses: string[];
-    departments: string[];
-    instructor?: string;
-    title?: string;
-    only_allow_open: boolean;
-    show_lower_div: boolean;
-    show_upper_div: boolean;
-    show_grad_div: boolean;
-    start_min?: number;
-    start_hr?: number;
-    end_min?: number;
-    end_hr?: number;
 }

@@ -1,6 +1,6 @@
 import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { WebRegSection } from "../../definitions";
-import { GeneralUtilities } from "../../utilities";
+import { GeneralUtilities, ScraperApiWrapper, ScraperResponse } from "../../utilities";
 import { DataRegistry } from "../../DataRegistry";
 
 export default class DidItBreak extends BaseCommand {
@@ -25,14 +25,8 @@ export default class DidItBreak extends BaseCommand {
     public async run(ctx: ICommandContext): Promise<number> {
         const errored = [];
         for await (const data of DataRegistry.CONFIG.ucsdInfo.currentWebRegTerms) {
-            const json: WebRegSection[] | { error: string } | null =
-                await GeneralUtilities.tryExecuteAsync(async () => {
-                    // You will need the ucsd_webreg_rs app available
-                    const d = await DataRegistry.AXIOS.get(
-                        `${DataRegistry.CONFIG.ucsdInfo.apiBase}/webreg/course_info/${data.term}?subject=CSE&number=8A`
-                    );
-                    return d.data;
-                });
+            const json: ScraperResponse<WebRegSection[]> = await ScraperApiWrapper.getInstance()
+                .getCourseInfo(data.term, "CSE", "8A");
 
             if (!json || "error" in json) {
                 errored.push(data.term);

@@ -88,3 +88,19 @@ export interface IInternalCourseData {
     endMin: number;
     instructor: string[];
 }
+
+export interface ISearchQuery {
+    subjects: string[];
+    courses: string[];
+    departments: string[];
+    instructor?: string;
+    title?: string;
+    only_allow_open: boolean;
+    show_lower_div: boolean;
+    show_upper_div: boolean;
+    show_grad_div: boolean;
+    start_min?: number;
+    start_hr?: number;
+    end_min?: number;
+    end_hr?: number;
+}

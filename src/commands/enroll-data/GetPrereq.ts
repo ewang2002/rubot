@@ -2,7 +2,7 @@ import { EmbedBuilder } from "discord.js";
 import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { LOOKUP_ARGUMENTS, parseCourseSubjCode } from "./helpers/Helper";
 import { PrerequisiteInfo } from "../../definitions";
-import { StringUtil, ArrayUtilities, GeneralUtilities } from "../../utilities";
+import { StringUtil, ArrayUtilities, ScraperApiWrapper, ScraperResponse } from "../../utilities";
 import { GeneralConstants } from "../../Constants";
 import { DataRegistry } from "../../DataRegistry";
 
@@ -42,14 +42,8 @@ export default class GetPrereq extends BaseCommand {
 
         const [subj, num] = parsedCode.split(" ");
         await ctx.interaction.deferReply();
-        const json: PrerequisiteInfo | { error: string } | null =
-            await GeneralUtilities.tryExecuteAsync(async () => {
-                // You will need the ucsd_webreg_rs app available
-                const d = await DataRegistry.AXIOS.get(
-                    `${DataRegistry.CONFIG.ucsdInfo.apiBase}/webreg/prereqs/${term}?subject=${subj}&number=${num}`
-                );
-                return d.data;
-            });
+        const json: ScraperResponse<PrerequisiteInfo> = await ScraperApiWrapper.getInstance()
+            .getPrerequisites(term, subj, num);
 
         if (!json || "error" in json) {
             await ctx.interaction.editReply({
