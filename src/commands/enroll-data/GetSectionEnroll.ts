@@ -1,8 +1,7 @@
 import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { DataRegistry } from "../../DataRegistry";
-import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { Collection, ButtonBuilder, StringSelectMenuBuilder, ButtonStyle } from "discord.js";
-import { AdvancedCollector } from "../../utilities/AdvancedCollector";
+import { AdvancedCollector, ArrayUtilities } from "../../utilities";
 import { EmojiConstants } from "../../Constants";
 import { PLOT_ARGUMENTS, parseCourseSubjCode } from "./helpers/Helper";
 import { IPlotInfo } from "../../definitions";

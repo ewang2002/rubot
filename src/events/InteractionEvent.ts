@@ -1,10 +1,7 @@
 import { ChatInputCommandInteraction, Interaction } from "discord.js";
 
-import { StringUtil } from "../utilities/StringUtilities";
-import { TimeUtilities } from "../utilities/TimeUtilities";
-import { StringBuilder } from "../utilities/StringBuilder";
+import { StringUtil, GeneralUtilities, TimeUtilities, StringBuilder } from "../utilities";
 import { ICommandContext } from "../commands";
-import { GeneralUtilities } from "../utilities/GeneralUtilities";
 import { DataRegistry } from "../DataRegistry";
 import { CommandRegistry } from "../commands";
 

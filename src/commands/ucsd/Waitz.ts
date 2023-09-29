@@ -1,5 +1,5 @@
 import BaseCommand, { ICommandContext } from "../BaseCommand";
-import { GeneralUtilities } from "../../utilities/GeneralUtilities";
+import { GeneralUtilities, StringUtil, StringBuilder, ArrayUtilities, AdvancedCollector } from "../../utilities";
 import { WaitzCompareData, WaitzLiveData } from "../../definitions/WaitzTypes";
 import {
     ButtonBuilder,
@@ -8,11 +8,7 @@ import {
     ButtonStyle,
     SelectMenuComponentOptionData,
 } from "discord.js";
-import { StringUtil } from "../../utilities/StringUtilities";
-import { StringBuilder } from "../../utilities/StringBuilder";
 import { EmojiConstants } from "../../Constants";
-import { ArrayUtilities } from "../../utilities/ArrayUtilities";
-import { AdvancedCollector } from "../../utilities/AdvancedCollector";
 import { DataRegistry } from "../../DataRegistry";
 
 export default class Waitz extends BaseCommand {
@@ -113,8 +109,7 @@ export default class Waitz extends BaseCommand {
             const compareData = compInfo.find((x) => x.name === entry.name);
             const embed = new EmbedBuilder()
                 .setTitle(
-                    `Real-Time Crowd Level @ **${entry.name}** (${
-                        Waitz.isOpen(entry) ? "Open" : "Closed"
+                    `Real-Time Crowd Level @ **${entry.name}** (${Waitz.isOpen(entry) ? "Open" : "Closed"
                     })`
                 )
                 .setFooter({ text: "Powered by Waitz (https://waitz.io/ucsd)." })
@@ -174,9 +169,7 @@ export default class Waitz extends BaseCommand {
             selectOptions.push({
                 value: entry.name,
                 label: entry.name,
-                description: `${entry.people} / ${entry.capacity} (${
-                    entry.isOpen ? "Open" : "Closed"
-                })`,
+                description: `${entry.people} / ${entry.capacity} (${entry.isOpen ? "Open" : "Closed"})`,
                 emoji: entry.isOpen
                     ? EmojiConstants.GREEN_SQUARE_EMOJI
                     : EmojiConstants.RED_SQUARE_EMOJI,

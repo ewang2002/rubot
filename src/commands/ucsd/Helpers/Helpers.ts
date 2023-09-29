@@ -1,6 +1,5 @@
-import { TimeUtilities } from "../../../utilities/TimeUtilities";
+import { TimeUtilities, ArrayUtilities } from "../../../utilities";
 import { StringSelectMenuBuilder, SelectMenuComponentOptionData } from "discord.js";
-import { ArrayUtilities } from "../../../utilities/ArrayUtilities";
 import getWebRegDateStr = TimeUtilities.getWebRegDateStr;
 import { EmojiConstants, GeneralConstants, UCSDConstants } from "../../../Constants";
 import { DataRegistry } from "../../../DataRegistry";

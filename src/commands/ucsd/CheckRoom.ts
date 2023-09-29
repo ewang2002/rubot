@@ -7,12 +7,8 @@ import {
     SelectMenuComponentOptionData,
     ButtonStyle,
 } from "discord.js";
-import { ArrayUtilities } from "../../utilities/ArrayUtilities";
+import { ArrayUtilities, AdvancedCollector, TimeUtilities, StringBuilder, StringUtil } from "../../utilities";
 import { EmojiConstants, GeneralConstants, UCSDConstants } from "../../Constants";
-import { AdvancedCollector } from "../../utilities/AdvancedCollector";
-import { TimeUtilities } from "../../utilities/TimeUtilities";
-import { StringBuilder } from "../../utilities/StringBuilder";
-import { StringUtil } from "../../utilities/StringUtilities";
 import { DataRegistry } from "../../DataRegistry";
 import getTimeStr = TimeUtilities.getTimeStr;
 import getWebRegDateStr = TimeUtilities.getWebRegDateStr;

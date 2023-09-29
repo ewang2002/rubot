@@ -5,10 +5,7 @@ import BaseCommand, {
     ICommandConf,
 } from "../BaseCommand";
 
-import { StringUtil } from "../../utilities/StringUtilities";
-import { ArrayUtilities } from "../../utilities/ArrayUtilities";
-import { StringBuilder } from "../../utilities/StringBuilder";
-import { GeneralUtilities } from "../../utilities/GeneralUtilities";
+import { StringUtil, ArrayUtilities, StringBuilder, GeneralUtilities } from "../../utilities";
 import { CommandRegistry } from "..";
 
 export default class Help extends BaseCommand {

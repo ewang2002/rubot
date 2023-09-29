@@ -3,8 +3,7 @@ import { ICapeRow, IConfiguration, IInternalCourseData, IPlotInfo, ListedCourse,
 import { createReadStream } from "fs";
 import { createInterface } from "readline";
 import * as path from "path";
-import { TimeUtilities } from "./utilities/TimeUtilities";
-import { GeneralUtilities } from "./utilities/GeneralUtilities";
+import { TimeUtilities, GeneralUtilities } from "./utilities";
 import axios, { AxiosInstance } from "axios";
 import { RegexConstants } from "./Constants";
 

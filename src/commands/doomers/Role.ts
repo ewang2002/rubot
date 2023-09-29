@@ -1,6 +1,6 @@
 import BaseCommand, { ArgumentType, ICommandContext, ICommandConf } from "../BaseCommand";
 import { GeneralConstants } from "../../Constants";
-import { GeneralUtilities } from "../../utilities/GeneralUtilities";
+import { GeneralUtilities } from "../../utilities";
 
 export default class Role extends BaseCommand {
     public constructor() {

@@ -2,14 +2,10 @@ import { EmbedBuilder, embedLength } from "discord.js";
 import { GeneralConstants } from "../../Constants";
 import { DataRegistry } from "../../DataRegistry";
 import { IWebRegSearchResult } from "../../definitions";
-import { ArrayUtilities } from "../../utilities/ArrayUtilities";
-import { GeneralUtilities } from "../../utilities/GeneralUtilities";
-import { StringBuilder } from "../../utilities/StringBuilder";
+import { ArrayUtilities, GeneralUtilities, StringBuilder, StringUtil, TimeUtilities } from "../../utilities";
 import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
 import { TERM_ARGUMENTS } from "./helpers/Helper";
 import * as table from "text-table";
-import { StringUtil } from "../../utilities/StringUtilities";
-import { TimeUtilities } from "../../utilities/TimeUtilities";
 
 export default class SearchCourse extends BaseCommand {
     public constructor() {

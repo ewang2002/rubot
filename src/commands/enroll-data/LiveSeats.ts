@@ -6,14 +6,11 @@ import {
     requestFromWebRegApi,
 } from "./helpers/Helper";
 import { EmojiConstants, GeneralConstants } from "../../Constants";
-import { ArrayUtilities } from "../../utilities/ArrayUtilities";
-import { StringUtil } from "../../utilities/StringUtilities";
+import { ArrayUtilities, GeneralUtilities, StringUtil, StringBuilder } from "../../utilities";
 import { EmbedBuilder, embedLength } from "discord.js";
 import { DataRegistry } from "../../DataRegistry";
 import * as table from "text-table";
-import { StringBuilder } from "../../utilities/StringBuilder";
 import { WebRegSection } from "../../definitions";
-import { GeneralUtilities } from "../../utilities/GeneralUtilities";
 
 export default class LiveSeats extends BaseCommand {
     public constructor() {
@@ -202,7 +199,7 @@ export default class LiveSeats extends BaseCommand {
             let numFieldsAdded = 0;
             for (const field of fields) {
                 returnEmbed.addFields({
-                    name: `Course **${parsedCode}**`, 
+                    name: `Course **${parsedCode}**`,
                     value: StringUtil.codifyString(field)
                 });
 

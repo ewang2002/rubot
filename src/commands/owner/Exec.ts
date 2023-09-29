@@ -2,7 +2,7 @@ import { exec as execute } from "child_process";
 import { AttachmentBuilder } from "discord.js";
 import { promisify } from "util";
 import { EmojiConstants } from "../../Constants";
-import { StringUtil } from "../../utilities/StringUtilities";
+import { StringUtil } from "../../utilities";
 import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
 
 export default class Exec extends BaseCommand {

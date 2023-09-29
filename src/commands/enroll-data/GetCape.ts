@@ -1,8 +1,7 @@
 import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
 import { EmojiConstants } from "../../Constants";
-import { ArrayUtilities } from "../../utilities/ArrayUtilities";
 import { ButtonBuilder, ButtonStyle, StringSelectMenuBuilder } from "discord.js";
-import { AdvancedCollector } from "../../utilities/AdvancedCollector";
+import { AdvancedCollector, ArrayUtilities } from "../../utilities";
 import { DataRegistry } from "../../DataRegistry";
 import CAPE_DATA = DataRegistry.CAPE_DATA;
 import { getCapeSummary, parseCourseSubjCode } from "./helpers/Helper";

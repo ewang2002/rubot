@@ -1,13 +1,10 @@
 import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { EmbedBuilder } from "discord.js";
-import { TimeUtilities } from "../../utilities/TimeUtilities";
+import { TimeUtilities, GeneralUtilities, StringBuilder, StringUtil } from "../../utilities";
 import { Bot } from "../../Bot";
 import { WebRegSection } from "../../definitions";
-import { GeneralUtilities } from "../../utilities/GeneralUtilities";
-import { StringBuilder } from "../../utilities/StringBuilder";
 import { DataRegistry } from "../../DataRegistry";
 import { EmojiConstants } from "../../Constants";
-import { StringUtil } from "../../utilities/StringUtilities";
 import * as table from "text-table";
 
 export default class Status extends BaseCommand {

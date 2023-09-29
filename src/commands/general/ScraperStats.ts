@@ -1,12 +1,10 @@
 import BaseCommand, { ICommandContext } from "../BaseCommand";
-import { GeneralUtilities } from "../../utilities/GeneralUtilities";
+import { GeneralUtilities, StringUtil, TimestampType, TimeUtilities } from "../../utilities";
 import { DataRegistry } from "../../DataRegistry";
 import { TERM_ARGUMENTS } from "../enroll-data/helpers/Helper";
-import { TimestampType, TimeUtilities } from "../../utilities/TimeUtilities";
 import { EmbedBuilder } from "discord.js";
 import { ScraperTimeStatInfo } from "../../definitions";
 import * as table from "text-table";
-import { StringUtil } from "../../utilities/StringUtilities";
 
 export default class LoginScriptStats extends BaseCommand {
     public constructor() {

@@ -1,14 +1,16 @@
 import { Collection, ButtonBuilder, EmbedBuilder, embedLength, ButtonStyle } from "discord.js";
 import { DataRegistry } from "../../../DataRegistry";
 import { ICapeRow, Meeting, WebRegSection } from "../../../definitions";
-import { ArrayUtilities } from "../../../utilities/ArrayUtilities";
-import { StringBuilder } from "../../../utilities/StringBuilder";
-import { StringUtil } from "../../../utilities/StringUtilities";
+import {
+    ArrayUtilities,
+    StringBuilder,
+    StringUtil, 
+    GeneralUtilities, 
+    AdvancedCollector, 
+    TimeUtilities
+} from "../../../utilities";
 import { ArgumentType, IArgumentInfo, ICommandContext } from "../../BaseCommand";
-import { GeneralUtilities } from "../../../utilities/GeneralUtilities";
 import { EmojiConstants, RegexConstants } from "../../../Constants";
-import { AdvancedCollector } from "../../../utilities/AdvancedCollector";
-import { TimeUtilities } from "../../../utilities/TimeUtilities";
 import CAPE_DATA = DataRegistry.CAPE_DATA;
 import padTimeDigit = TimeUtilities.padTimeDigit;
 import getTimeStr = TimeUtilities.getTimeStr;

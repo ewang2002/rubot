@@ -1,6 +1,6 @@
 import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { WebRegSection } from "../../definitions";
-import { GeneralUtilities } from "../../utilities/GeneralUtilities";
+import { GeneralUtilities } from "../../utilities";
 import { DataRegistry } from "../../DataRegistry";
 
 export default class DidItBreak extends BaseCommand {

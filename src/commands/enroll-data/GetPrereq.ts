@@ -1,10 +1,8 @@
 import { EmbedBuilder } from "discord.js";
 import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { LOOKUP_ARGUMENTS, parseCourseSubjCode } from "./helpers/Helper";
-import { GeneralUtilities } from "../../utilities/GeneralUtilities";
 import { PrerequisiteInfo } from "../../definitions";
-import { StringUtil } from "../../utilities/StringUtilities";
-import { ArrayUtilities } from "../../utilities/ArrayUtilities";
+import { StringUtil, ArrayUtilities, GeneralUtilities } from "../../utilities";
 import { GeneralConstants } from "../../Constants";
 import { DataRegistry } from "../../DataRegistry";
 

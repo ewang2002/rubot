@@ -1,4 +1,4 @@
-import { GeneralUtilities } from "../../utilities/GeneralUtilities";
+import { GeneralUtilities } from "../../utilities";
 import BaseCommand, { ICommandContext } from "../BaseCommand";
 
 export default class LiveSeatLegends extends BaseCommand {

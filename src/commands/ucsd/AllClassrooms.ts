@@ -1,13 +1,9 @@
 // "If it works, don't question it."
 import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
 import { DataRegistry } from "../../DataRegistry";
-import { TimeUtilities } from "../../utilities/TimeUtilities";
+import { TimeUtilities, ArrayUtilities, StringUtil, AdvancedCollector, StringBuilder } from "../../utilities";
 import { ButtonBuilder, ButtonStyle, Collection, EmbedBuilder, StringSelectMenuBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
 import { EmojiConstants, GeneralConstants, UCSDConstants } from "../../Constants";
-import { ArrayUtilities } from "../../utilities/ArrayUtilities";
-import { StringUtil } from "../../utilities/StringUtilities";
-import { AdvancedCollector } from "../../utilities/AdvancedCollector";
-import { StringBuilder } from "../../utilities/StringBuilder";
 import { getSelectMenusFromBuildings, getTimeFromObj, getUsedClassrooms } from "./Helpers/Helpers";
 import getDateTime = TimeUtilities.getDateTime;
 
