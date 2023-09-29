@@ -13,6 +13,7 @@ import axios, { AxiosInstance } from "axios";
 export namespace Data {
     /**
      * The HTTP client used to make web requests.
+     * 
      * @type {AxiosInstance}
      */
     export const AXIOS: AxiosInstance = axios.create();

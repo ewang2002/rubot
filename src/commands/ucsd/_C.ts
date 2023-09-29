@@ -1,7 +1,5 @@
-export interface CategoryConf {
-    categoryName: string;
-}
+import { ICategoryConf } from "../../definitions";
 
 export default {
     categoryName: "UCSD General"
-} as CategoryConf;
+} as ICategoryConf;
