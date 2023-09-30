@@ -227,7 +227,6 @@ export namespace AdvancedCollector {
             | "msgOptions"
             | "oldMsg"
             | "deleteBaseMsgAfterComplete"
-            | "clearInteractionsAfterComplete"
         >,
         uniqueIdentifier: string
     ): Promise<MessageComponentInteraction | null> {
@@ -238,6 +237,7 @@ export namespace AdvancedCollector {
                     i.user.id === options.targetAuthor.id &&
                     i.customId.startsWith(uniqueIdentifier),
                 time: options.duration,
+                dispose: options.clearInteractionsAfterComplete
             });
 
             if (options.acknowledgeImmediately) {
@@ -270,6 +270,7 @@ export namespace AdvancedCollector {
             returnInteraction = await botMsg.awaitMessageComponent({
                 filter: (i) => i.user.id === options.targetAuthor.id,
                 time: options.duration,
+                dispose: options.clearInteractionsAfterComplete
             });
 
             if (options.acknowledgeImmediately) {
@@ -282,11 +283,6 @@ export namespace AdvancedCollector {
         finally {
             if (options.deleteBaseMsgAfterComplete) {
                 await botMsg.delete().catch();
-            }
-            else if (options.clearInteractionsAfterComplete && botMsg.editable) {
-                await botMsg
-                    .edit(GeneralUtilities.getMessageOptionsFromMessage(botMsg, []))
-                    .catch();
             }
         }
 

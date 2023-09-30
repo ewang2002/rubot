@@ -314,6 +314,7 @@ export default class ViewAllClassrooms extends BaseCommand {
                         duration: 2 * 60 * 1000,
                         targetAuthor: ctx.user,
                         targetChannel: ctx.channel,
+                        clearInteractionsAfterComplete: true
                     },
                     uniqueId
                 );

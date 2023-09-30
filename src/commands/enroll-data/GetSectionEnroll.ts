@@ -114,6 +114,7 @@ export default class GetSectionEnroll extends BaseCommand {
                 acknowledgeImmediately: true,
                 targetChannel: ctx.channel,
                 duration: 30 * 1000,
+                clearInteractionsAfterComplete: false
             },
             uIdentifier
         );

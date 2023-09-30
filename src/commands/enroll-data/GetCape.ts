@@ -111,6 +111,7 @@ export default class GetCape extends BaseCommand {
                         acknowledgeImmediately: true,
                         targetChannel: ctx.channel,
                         duration: 30 * 1000,
+                        clearInteractionsAfterComplete: false
                     },
                     uIdentifier
                 );
@@ -185,6 +186,7 @@ export default class GetCape extends BaseCommand {
                         acknowledgeImmediately: true,
                         targetChannel: ctx.channel,
                         duration: 30 * 1000,
+                        clearInteractionsAfterComplete: false
                     },
                     uIdentifier
                 );

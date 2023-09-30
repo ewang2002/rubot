@@ -133,6 +133,7 @@ export default class CheckRoom extends BaseCommand {
                     duration: 60 * 1000,
                     targetAuthor: ctx.user,
                     targetChannel: ctx.channel,
+                    clearInteractionsAfterComplete: false
                 },
                 uniqueId
             );
@@ -259,6 +260,7 @@ export default class CheckRoom extends BaseCommand {
                     duration: 2 * 60 * 1000,
                     targetAuthor: ctx.user,
                     targetChannel: ctx.channel,
+                    clearInteractionsAfterComplete: false
                 },
                 uniqueId
             );

@@ -214,6 +214,7 @@ export default class Waitz extends BaseCommand {
                         duration: 60 * 1000,
                         targetAuthor: ctx.user,
                         targetChannel: ctx.channel,
+                        clearInteractionsAfterComplete: true
                     },
                     uniqueId
                 );
