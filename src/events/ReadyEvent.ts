@@ -10,5 +10,5 @@ export async function onReadyEvent(): Promise<void> {
     }
 
     console.info(`${botUser.tag} has started successfully.`);
-    console.info("\tMode: " + (DataRegistry.CONFIG.discord.botOwnerIds.length === 0 ? "Production" : "Testing"));
+    console.info("\tMode: " + (DataRegistry.CONFIG.discord.debugGuildIds.length === 0 ? "Production" : "Testing"));
 }
