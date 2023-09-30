@@ -332,8 +332,8 @@ export default class SearchCourse extends BaseCommand {
         if (showTitles) {
             const allData = table(
                 json.map((w) => [
-                    `${w.SUBJ_CODE.trim()} ${w.CRSE_CODE.trim()}`,
-                    w.CRSE_TITLE.trim(),
+                    `${w.subj_code.trim()} ${w.course_code.trim()}`,
+                    w.course_title.trim(),
                 ])
             ).split("\n");
 
@@ -376,7 +376,7 @@ export default class SearchCourse extends BaseCommand {
         }
         else {
             const fields = ArrayUtilities.arrayToStringFields(
-                json.map((x) => `${x.SUBJ_CODE.trim()} ${x.CRSE_CODE.trim()}, `),
+                json.map((x) => `${x.subj_code.trim()} ${x.course_code.trim()}, `),
                 (_, elem) => elem
             );
 

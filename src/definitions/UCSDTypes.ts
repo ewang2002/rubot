@@ -32,12 +32,11 @@ export interface WebRegSection {
 }
 
 export interface IWebRegSearchResult {
-    UNIT_TO: number;
-    SUBJ_CODE: string;
-    CRSE_TITLE: string;
-    UNIT_FROM: number;
-    CRSE_CODE: string;
+    subj_code: string;
+    course_code: string;
+    course_title: string;
 }
+
 
 export interface Meeting {
     meeting_type: string;

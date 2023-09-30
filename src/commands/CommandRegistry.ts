@@ -29,7 +29,8 @@ export namespace CommandRegistry {
                 .map(dir => path.join(outPath, dir.name)));
 
         for (const folder of foldersToProcess) {
-            const contentOfCategory: ICategoryConf = await import(path.join(folder, GeneralConstants.CONFIG_JS_FILE)).then(obj => obj.default);
+            const contentOfCategory: ICategoryConf = await import(path.join(folder, GeneralConstants.CONFIG_JS_FILE))
+                .then(obj => obj.default);
             const commands: BaseCommand[] = [];
 
             // Get all command files
