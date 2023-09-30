@@ -5,7 +5,15 @@ import { Bot } from "./Bot";
 import { IConfiguration } from "./definitions";
 import { ScraperApiWrapper } from "./utilities";
 
-const content = fs.readFileSync(path.join(__dirname, "..", "config.production.json"));
+let configName = "config.production.json";
+if (process.argv.length > 0) {
+    const proposed = process.argv.at(-1)!;
+    if (proposed.endsWith(".json")) {
+        configName = proposed;
+    }
+}
+
+const content = fs.readFileSync(path.join(__dirname, "..", configName));
 const config: IConfiguration = JSON.parse(content.toString());
 DataRegistry.initStaticData(config);
 
