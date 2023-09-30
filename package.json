@@ -1,7 +1,7 @@
 {
     "name": "rubot",
     "version": "2.0.0",
-    "description": "Good question.",
+    "description": "A somewhat UCSD-oriented Discord bot named after a clown.",
     "main": "index.js",
     "scripts": {
         "compile": "tsc -p .",

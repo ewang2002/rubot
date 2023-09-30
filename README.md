@@ -1,5 +1,5 @@
 # Rubot 2.0
-A UCSD-oriented Discord bot named after a clown. 
+A somewhat UCSD-oriented Discord bot named after a clown. 
 
 ## Features
 Rubot does contain a variety of commands that UCSD students may find useful. For example, you can
