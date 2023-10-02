@@ -2,6 +2,7 @@ export namespace GeneralConstants {
     export const ZERO_WIDTH_SPACE: string = "\u200b";
     export const CONFIG_JS_FILE: string = "_.js";
     export const DAYS_OF_WEEK: string[] = ["Su", "M", "Tu", "W", "Th", "F", "Sa"];
+    export const WEEK_TO_MS: number = 6.048e+8;
 }
 
 export namespace UCSDConstants {

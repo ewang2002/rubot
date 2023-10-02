@@ -109,7 +109,7 @@ export namespace TimeUtilities {
      * Gets the current time in a nice string format.
      * @param {string} [timezone] The timezone, if applicable. Otherwise, GMT is used.
      * @param {boolean} [removeAmPm] Whether to remove the AM/PM ending.
-     * @returns {string} The current formatter date & time.
+     * @returns {string} The current formatted date & time.
      */
     export function getFormattedTime(
         timezone: string = "Atlantic/Reykjavik",
@@ -136,7 +136,7 @@ export namespace TimeUtilities {
     /**
      * Gets the current time in a nice string format.
      * @param {Date | number} [date = new Date()] The date to choose, if any.
-     * @param {string} [timezone] The timezone, if applicable. Otherwise, GMT is used. See
+     * @param {string} [timezone] The timezone, if applicable. Otherwise, PT is used. See
      * https://en.wikipedia.org/wiki/List_of_tz_database_time_zones for a full list.
      * @returns {string} The current formatter date & time.
      */
