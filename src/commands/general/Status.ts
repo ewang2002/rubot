@@ -1,17 +1,8 @@
 import BaseCommand, { ICommandContext } from "../BaseCommand";
 import { EmbedBuilder } from "discord.js";
-import {
-    GeneralUtilities,
-    ScraperApiWrapper,
-    ScraperResponse,
-    StringBuilder,
-    StringUtil,
-    TimeUtilities
-} from "../../utilities";
+import { StringUtil, TimeUtilities } from "../../utilities";
 import { Bot } from "../../Bot";
-import { WebRegSection } from "../../definitions";
 import { DataRegistry } from "../../DataRegistry";
-import { EmojiConstants } from "../../Constants";
 import * as table from "text-table";
 
 export default class Status extends BaseCommand {
@@ -48,27 +39,6 @@ export default class Status extends BaseCommand {
             .setFooter({ text: "Requested" })
             .setTimestamp();
 
-        const webregStatus = new StringBuilder();
-        for await (const data of DataRegistry.CONFIG.ucsdInfo.currentWebRegTerms) {
-            const json: ScraperResponse<WebRegSection[]> = await ScraperApiWrapper.getInstance()
-                .getCourseInfo(data.term, "CSE", "8A");
-
-            webregStatus.append(data.term).append(" - ");
-            if (!json || "error" in json) {
-                webregStatus.append(EmojiConstants.X_EMOJI);
-            }
-            else {
-                webregStatus.append(EmojiConstants.GREEN_CHECK_EMOJI);
-            }
-
-            webregStatus.appendLine();
-            await GeneralUtilities.stopFor(500);
-        }
-
-        statusEmbed.addFields({
-            name: "WebReg",
-            value: StringUtil.codifyString(webregStatus.toString())
-        });
         statusEmbed.addFields({
             name: "CAPE",
             value: StringUtil.codifyString(`${DataRegistry.CAPE_DATA.length} Entries Loaded.`)
