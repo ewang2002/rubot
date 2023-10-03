@@ -5,6 +5,8 @@ export namespace GeneralConstants {
     export const WEEK_TO_MS: number = 6.048e+8;
 }
 
+
+
 export namespace UCSDConstants {
     /**
      * Duration of the final exam, in milliseconds.
@@ -125,6 +127,7 @@ export namespace UCSDConstants {
 
 export namespace RegexConstants {
     export const ONLY_DIGITS_REGEX: RegExp = /^\d+$/;
+    export const ONLY_LETTERS: RegExp = /^[a-z]+$/i;
 }
 
 export namespace EmojiConstants {

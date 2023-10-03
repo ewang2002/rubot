@@ -1,3 +1,5 @@
+import { RegexConstants } from "../Constants";
+
 export enum TimestampType {
     /**
      * Formats the time so that it's displayed relative to the
@@ -298,5 +300,66 @@ export namespace TimeUtilities {
     export function getDiscordTime({ time = Date.now(), style = TimestampType.Relative } = {}): string {
         // Truncate and divide by 1000 to transform  ms to seconds
         return `<t:${Math.trunc(time / 1000)}:${style}>`;
+    }
+
+    
+    type TimeUnitType = { ms: number; formatted: string; };
+
+    /**
+     * Parses a time + unit string (for example, `3m`) into the corresponding duration in milliseconds.
+     * @param {string} timeUnit The time and unit. There can be multiple.
+     * @returns {TimeUtilities | null} The parsed time, if any.
+     */
+    export function parseTimeUnit(timeUnit: string): TimeUnitType | null {
+        // Break up the time + units into individual strings
+        // For example, 3d5m = [3d, 5m]
+        let validStr = false;
+        let lastIdx = 0;
+        let duration = 0;
+        for (let i = 0; i < timeUnit.length; i++) {
+            // Not a letter or space = skip
+            if (timeUnit[i] === " " || !RegexConstants.ONLY_LETTERS.test(timeUnit[i])) {
+                continue;
+            }
+    
+            //     --- substring(lastIdx, i)
+            //     | |
+            // ... 230m ...
+            //     ^  ^
+            //     |  i
+            //     |
+            //     lastIdx
+            const parsedNum = Number.parseInt(timeUnit.substring(lastIdx, i).replaceAll(" ", ""), 10);
+            lastIdx = i + 1;
+            if (Number.isNaN(parsedNum)) {
+                continue;
+            }
+    
+            switch (timeUnit[i]) {
+                case "m": {
+                    duration += parsedNum * 60000;
+                    break;
+                }
+                case "h": {
+                    duration += parsedNum * 3.6e+6;
+                    break;
+                }
+                case "d": {
+                    duration += parsedNum * 8.64e+7;
+                    break;
+                }
+                case "w": {
+                    duration += parsedNum * 6.048e+8;
+                    break;
+                }
+                default: {
+                    duration += parsedNum * 8.64e+7;
+                    break;
+                }
+            }
+    
+            validStr = true;
+        }
+        return validStr ? { ms: duration, formatted: formatDuration(duration, true, false) } : null;
     }
 }
