@@ -19,7 +19,7 @@ export default class Help extends BaseCommand {
                     desc: "The command to find help information for.",
                     type: ArgumentType.String,
                     required: false,
-                    example: ["help", "startafkcheck"],
+                    example: ["help", "ping"],
                 },
             ],
             commandCooldown: 4 * 1000,
