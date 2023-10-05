@@ -22,7 +22,7 @@ ScraperApiWrapper.getInstance();
 ScraperApiWrapper.init(config.ucsdInfo.apiBase, config.ucsdInfo.apiKey);
 
 (async () => {
-    await DataRegistry.initEnrollmentData(config);
+    //await DataRegistry.initEnrollmentData(config);
     const bot = new Bot(config.discord.clientId, config.discord.token);
     bot.startAllEvents();
 

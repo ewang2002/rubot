@@ -1,8 +1,7 @@
-import BaseCommand, { ArgumentType, IArgumentInfo, ICommandContext, } from "../BaseCommand";
+import BaseCommand, { ArgumentType, ICommandContext, } from "../BaseCommand";
 
-import { AdvancedCollector, ArrayUtilities, GeneralUtilities, StringBuilder, StringUtil } from "../../utilities";
-import { CommandRegistry } from "..";
-import { ButtonBuilder, ButtonStyle, EmbedBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
+import { AdvancedCollector, GeneralUtilities, TimeUtilities, } from "../../utilities";
+import { ButtonBuilder, ButtonStyle, TextInputBuilder, TextInputStyle } from "discord.js";
 
 export default class CreateReminder extends BaseCommand {
     public constructor() {
@@ -19,7 +18,7 @@ export default class CreateReminder extends BaseCommand {
                     argName: "reminder_info",
                     type: ArgumentType.String,
                     desc: "The information you'd like to be reminded about.",
-                    required: false,
+                    required: true,
                     example: ["CSE 100 homework due"],
                 },
             ],
@@ -34,40 +33,34 @@ export default class CreateReminder extends BaseCommand {
      */
     public async run(ctx: ICommandContext): Promise<number> {
         const reminderMsg = ctx.interaction.options.getString("reminder_info"); // get user input
-
         // unique ID for the message (per person)
         const uniqueId = `${Date.now()}_${ctx.user.id}_${Math.random()}`;
 
         if (reminderMsg) {
-            // *teleports behind you* gets your command  B)
-            const command = CommandRegistry.getCommandByName(reminderMsg);
+            // creates embed (the message basically)
+            const remindEmbed = GeneralUtilities.generateBlankEmbed(ctx.user, "Green") // for waffle to see
+                .setTitle("Reminder information")
+                .setFooter({
+                    text: `Server Context: ${ctx.guild?.name ?? "Direct Message @edbird"}`,
+                })
+                .setDescription("Hello! You'd like to be reminded about: " + `${reminderMsg}`);
 
-            if (command) {
-                // creates embed (the message basically)
-                const remindEmbed = GeneralUtilities.generateBlankEmbed(ctx.user, "Green") // for waffle to see
-                    .setTitle("Reminder information")
-                    .setFooter({
-                        text: `Server Context: ${ctx.guild?.name ?? "Direct Message @edbird"}`,
-                    })
-                    .setDescription("Hello! You'd like to be reminded about: " + `${reminderMsg}`);
-
-                // after user sends in slash command, i'm going to reply with the embed and button 
-                await ctx.interaction.reply({
-                    embeds: [remindEmbed],
-                    components: AdvancedCollector.getActionRowsFromComponents([
-                        new ButtonBuilder()
-                            .setLabel("Set Date")
-                            .setCustomId(`${uniqueId}_date`)
-                            .setStyle(ButtonStyle.Primary)
-                    ]), 
-                });
-            }
+            // after user sends in slash command, i'm going to reply with the embed and button 
+            await ctx.interaction.reply({
+                embeds: [remindEmbed],
+                components: AdvancedCollector.getActionRowsFromComponents([
+                    new ButtonBuilder()
+                        .setLabel("Set Date")
+                        .setCustomId(`${uniqueId}_date`)
+                        .setStyle(ButtonStyle.Primary)
+                ]), 
+            });
         }
         
-        await ctx.interaction.deferReply(); // keeps ... thingy when loading (gives you an extra 15 minutes to press the button)
+        //await ctx.interaction.deferReply(); // keeps ... thingy when loading (gives you an extra 15 minutes to press the button)
 
         // checks for [duration] if there's any button presses
-        // if no intearction within [duration], just exit
+        // if no interaction within [duration], just exit
         while (true) {
             const interact = await AdvancedCollector.startInteractionEphemeralCollector(
                 {
@@ -103,8 +96,8 @@ export default class CreateReminder extends BaseCommand {
                                     .setRequired(true),
                                 new TextInputBuilder()
                                     .setStyle(TextInputStyle.Short)
-                                    .setMaxLength(2)
-                                    .setLabel("Year (20xx)")
+                                    .setMaxLength(4)
+                                    .setLabel("Year (xxxx)")
                                     .setCustomId("year")
                                     .setRequired(true),
                                 new TextInputBuilder()
@@ -137,26 +130,31 @@ export default class CreateReminder extends BaseCommand {
 
                             // save the info
 
-                            let newEmbed;
+                            let message;
+                            let color = "";
                             if (!Number.isNaN(date.getTime())) {
-                                newEmbed = GeneralUtilities.generateBlankEmbed(ctx.user, "Green") // for waffle to see
-                                    .setTitle("Thank you!")
-                                    .setFooter({
-                                        text: `Server Context: ${ctx.guild?.name ?? "Direct Message @edbird"}`,
-                                    })
-                                    .setDescription("Date set! On" + `${date.toString()}, `+ "you'll be reminded about: " + `${reminderMsg}`);
+                                if (date < new Date()){
+                                    message = "Sorry, we can't remind you in the past!";
+                                    color = "Red";
+                                }
+                                else {
+                                    message = "Date set! " + `${TimeUtilities.getDiscordTime({ time: date.getTime() })}, `+ "you'll be reminded about: " + `${reminderMsg}`;
+                                    color = "Green";
+                                }
                             }
                             else {
-                                newEmbed = GeneralUtilities.generateBlankEmbed(ctx.user, "Green") // for waffle to see
-                                    .setTitle("Error")
-                                    .setFooter({
-                                        text: `Server Context: ${ctx.guild?.name ?? "Direct Message @edbird"}`,
-                                    })
-                                    .setDescription("Date not recognized! Try again." );
+                                message = "Date not recognized! Try again.";
+                                color = "Red";
                             }
-
+                            const newEmbed = GeneralUtilities.generateBlankEmbed(ctx.user, "Green")
+                                .setTitle("Result")
+                                .setFooter({
+                                    text: `Server Context: ${ctx.guild?.name ?? "Direct Message @edbird"}`, })
+                                .setDescription(message);
+                            
                             await ctx.interaction.editReply({
-                                embeds: [newEmbed]
+                                embeds: [newEmbed],
+                                components: []
                             });
                         });
                 }
