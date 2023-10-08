@@ -1,7 +1,7 @@
 import BaseCommand, { ArgumentType, ICommandContext, } from "../BaseCommand";
 
 import { AdvancedCollector, GeneralUtilities, TimeUtilities, } from "../../utilities";
-import { ButtonBuilder, ButtonStyle, TextInputBuilder, TextInputStyle } from "discord.js";
+import { ButtonBuilder, ButtonStyle, ColorResolvable, TextInputBuilder, TextInputStyle } from "discord.js";
 
 export default class CreateReminder extends BaseCommand {
     public constructor() {
@@ -57,7 +57,7 @@ export default class CreateReminder extends BaseCommand {
             });
         }
         
-        //await ctx.interaction.deferReply(); // keeps ... thingy when loading (gives you an extra 15 minutes to press the button)
+        //await ctx.interaction.deferReply(); // keeps ... thingy when loading (gives you an extra 15 minutes to press the button) (doesn't seem to work tho)
 
         // checks for [duration] if there's any button presses
         // if no interaction within [duration], just exit
@@ -131,7 +131,7 @@ export default class CreateReminder extends BaseCommand {
                             // save the info
 
                             let message;
-                            let color = "";
+                            let color: ColorResolvable = "Green";
                             if (!Number.isNaN(date.getTime())) {
                                 if (date < new Date()){
                                     message = "Sorry, we can't remind you in the past!";
@@ -146,7 +146,7 @@ export default class CreateReminder extends BaseCommand {
                                 message = "Date not recognized! Try again.";
                                 color = "Red";
                             }
-                            const newEmbed = GeneralUtilities.generateBlankEmbed(ctx.user, "Green")
+                            const newEmbed = GeneralUtilities.generateBlankEmbed(ctx.user, color)
                                 .setTitle("Result")
                                 .setFooter({
                                     text: `Server Context: ${ctx.guild?.name ?? "Direct Message @edbird"}`, })
