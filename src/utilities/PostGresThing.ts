@@ -26,21 +26,32 @@ export namespace PostGresThing {
         }
     }
 
-    export async function search (query:string | Date, type:queryType) {
+    export async function search (query:string | Date, type:queryType): Promise<{ message: string, alert_time: Date; }[]> {
         try {
             let res;
             if (type === "user") {
-                res = await pool.query("SELECT message FROM rubot.to_alert WHERE user_id = $1;", [query]);
+                res = await pool.query("SELECT message, alert_time FROM rubot.to_alert WHERE user_id = $1;", [query]);
             }
-            else { // if time
-                res = await pool.query("SELECT $1 as message;", [query]); // todo
+            else { // search via time (in minute increments) 
+                res = await pool.query(`
+                SELECT 
+                    message, 
+                    user_id
+                FROM rubot.to_alert
+                WHERE alert_time >= date_trunc('minute', $1::timestamp) 
+                AND   alert_time < date_trunc('minute', $1::timestamp) + INTERVAL '1 minute';`, 
+                [query]);
             }
             console.log("search");
             console.log(res.rows); 
+
+            return res.rows;
         } 
         catch (err) {
             console.error(err);
         }
+
+        return [];
     }
 
     export async function insert (user:string, message:string | null, alert_time:Date) {
