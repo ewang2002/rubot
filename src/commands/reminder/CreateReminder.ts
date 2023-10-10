@@ -2,6 +2,7 @@ import BaseCommand, { ArgumentType, ICommandContext, } from "../BaseCommand";
 
 import { AdvancedCollector, GeneralUtilities, TimeUtilities, } from "../../utilities";
 import { ButtonBuilder, ButtonStyle, ColorResolvable, TextInputBuilder, TextInputStyle } from "discord.js";
+import { PostGresThing } from "../../utilities/PostGresThing";
 
 export default class CreateReminder extends BaseCommand {
     public constructor() {
@@ -129,6 +130,7 @@ export default class CreateReminder extends BaseCommand {
                             date.setMinutes(minute);
 
                             // save the info
+                            PostGresThing.insert(ctx.user.id, reminderMsg, date);
 
                             let message;
                             let color: ColorResolvable = "Green";
