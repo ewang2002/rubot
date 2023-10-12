@@ -12,6 +12,7 @@ const pool = new Pool({
  
 type SearchUserType = { id: number, message: string, alert_time: Date; }[] 
 type SearchTimeType = { id: number, message: string, user_id: string, channel_id: string; }[]
+type SearchIDType = { message: string, alert_time: Date }[]
 
 export namespace PostGresReminder {
     // creates table for storing alerts 
@@ -40,6 +41,21 @@ export namespace PostGresReminder {
         try {
             const res = await pool.query("SELECT id, message, alert_time FROM rubot.alert WHERE user_id = $1 AND alert_time >= now();", [query]);
             console.log("search by user");
+            console.log(res.rows); 
+
+            return res.rows;
+        }
+        catch (err) {
+            console.error(err);
+        }
+        
+        return [];
+    }
+
+    export async function searchByID (id: string | null): Promise<SearchIDType> {
+        try {
+            const res = await pool.query("SELECT message, alert_time FROM rubot.alert WHERE id = $1 AND alert_time >= now();", [id]);
+            console.log("search by ID");
             console.log(res.rows); 
 
             return res.rows;
@@ -96,8 +112,18 @@ export namespace PostGresReminder {
     export async function dropAlertTable () {
         try {
             const res = await pool.query("DROP TABLE IF EXISTS rubot.alert;");
-            console.log(res); 
-            
+            console.log(res);  
+        } 
+        catch (err) {
+            console.error(err);
+        } 
+    }
+
+    export async function deleteRow (id: string) {
+        try {
+            const res = await pool.query("DELETE FROM rubot.alert WHERE id = $1;", [id]);
+            console.log(res);  
+            return res;
         } 
         catch (err) {
             console.error(err);

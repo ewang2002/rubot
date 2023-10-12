@@ -28,7 +28,7 @@ export default class CheckReminder extends BaseCommand {
         let fmt_msg = "\n";
         for (const msg of messages) {
             if ("alert_time" in msg) {
-                fmt_msg += "* " + msg.message + " on " + msg.alert_time.toDateString() + "\n"; 
+                fmt_msg += "* **" + msg.message + "** on " + msg.alert_time.toDateString() + ` \`(id: ${msg.id})\`` + "\n"; 
             }
         }
 
@@ -38,7 +38,7 @@ export default class CheckReminder extends BaseCommand {
             .setFooter({
                 text: `Server Context: ${ctx.guild?.name ?? "Direct Message @edbird"}`,
             })
-            .setDescription("Your future reminders: " + fmt_msg);
+            .setDescription("Your future reminders: " + fmt_msg + "\nTo delete reminders, use the /deleteReminder command with the reminder's id.");
         
         // after user sends in slash command, i'm going to reply with the embed and button 
         await ctx.interaction.reply({
