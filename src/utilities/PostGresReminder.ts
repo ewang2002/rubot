@@ -121,7 +121,7 @@ export namespace PostGresReminder {
                         const channel: TextChannel = client.channels.cache.get(reminder.channel_id) as TextChannel;
                         const user = client.users.cache.get(reminder.user_id);
 
-                        let remindEmbed = new EmbedBuilder()
+                        const remindEmbed = new EmbedBuilder()
                             .setColor("DarkGreen")
                             .setTitle("Reminder!")
                             .setDescription(`<@${reminder.user_id}>, your reminder: ${reminder.message}`)
