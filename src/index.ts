@@ -4,9 +4,7 @@ import { DataRegistry } from "./DataRegistry";
 import { Bot } from "./Bot";
 import { IConfiguration } from "./definitions";
 import { ScraperApiWrapper } from "./utilities";
-import { PostGresThing } from "./utilities/PostGresThing";
-
-PostGresThing.coolFunction("SELECT 'HELLO' as message");
+import { PostGresReminder } from "./utilities/PostGresReminder";
 
 let configName = "config.production.json";
 if (process.argv.length > 0) {
@@ -25,9 +23,15 @@ ScraperApiWrapper.getInstance();
 ScraperApiWrapper.init(config.ucsdInfo.apiBase, config.ucsdInfo.apiKey);
 
 (async () => {
-    //await DataRegistry.initEnrollmentData(config);
+    // await PostGresReminder.createAlertTable();
+    // PostGresReminder.end();
+
+    await DataRegistry.initEnrollmentData(config);
     const bot = new Bot(config.discord.clientId, config.discord.token);
     bot.startAllEvents();
+
+    // starts loop to check if we need to remind anyone 
+    PostGresReminder.loop();
 
     if (config.discord.debugGuildIds.length === 0) {
         await bot.login();

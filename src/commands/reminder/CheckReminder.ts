@@ -2,7 +2,7 @@ import BaseCommand, { ICommandContext, } from "../BaseCommand";
 
 import { GeneralUtilities } from "../../utilities";
 // import { ButtonBuilder, ButtonStyle, ColorResolvable, TextInputBuilder, TextInputStyle } from "discord.js";
-import { PostGresThing } from "../../utilities/PostGresThing";
+import { PostGresReminder as PostGresReminder } from "../../utilities/PostGresReminder";
 
 export default class CheckReminder extends BaseCommand {
     public constructor() {
@@ -24,10 +24,12 @@ export default class CheckReminder extends BaseCommand {
      * @inheritDoc
      */
     public async run(ctx: ICommandContext): Promise<number> {
-        const messages = await PostGresThing.search(ctx.user.id, "user");
+        const messages = await PostGresReminder.searchByUser(ctx.user.id);
         let fmt_msg = "\n";
-        for (let i = 0; i < messages.length; i++) {
-            fmt_msg += "* " + messages[i].message + " on " + messages[i].alert_time.toDateString() + "\n";
+        for (const msg of messages) {
+            if ("alert_time" in msg) {
+                fmt_msg += "* " + msg.message + " on " + msg.alert_time.toDateString() + "\n"; 
+            }
         }
 
         // creates embed (the message basically)

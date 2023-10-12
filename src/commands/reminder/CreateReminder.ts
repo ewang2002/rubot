@@ -2,7 +2,7 @@ import BaseCommand, { ArgumentType, ICommandContext, } from "../BaseCommand";
 
 import { AdvancedCollector, GeneralUtilities, TimeUtilities, } from "../../utilities";
 import { ButtonBuilder, ButtonStyle, ColorResolvable, TextInputBuilder, TextInputStyle } from "discord.js";
-import { PostGresThing } from "../../utilities/PostGresThing";
+import { PostGresReminder } from "../../utilities/PostGresReminder";
 
 export default class CreateReminder extends BaseCommand {
     public constructor() {
@@ -38,8 +38,8 @@ export default class CreateReminder extends BaseCommand {
         const uniqueId = `${Date.now()}_${ctx.user.id}_${Math.random()}`;
 
         if (reminderMsg) {
-            // creates embed (the message basically)
-            const remindEmbed = GeneralUtilities.generateBlankEmbed(ctx.user, "Green") // for waffle to see
+            // creates embed
+            const remindEmbed = GeneralUtilities.generateBlankEmbed(ctx.user, "Green")
                 .setTitle("Reminder information")
                 .setFooter({
                     text: `Server Context: ${ctx.guild?.name ?? "Direct Message @edbird"}`,
@@ -57,8 +57,6 @@ export default class CreateReminder extends BaseCommand {
                 ]), 
             });
         }
-        
-        //await ctx.interaction.deferReply(); // keeps ... thingy when loading (gives you an extra 15 minutes to press the button) (doesn't seem to work tho)
 
         // checks for [duration] if there's any button presses
         // if no interaction within [duration], just exit
@@ -73,10 +71,12 @@ export default class CreateReminder extends BaseCommand {
                 },
                 uniqueId
             );
-
+            
+            // if there's no button press within [duration], delete it
             if (!interact) {
                 break;
             }
+
             if (interact.isButton()) {
                 if (interact.customId === `${uniqueId}_date`) {
                     AdvancedCollector.sendTextModal(interact, 
@@ -122,15 +122,13 @@ export default class CreateReminder extends BaseCommand {
                             const year = Number.parseInt(result.fields.getTextInputValue("year"));
                             const hour = Number.parseInt(result.fields.getTextInputValue("hour"));
                             const minute = Number.parseInt(result.fields.getTextInputValue("minute"));
+
                             const date = new Date();
                             date.setMonth(month - 1);
                             date.setDate(day);
                             date.setFullYear(year);
                             date.setHours(hour);
                             date.setMinutes(minute);
-
-                            // save the info
-                            PostGresThing.insert(ctx.user.id, reminderMsg, date);
 
                             let message;
                             let color: ColorResolvable = "Green";
@@ -140,6 +138,9 @@ export default class CreateReminder extends BaseCommand {
                                     color = "Red";
                                 }
                                 else {
+                                    // save the info
+                                    PostGresReminder.insert(ctx.user.id, reminderMsg, date, ctx.channel.id);
+
                                     message = "Date set! " + `${TimeUtilities.getDiscordTime({ time: date.getTime() })}, `+ "you'll be reminded about: " + `${reminderMsg}`;
                                     color = "Green";
                                 }
@@ -148,6 +149,8 @@ export default class CreateReminder extends BaseCommand {
                                 message = "Date not recognized! Try again.";
                                 color = "Red";
                             }
+
+                            // change the old embed to contain information about their reminder
                             const newEmbed = GeneralUtilities.generateBlankEmbed(ctx.user, color)
                                 .setTitle("Result")
                                 .setFooter({
