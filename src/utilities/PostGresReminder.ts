@@ -4,7 +4,6 @@ import {
     TextChannel,
 } from "discord.js";
 import { Bot } from "../Bot";
-import { lstat } from "fs";
 
 const pool = new Pool({
     user: "postgres",
@@ -84,7 +83,6 @@ export namespace PostGresReminder {
                 [user, message, alert_time, channel_id]);
             console.log("insert");
             console.log(res); 
-            
         } 
         catch (err) {
             console.error(err);
