@@ -38,7 +38,7 @@ export default class CheckReminder extends BaseCommand {
             .setFooter({
                 text: `Server Context: ${ctx.guild?.name ?? "Direct Message @edbird"}`,
             })
-            .setDescription("Your current reminders: " + fmt_msg);
+            .setDescription("Your future reminders: " + fmt_msg);
         
         // after user sends in slash command, i'm going to reply with the embed and button 
         await ctx.interaction.reply({

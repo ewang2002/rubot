@@ -35,10 +35,10 @@ export namespace PostGresReminder {
         }
     }
 
-    // search via user 
+    // search *future* alerts via user 
     export async function searchByUser (query:string): Promise<SearchUserType> {
         try {
-            const res = await pool.query("SELECT id, message, alert_time FROM rubot.alert WHERE user_id = $1;", [query]);
+            const res = await pool.query("SELECT id, message, alert_time FROM rubot.alert WHERE user_id = $1 AND alert_time >= now();", [query]);
             console.log("search by user");
             console.log(res.rows); 
 
