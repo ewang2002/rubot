@@ -119,4 +119,21 @@ export namespace GeneralUtilities {
             }, time);
         });
     }
+
+    /**
+     * Logs the time, method, chosen output, and level. 
+     * @param {string | object} input The input to print. 
+     * @param {string} method The method used.
+     * @param {string} level The log level
+     * @returns <void>
+     */
+    type logLevel = "INFO" | "WARN" | "ERROR" 
+    export function log(input: unknown, method: string, level: logLevel): void {
+        console.log("-------------------------------");
+        console.log((new Date()).toDateString() + ", at " + (new Date()).toTimeString());
+        console.log("Function: " + method + "\n");
+        console.log("Output -- " + level);
+        console.log(input);
+        console.log("-------------------------------\n");
+    }
 }

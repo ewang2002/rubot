@@ -44,6 +44,11 @@ export interface IConfiguration {
             };
         };
     };
+    postgresInfo: {
+        user: string;
+        password: string;
+        host: string;
+    };
 }
 
 

@@ -1,8 +1,6 @@
 import BaseCommand, { ICommandContext, } from "../BaseCommand";
-
 import { GeneralUtilities } from "../../utilities";
-// import { ButtonBuilder, ButtonStyle, ColorResolvable, TextInputBuilder, TextInputStyle } from "discord.js";
-import { PostGresReminder as PostGresReminder } from "../../utilities/PostGresReminder";
+import { PostgresReminder as PostgresReminder } from "../../utilities/PostgresReminder";
 
 export default class CheckReminder extends BaseCommand {
     public constructor() {
@@ -10,7 +8,7 @@ export default class CheckReminder extends BaseCommand {
             cmdCode: "CHECKREMINDER",
             formalCommandName: "CheckReminder",
             botCommandName: "checkreminder",
-            description: "Check reminders.",
+            description: "Check what upcoming reminders you have.",
             generalPermissions: [],
             botPermissions: [],
             argumentInfo: [],
@@ -24,23 +22,22 @@ export default class CheckReminder extends BaseCommand {
      * @inheritDoc
      */
     public async run(ctx: ICommandContext): Promise<number> {
-        const messages = await PostGresReminder.searchByUser(ctx.user.id);
-        let fmt_msg = "\n";
+        const messages = await PostgresReminder.searchByUser(ctx.user.id);
+        let formatted = "\n";
         for (const msg of messages) {
             if ("alert_time" in msg) {
-                fmt_msg += "* **" + msg.message + "** on " + msg.alert_time.toDateString() + ` \`(id: ${msg.id})\`` + "\n"; 
+                formatted += "* **" + msg.message + "** on " + msg.alert_time.toDateString() + ` \`(id: ${msg.id})\`` + "\n"; 
             }
         }
-
-        // creates embed (the message basically)
-        const remindEmbed = GeneralUtilities.generateBlankEmbed(ctx.user, "Green") // for waffle to see
+        // creates embed with reminders
+        const remindEmbed = GeneralUtilities.generateBlankEmbed(ctx.user, "Green")
             .setTitle("Reminder information")
             .setFooter({
                 text: `Server Context: ${ctx.guild?.name ?? "Direct Message @edbird"}`,
             })
-            .setDescription("Your future reminders: " + fmt_msg + "\nTo delete reminders, use the /deleteReminder command with the reminder's id.");
+            .setDescription("Your future reminders: " + formatted + "\nTo delete reminders, use the /deleteReminder command with the reminder's id.");
         
-        // after user sends in slash command, i'm going to reply with the embed and button 
+        // after user sends slash command, reply with embed and button 
         await ctx.interaction.reply({
             embeds: [remindEmbed],
         });

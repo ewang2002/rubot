@@ -1,8 +1,7 @@
 import BaseCommand, { ArgumentType, ICommandContext, } from "../BaseCommand";
 
 import { GeneralUtilities } from "../../utilities";
-// import { ButtonBuilder, ButtonStyle, ColorResolvable, TextInputBuilder, TextInputStyle } from "discord.js";
-import { PostGresReminder as PostGresReminder } from "../../utilities/PostGresReminder";
+import { PostgresReminder as PostgresReminder } from "../../utilities/PostgresReminder";
 import { ColorResolvable } from "discord.js";
 
 export default class DeleteReminder extends BaseCommand {
@@ -35,15 +34,15 @@ export default class DeleteReminder extends BaseCommand {
      */
     public async run(ctx: ICommandContext): Promise<number> {
         const toDelete = ctx.interaction.options.getString("delete_id");
-        const message = await PostGresReminder.searchByID(toDelete);
+        const message = await PostgresReminder.searchByID(toDelete);
         
         const remindEmbed = GeneralUtilities.generateBlankEmbed(ctx.user);
         let color: ColorResolvable = "Green";
 
         if (toDelete) {
-            const deleted = await PostGresReminder.deleteRow(toDelete);
-            console.log(message);
-            if (deleted && "rowCount" in deleted && deleted.rowCount === 0) {
+            const deleted = await PostgresReminder.deleteRow(toDelete);
+
+            if (deleted.rowCount === 0) {
                 color = "Red";
                 remindEmbed
                     .setTitle("Delete Unsuccessful")
