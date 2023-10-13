@@ -1,5 +1,4 @@
 import BaseCommand, { ArgumentType, ICommandContext, } from "../BaseCommand";
-
 import { AdvancedCollector, GeneralUtilities, TimeUtilities, } from "../../utilities";
 import { ButtonBuilder, ButtonStyle, ColorResolvable, TextInputBuilder, TextInputStyle } from "discord.js";
 import { PostgresReminder } from "../../utilities/PostgresReminder";
@@ -35,7 +34,7 @@ export default class CreateReminder extends BaseCommand {
     public async run(ctx: ICommandContext): Promise<number> {
         // get user input
         const reminderMsg = ctx.interaction.options.getString("reminder_info");
-        // unique ID for the message (per person)
+        // unique ID for the message so interactions don't collide
         const uniqueId = `${Date.now()}_${ctx.user.id}_${Math.random()}`;
 
         // creates embed with the user's message
@@ -80,7 +79,7 @@ export default class CreateReminder extends BaseCommand {
                 if (interact.customId === `${uniqueId}_date`) {
                     AdvancedCollector.sendTextModal(interact, 
                         {
-                            modalTitle: "Set Date (24 Hour Time)",
+                            modalTitle: "Set Date (24 Hour Time",
                             inputs: [
                                 new TextInputBuilder()
                                     .setStyle(TextInputStyle.Short)
@@ -120,7 +119,7 @@ export default class CreateReminder extends BaseCommand {
                             const year = Number.parseInt(result.fields.getTextInputValue("year"));
                             const hour = Number.parseInt(result.fields.getTextInputValue("hour"));
                             const minute = Number.parseInt(result.fields.getTextInputValue("minute"));
-                            
+
                             await result.deferUpdate();
                             const date = new Date();
                             date.setMonth(month - 1);
@@ -137,7 +136,7 @@ export default class CreateReminder extends BaseCommand {
                                     color = "Red";
                                 }
                                 else {
-                                    // save the info
+                                    // save the info into the db 
                                     PostgresReminder.insert(ctx.user.id, reminderMsg, date, ctx.channel.id);
 
                                     message = "Date set! " + `${TimeUtilities.getDiscordTime({ time: date.getTime() })}, `+ "you'll be reminded about: " + `${reminderMsg}`;
@@ -156,7 +155,7 @@ export default class CreateReminder extends BaseCommand {
                                     text: `Server Context: ${ctx.guild?.name ?? "Direct Message @edbird"}`, })
                                 .setDescription(message);
                             
-                            await ctx.interaction.editReply({
+                            await ctx.interaction.editReply({ 
                                 embeds: [newEmbed],
                                 components: []
                             });
