@@ -20,11 +20,15 @@ DataRegistry.initStaticData(config);
 // Create instance of scraper.
 ScraperApiWrapper.getInstance();
 ScraperApiWrapper.init(config.ucsdInfo.apiBase, config.ucsdInfo.apiKey);
+import { PostgresReminder } from "./utilities/PostgresReminder";
 
 (async () => {
     await DataRegistry.initEnrollmentData(config);
     const bot = new Bot(config.discord.clientId, config.discord.token);
     bot.startAllEvents();
+
+    // starts loop to check if we need to remind anyone 
+    PostgresReminder.loop();
 
     if (config.discord.debugGuildIds.length === 0) {
         await bot.login();
