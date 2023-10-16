@@ -139,7 +139,7 @@ export default class CreateReminder extends BaseCommand {
                                     // save the info into the db 
                                     PostgresReminder.insert(ctx.user.id, reminderMsg, date, ctx.channel.id);
 
-                                    message = "Date set! " + `${TimeUtilities.getDiscordTime({ time: date.getTime() })}, `+ "you'll be reminded about: " + `${reminderMsg}`;
+                                    message = "Date set! " + `${TimeUtilities.getDiscordTime({ time: date.getTime() })}, `+ "you'll be reminded about: " + reminderMsg;
                                     color = "Green";
                                 }
                             }
