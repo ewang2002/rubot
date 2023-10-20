@@ -15,7 +15,10 @@ export namespace PostgresReminder {
     const pool = new Pool({
         user: DataRegistry.CONFIG.postgresInfo.user,
         password: DataRegistry.CONFIG.postgresInfo.password,
-        host: DataRegistry.CONFIG.postgresInfo.host
+        host: DataRegistry.CONFIG.postgresInfo.host,
+        port: DataRegistry.CONFIG.postgresInfo.port,
+        database: DataRegistry.CONFIG.postgresInfo.database,
+        ssl: DataRegistry.CONFIG.postgresInfo.ssl
     });
     
     /**
