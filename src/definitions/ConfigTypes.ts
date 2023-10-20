@@ -48,6 +48,9 @@ export interface IConfiguration {
         user: string;
         password: string;
         host: string;
+        port: number;
+        ssl: boolean,
+        database: string;
     };
 }
 
