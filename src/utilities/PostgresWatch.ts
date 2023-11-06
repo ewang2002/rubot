@@ -210,13 +210,13 @@ export namespace PostgresWatch {
                             console.log("user map2!!!! " + JSON.stringify(userMap));
 
                             // for each channel in userMap
-                            for (const channelInfo in Object.keys(userMap)) {
+                            for (const channelInfo of Object.keys(userMap)) {
                                 const channel: TextChannel = client.channels.cache.get(channelInfo) as TextChannel;
                                 // this no worky 
-                                let userList = userMap.channelInfo;
+                                let userList = userMap[channelInfo];
                                 console.log("user list");
                                 console.log(userList);
-                                userList = userList.map(i => "@" + i);
+                                userList = userList.map(i => "<@" + i + "> ");
 
                                 const courseEmbed = new EmbedBuilder()
                                     .setColor("DarkGreen")
@@ -226,13 +226,13 @@ export namespace PostgresWatch {
                                 
                                 channel.send({
                                     content: "=======================================================\n" +
-                                        `<${userList.toString()}>`, embeds: [courseEmbed]
+                                        `${userList.toString()}`, embeds: [courseEmbed]
                                 });
                             }
-
                             break;
                         }
                     }
+                    GeneralUtilities.stopFor(1000);
                 });
             }
 
