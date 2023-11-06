@@ -89,7 +89,7 @@ export namespace PostgresWatch {
     }
 
     /**
-     * Insert a new course to remind into Postgres
+     * Insert a new course to remind for into Postgres
      * @param {string} user_id Discord user ID
      * @param {string} course class to alert for
      * @param {string} channel_id id of Discord channel to send in
@@ -120,7 +120,7 @@ export namespace PostgresWatch {
     }
 
     /**
-     * Deletes a course 
+     * Deletes a course from a user
      * @param {string} user_id user_id of the person wanting to delete
      * @param {string} course course to remove
      * @returns {Promise<QueryResult>} The information about the request
@@ -153,15 +153,10 @@ export namespace PostgresWatch {
         const client = Bot.BotInstance.client;
 
         setInterval(async () => {
-            // const courses = getAllAlertCourses() to get list of courses to search thru 
-            // find uniq courses in that list 
-            // api calls on each unique course
-            // for each course, search thru courses var (groupby? https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/groupBy)
-            //                  and send a notif to the right person/channel
-            console.log("moshimoshi?");
+            // list of courses/users/channels that we could potentially alert on
             const courses = await getAllAlertCourses();
-            //console.log(courses);
 
+            // create a grouped map of course: object
             const map: { [course: string]: CourseList } = {};
             for (const c of courses) {
                 if (!(c.course in map)) {
@@ -171,29 +166,22 @@ export namespace PostgresWatch {
                     map[c.course].push(c);
                 }
             }
-            console.log("map: ");
-            //console.log(map);
 
+            // for each course that could be alerted on, make an API call to see if seats are open
             for (const course of Object.keys(map)) {
                 const [subject, num] = course.split(" ");
-                // const subject: string = course.slice(0, 2);
-                // const num: string = course.slice(3, course.length);
 
                 ScraperApiWrapper.getInstance().getCourseInfo(
                     DataRegistry.CONFIG.ucsdInfo.currentWebRegTerms[0].term, subject, num).then(async courseInfoList => {
-                    // for each reminder found, we send an embed to remind the user
                     const userMap: { [channel_id: string]: string[] } = {};
-                    console.log(DataRegistry.CONFIG.ucsdInfo.currentWebRegTerms[0].term);
-                    console.log("subject" + subject);
-                    console.log("num" + num);
-                    //console.log("courseInfoList: ");
-                    //console.log(courseInfoList);
+
                     // if courseInfoList has an error or is null
                     if (!courseInfoList || ("error" in courseInfoList)) {
                         GeneralUtilities.log("Course Info doesn't exist or error'd", "Scraper API Request", "ERROR");
                         return;
                     }
                     
+                    // for every section of the course in webreg
                     for (const section of courseInfoList) {
                         // if there's a section open
                         if (section.available_seats > 0 && section.waitlist_ct <= 0 && section.is_visible) {
@@ -206,16 +194,11 @@ export namespace PostgresWatch {
                                     userMap[channel_id].push(user_id);
                                 }
                             }
-                            console.log("user map: " + userMap);
-                            console.log("user map2!!!! " + JSON.stringify(userMap));
 
-                            // for each channel in userMap
+                            // for each channel in userMap, notify every person for the class in that channel
                             for (const channelInfo of Object.keys(userMap)) {
                                 const channel: TextChannel = client.channels.cache.get(channelInfo) as TextChannel;
-                                // this no worky 
                                 let userList = userMap[channelInfo];
-                                console.log("user list");
-                                console.log(userList);
                                 userList = userList.map(i => "<@" + i + "> ");
 
                                 const courseEmbed = new EmbedBuilder()
@@ -232,11 +215,10 @@ export namespace PostgresWatch {
                             break;
                         }
                     }
+                    // wait a second between API requests 
                     GeneralUtilities.stopFor(1000);
                 });
             }
-
-
         }, seconds * 1000);
     }
 }
