@@ -51,7 +51,7 @@ export namespace PostgresWatch {
     export async function searchCourse(user_id: string, course: string): Promise<CourseList> {
         try {
             const res = await pool.query(`
-                SELECT user_id, user_id
+                SELECT user_id, course
                 FROM rubot.watch 
                 WHERE user_id = $1 AND course = $2;`, [user_id, course]);
             GeneralUtilities.log(res.rows, searchCourse.name, "INFO");
@@ -158,7 +158,9 @@ export namespace PostgresWatch {
             // api calls on each unique course
             // for each course, search thru courses var (groupby? https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/groupBy)
             //                  and send a notif to the right person/channel
+            console.log("moshimoshi?");
             const courses = await getAllAlertCourses();
+            //console.log(courses);
 
             const map: { [course: string]: CourseList } = {};
             for (const c of courses) {
@@ -169,17 +171,26 @@ export namespace PostgresWatch {
                     map[c.course].push(c);
                 }
             }
+            console.log("map: ");
+            //console.log(map);
 
             for (const course of Object.keys(map)) {
-                const subject: string = course.slice(0, 2);
-                const num: string = course.slice(3, course.length);
+                const [subject, num] = course.split(" ");
+                // const subject: string = course.slice(0, 2);
+                // const num: string = course.slice(3, course.length);
 
-                ScraperApiWrapper.getInstance().getCourseInfo(DataRegistry.CONFIG.ucsdInfo.currentWebRegTerms[0].term, subject, num).then(async courseInfoList => {
+                ScraperApiWrapper.getInstance().getCourseInfo(
+                    DataRegistry.CONFIG.ucsdInfo.currentWebRegTerms[0].term, subject, num).then(async courseInfoList => {
                     // for each reminder found, we send an embed to remind the user
                     const userMap: { [channel_id: string]: string[] } = {};
-
+                    console.log(DataRegistry.CONFIG.ucsdInfo.currentWebRegTerms[0].term);
+                    console.log("subject" + subject);
+                    console.log("num" + num);
+                    //console.log("courseInfoList: ");
+                    //console.log(courseInfoList);
                     // if courseInfoList has an error or is null
                     if (!courseInfoList || ("error" in courseInfoList)) {
+                        GeneralUtilities.log("Course Info doesn't exist or error'd", "Scraper API Request", "ERROR");
                         return;
                     }
                     
@@ -195,10 +206,16 @@ export namespace PostgresWatch {
                                     userMap[channel_id].push(user_id);
                                 }
                             }
-                            
+                            console.log("user map: " + userMap);
+                            console.log("user map2!!!! " + JSON.stringify(userMap));
+
+                            // for each channel in userMap
                             for (const channelInfo in Object.keys(userMap)) {
                                 const channel: TextChannel = client.channels.cache.get(channelInfo) as TextChannel;
+                                // this no worky 
                                 let userList = userMap.channelInfo;
+                                console.log("user list");
+                                console.log(userList);
                                 userList = userList.map(i => "@" + i);
 
                                 const courseEmbed = new EmbedBuilder()

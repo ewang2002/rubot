@@ -26,8 +26,8 @@ import { PostgresWatch } from "./utilities/PostgresWatch";
 // PostgresReminder.createAlertTable();
 // console.log("created table");
 //PostgresWatch.dropCourseTable();
-PostgresWatch.createWatchTable();
-console.log("made table?");
+//PostgresWatch.createWatchTable();
+//console.log("made table?");
 (async () => {
     await DataRegistry.initEnrollmentData(config);
     const bot = new Bot(config.discord.clientId, config.discord.token);
@@ -35,6 +35,7 @@ console.log("made table?");
 
     // starts loop to check if we need to remind anyone 
     PostgresReminder.loop();
+    PostgresWatch.loop();
 
     if (config.discord.debugGuildIds.length === 0) {
         await bot.login();

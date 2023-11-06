@@ -66,9 +66,9 @@ export default class WatchClass extends BaseCommand {
         }
 
         // if you're already watching the class
-        const searchResults = PostgresWatch.searchCourse(ctx.user.id, parsedCode);
+        const searchResults = await PostgresWatch.searchCourse(ctx.user.id, parsedCode);
         // TODO: ensure that filled search results are falsy 
-        if (!searchResults) {
+        if (searchResults.length !== 0) {
             await ctx.interaction.editReply({
                 content: `You are already watching \`${parsedCode}\`.`,
             });
@@ -79,7 +79,7 @@ export default class WatchClass extends BaseCommand {
         // if course is correctly formatted, store the class in Postgres and return confirmation embed
         PostgresWatch.insertClass(ctx.user.id, parsedCode, ctx.channel.id);
         
-        await ctx.interaction.reply({
+        await ctx.interaction.editReply({
             embeds: [GeneralUtilities.generateBlankEmbed(ctx.user)
                 .setTitle("Course added to watch list")
                 .setFooter({
