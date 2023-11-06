@@ -195,6 +195,7 @@ export namespace PostgresReminder {
                     if (user) {
                         remindEmbed.setAuthor({ name: user.tag, iconURL: user.displayAvatarURL() });
                     }
+                    
                     channel.send({
                         content: "=======================================================\n" +
                             `<@${reminder.user_id}>`, embeds: [remindEmbed]
