@@ -7,9 +7,10 @@ import { Bot } from "../Bot";
 import { GeneralUtilities } from "./GeneralUtilities";
 import { DataRegistry } from "../DataRegistry";
 import { ScraperApiWrapper } from "./ScraperApiWrapper";
+import { channel } from "diagnostics_channel";
 
-type CourseList = { user_id: string, course: string, channel_id?: string; }[]
-
+type CourseList = { user_id: string, course: string, channel_id?: string, previously_open?: boolean; }[]
+  
 export namespace PostgresWatch {
     const pool = new Pool({
         user: DataRegistry.CONFIG.postgresInfo.user,
@@ -22,6 +23,9 @@ export namespace PostgresWatch {
 
     /**
      * Create table in PostgreSQL to store courses to watch 
+     * note: previously_open col is to see if a class has been watched and found to be open already
+     * If so, we shouldn't alert the user until it has filled up again and they may want to know 
+     * This is to avoid pinging people every time a class is checked (potentially every minute)
      */
     export async function createWatchTable(): Promise<void> {
         try {
@@ -31,7 +35,8 @@ export namespace PostgresWatch {
                 CREATE TABLE IF NOT EXISTS "rubot"."watch" (
                     "user_id" text NOT NULL,
                     "course" text NOT NULL,
-                    "channel_id" text NOT NULL
+                    "channel_id" text NOT NULL,
+                    "previously_open" boolean NOT NULL
                 );`
             );
             GeneralUtilities.log(res, createWatchTable.name, "INFO");
@@ -43,6 +48,7 @@ export namespace PostgresWatch {
 
     /**
      * Get list of classes given user_id and course
+     * Currently only used to check if user is already watching the course 
      * @param {string} user_id Discord user ID
      * @param {string} course 
      * @returns {Promise<CourseList>} List of Objects w/ class, user id
@@ -67,7 +73,8 @@ export namespace PostgresWatch {
 
     /**
      * Get list of classes that could be alerted on
-     * @returns {Promise<CourseList>} List of Objects w/ class, user id, and channel id
+     * Currently used to loop through list of courses and make API request
+     * @returns {Promise<CourseList>} List of Objects w/ class, user id, channel id, and if prev watched
      */
 
     export async function getAllAlertCourses(): Promise<CourseList> {
@@ -75,7 +82,8 @@ export namespace PostgresWatch {
             const res = await pool.query(`
                 SELECT user_id, 
                        course, 
-                       channel_id
+                       channel_id,
+                       previously_open
                 FROM rubot.watch;`);
             GeneralUtilities.log(res.rows, getAllAlertCourses.name, "INFO");
 
@@ -96,14 +104,35 @@ export namespace PostgresWatch {
      */
     export async function insertClass(user_id: string, course: string, channel_id: string): Promise<void> {
         try {
-            const res = await pool.query("INSERT INTO rubot.watch VALUES ($1, $2, $3);",
-                [user_id, course, channel_id]);
+            const res = await pool.query("INSERT INTO rubot.watch VALUES ($1, $2, $3, $4);",
+                [user_id, course, channel_id, false]);
 
             GeneralUtilities.log(res, insertClass.name, "INFO");
         }
         catch (err) {
             GeneralUtilities.log(err, insertClass.name, "ERROR");
         }
+    }
+
+    /**
+     * Update a row's previously_open col in Postgres
+     * @param {string} user_id Discord user ID
+     * @param {string} course class to alert for
+     * @param {boolean} open if class should be set to open or not
+     */
+    export async function updatePrevOpenCol(user_id: string, course: string, open: boolean): Promise<unknown[]> {
+        try {
+            const res = await pool.query(`UPDATE rubot.watch SET previously_open = $3
+                                          WHERE user_id = $1 AND course = $2;`, [user_id, course, open]);
+            GeneralUtilities.log(res, dropCourseTable.name, "INFO");
+
+            return res.rows;
+        }
+        catch (err) {
+            GeneralUtilities.log(err, dropCourseTable.name, "ERROR");
+        }
+        
+        return [];
     }
 
     /**
@@ -127,7 +156,8 @@ export namespace PostgresWatch {
      */
     export async function deleteRow(user_id: string, course: string): Promise<QueryResult> {
         try {
-            const res = await pool.query("DELETE FROM rubot.watch WHERE user_id = $1 AND course = $2;", [user_id, course]);
+            const res = await pool.query(`DELETE FROM rubot.watch 
+                                          WHERE user_id = $1 AND course = $2;`, [user_id, course]);
             GeneralUtilities.log(res, deleteRow.name, "INFO");
 
             return res;
@@ -186,7 +216,13 @@ export namespace PostgresWatch {
                         // if there's a section open
                         if (section.available_seats > 0 && section.waitlist_ct <= 0 && section.is_visible) {
                             // create a map of channel ids to a list of users
-                            for (const { user_id, channel_id } of map[course]) {
+                            for (const { user_id, channel_id, previously_open } of map[course]) {
+                                // if previously_open is true, then we've alerted them before and don't need to alert again
+                                if (previously_open) {
+                                    continue;
+                                }
+                                // note we've already notified user and don't need to notify again until class fills
+                                updatePrevOpenCol(user_id, course, true);
                                 if (channel_id && !(channel_id in userMap)) {
                                     userMap[channel_id] = [];
                                 }
@@ -211,8 +247,18 @@ export namespace PostgresWatch {
                                     content: "=======================================================\n" +
                                         `${userList.toString()}`, embeds: [courseEmbed]
                                 });
+
+                                GeneralUtilities.log(`Alerted ${userList.toString()} for ${course}`, "Alert sent", "INFO");
                             }
                             break;
+                        }
+                        // section not open, so need to set previously_open for everyone to false
+                        else {
+                            for (const { user_id, channel_id, previously_open } of map[course]) {
+                                if (previously_open && channel_id) {
+                                    updatePrevOpenCol(user_id, channel_id, false);
+                                }
+                            }
                         }
                     }
                     // wait a second between API requests 

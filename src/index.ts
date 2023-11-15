@@ -23,19 +23,10 @@ ScraperApiWrapper.init(config.ucsdInfo.apiBase, config.ucsdInfo.apiKey);
 import { PostgresReminder } from "./utilities/PostgresReminder";
 import { PostgresWatch } from "./utilities/PostgresWatch";
 
-// PostgresReminder.createAlertTable();
-// console.log("created table");
-//PostgresWatch.dropCourseTable();
-//PostgresWatch.createWatchTable();
-//console.log("made table?");
 (async () => {
     await DataRegistry.initEnrollmentData(config);
     const bot = new Bot(config.discord.clientId, config.discord.token);
     bot.startAllEvents();
-
-    // starts loop to check if we need to remind anyone 
-    PostgresReminder.loop();
-    PostgresWatch.loop();
 
     if (config.discord.debugGuildIds.length === 0) {
         await bot.login();
@@ -43,4 +34,8 @@ import { PostgresWatch } from "./utilities/PostgresWatch";
     else {
         await bot.login(config.discord.debugGuildIds);
     }
+
+    // starts loop to check if we need to remind anyone about classes/reminders
+    PostgresReminder.loop();
+    PostgresWatch.loop();
 })();

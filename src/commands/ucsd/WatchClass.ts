@@ -67,7 +67,6 @@ export default class WatchClass extends BaseCommand {
 
         // if you're already watching the class
         const searchResults = await PostgresWatch.searchCourse(ctx.user.id, parsedCode);
-        // TODO: ensure that filled search results are falsy 
         if (searchResults.length !== 0) {
             await ctx.interaction.editReply({
                 content: `You are already watching \`${parsedCode}\`.`,
