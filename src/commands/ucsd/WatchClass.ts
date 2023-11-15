@@ -11,7 +11,8 @@ export default class WatchClass extends BaseCommand {
             cmdCode: "WATCHCLASS",
             formalCommandName: "WatchClass",
             botCommandName: "watchclass",
-            description: "Write the class you'd like to watch to get notified if there are empty seats.",
+            description: `Input the class you'd like to watch to get notified if there are empty seats.
+            Will alert every time after the seats fill up and then a spot opens`,
             generalPermissions: [],
             botPermissions: [],
             argumentInfo: [

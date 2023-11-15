@@ -7,7 +7,6 @@ import { Bot } from "../Bot";
 import { GeneralUtilities } from "./GeneralUtilities";
 import { DataRegistry } from "../DataRegistry";
 import { ScraperApiWrapper } from "./ScraperApiWrapper";
-import { channel } from "diagnostics_channel";
 
 type CourseList = { user_id: string, course: string, channel_id?: string, previously_open?: boolean; }[]
   
@@ -248,7 +247,7 @@ export namespace PostgresWatch {
                                         `${userList.toString()}`, embeds: [courseEmbed]
                                 });
 
-                                GeneralUtilities.log(`Alerted ${userList.toString()} for ${course}`, "Alert sent", "INFO");
+                                GeneralUtilities.log(`Alerted ${userList.toString()}for ${course}`, "Alert sent", "INFO");
                             }
                             break;
                         }
