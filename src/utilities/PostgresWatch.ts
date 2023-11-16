@@ -178,7 +178,7 @@ export namespace PostgresWatch {
      */
     export function loop() {
         // call function every minute
-        const seconds = 60;
+        const SECONDS: number = 60;
         const client = Bot.BotInstance.client;
 
         setInterval(async () => {
@@ -188,10 +188,10 @@ export namespace PostgresWatch {
             // create a grouped map of course: object
             const map: { [course: string]: CourseList } = {};
             for (const c of courses) {
-                if (!(c.course in map)) {
-                    map[c.course] = [];
-                }
                 if (c) {
+                    if (!(c.course in map)) {
+                        map[c.course] = [];
+                    }
                     map[c.course].push(c);
                 }
             }
@@ -264,6 +264,6 @@ export namespace PostgresWatch {
                     GeneralUtilities.stopFor(1000);
                 });
             }
-        }, seconds * 1000);
+        }, SECONDS * 1000);
     }
 }

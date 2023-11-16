@@ -1,6 +1,6 @@
 import BaseCommand, { ArgumentType, ICommandContext, } from "../BaseCommand";
 
-import { GeneralUtilities } from "../../utilities";
+import { GeneralUtilities, ScraperApiWrapper } from "../../utilities";
 import { DataRegistry } from "../../DataRegistry";
 import { parseCourseSubjCode } from "../enroll-data/helpers/Helper";
 import { PostgresWatch } from "../../utilities/PostgresWatch";
@@ -49,16 +49,15 @@ export default class WatchClass extends BaseCommand {
 
         await ctx.interaction.deferReply();
 
-        // check this 
-        const searchRes = DataRegistry.COURSE_LISTING.find((x) => {
-            const subjCourseSplit = x.subjCourse.split("/");
-            // Case where we might have SUBJ1 NUM1/SUBJ2 NUM2/.../SUBJn NUMn
-            if (subjCourseSplit.find((z) => z === parsedCode)) {
-                return x;
-            }
-        });
+        const [subject, num] = parsedCode.split(" ");
 
-        if (!searchRes) {
+        // make a call to webreg api to see if course exists 
+        const courseInfoList = await ScraperApiWrapper.getInstance().getCourseInfo(
+            DataRegistry.CONFIG.ucsdInfo.currentWebRegTerms[0].term, subject, num);
+
+        if (!courseInfoList || ("error" in courseInfoList) || courseInfoList.length === 0) {
+            GeneralUtilities.log("Course Info doesn't exist or error'd", "Scraper API Request", "ERROR");
+
             await ctx.interaction.editReply({
                 content: `The course, \`${parsedCode}\`, was not found. Try again.`,
             });

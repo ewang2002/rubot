@@ -40,7 +40,6 @@ export namespace GeneralUtilities {
             return await func();
         }
         catch (e) {
-            console.log(e);
             return null;
         }
     }

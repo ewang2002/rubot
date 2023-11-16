@@ -48,23 +48,7 @@ export default class DeleteClass extends BaseCommand {
 
         await ctx.interaction.deferReply();
 
-        const searchRes = DataRegistry.COURSE_LISTING.find((x) => {
-            const subjCourseSplit = x.subjCourse.split("/");
-            // Case where we might have SUBJ1 NUM1/SUBJ2 NUM2/.../SUBJn NUMn
-            if (subjCourseSplit.find((z) => z === parsedCode)) {
-                return x;
-            }
-        });
-
-        if (!searchRes) {
-            await ctx.interaction.editReply({
-                content: `The course, \`${parsedCode}\`, was not found. Try again.`,
-            });
-
-            return -1;
-        }
-
-        // if you're already watching the class
+        // if you're not already watching the class
         const searchResults = await PostgresWatch.searchCourse(ctx.user.id, parsedCode);
         if (searchResults.length === 0) {
             await ctx.interaction.editReply({
