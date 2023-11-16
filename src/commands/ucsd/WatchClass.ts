@@ -9,7 +9,7 @@ export default class WatchClass extends BaseCommand {
     public constructor() {
         super ({
             cmdCode: "WATCHCLASS",
-            formalCommandName: "WatchClass",
+            formalCommandName: "Watch Class",
             botCommandName: "watchclass",
             description: `Input the class you'd like to watch to get notified if there are empty seats.
             Will alert every time after the seats fill up and then a spot opens`,

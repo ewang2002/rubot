@@ -9,7 +9,7 @@ export default class DeleteClass extends BaseCommand {
     public constructor() {
         super ({
             cmdCode: "DELETECLASS",
-            formalCommandName: "DeleteClass",
+            formalCommandName: "Delete Class",
             botCommandName: "deleteclass",
             description: "Remove a class from your watch list",
             generalPermissions: [],
