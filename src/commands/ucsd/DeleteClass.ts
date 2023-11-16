@@ -1,7 +1,6 @@
 import BaseCommand, { ArgumentType, ICommandContext, } from "../BaseCommand";
 
 import { GeneralUtilities } from "../../utilities";
-import { DataRegistry } from "../../DataRegistry";
 import { parseCourseSubjCode } from "../enroll-data/helpers/Helper";
 import { PostgresWatch } from "../../utilities/PostgresWatch";
 
