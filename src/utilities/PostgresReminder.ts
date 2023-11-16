@@ -176,7 +176,7 @@ export namespace PostgresReminder {
      */
     export function loop() {
         // call function every minute
-        const seconds = 60;
+        const SECONDS: number = 60;
         const client = Bot.BotInstance.client;
 
         setInterval(() => {
@@ -195,12 +195,13 @@ export namespace PostgresReminder {
                     if (user) {
                         remindEmbed.setAuthor({ name: user.tag, iconURL: user.displayAvatarURL() });
                     }
+                    
                     channel.send({
                         content: "=======================================================\n" +
                             `<@${reminder.user_id}>`, embeds: [remindEmbed]
                     });
                 }
             });
-        }, seconds * 1000);
+        }, SECONDS * 1000);
     }
 }
