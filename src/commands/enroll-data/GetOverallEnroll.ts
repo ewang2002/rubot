@@ -101,7 +101,7 @@ export default class GetOverallEnroll extends BaseCommand {
             files: filesList.map((x) => {
                 return x.fileUrl;
             }),
-            content: `**\`${parsedCode}\`**\n -----------------\nTerms: \n**\`${termsList.join("")}\`**`,
+            content: `**__\`${parsedCode}\`__**\n${termsList.join("")}`,
         });
 
         return 0;
