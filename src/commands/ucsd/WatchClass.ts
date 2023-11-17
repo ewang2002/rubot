@@ -76,7 +76,14 @@ export default class WatchClass extends BaseCommand {
         }
 
         // if course is correctly formatted, store the class in Postgres and return confirmation embed
-        PostgresWatch.insertClass(ctx.user.id, parsedCode, ctx.channel.id);
+        const insert = await PostgresWatch.insertClass(ctx.user.id, parsedCode, ctx.channel.id);
+        if (insert !== 0) {
+            await ctx.interaction.editReply({
+                content: "Sorry, we weren't able to catch your request. Try again later.",
+            });
+
+            return -1;
+        }
         
         await ctx.interaction.editReply({
             embeds: [GeneralUtilities.generateBlankEmbed(ctx.user)

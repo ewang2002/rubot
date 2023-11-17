@@ -101,15 +101,17 @@ export namespace PostgresWatch {
      * @param {string} course class to alert for
      * @param {string} channel_id id of Discord channel to send in
      */
-    export async function insertClass(user_id: string, course: string, channel_id: string): Promise<void> {
+    export async function insertClass(user_id: string, course: string, channel_id: string): Promise<number> {
         try {
             const res = await pool.query("INSERT INTO rubot.watch VALUES ($1, $2, $3, $4);",
                 [user_id, course, channel_id, false]);
 
             GeneralUtilities.log(res, insertClass.name, "INFO");
+            return 0;
         }
         catch (err) {
             GeneralUtilities.log(err, insertClass.name, "ERROR");
+            return -1;
         }
     }
 
