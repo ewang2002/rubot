@@ -44,13 +44,17 @@ export default class GetOverallEnroll extends BaseCommand {
                 break;
         }
 
-        let arr;
-        let res;
+        let allPlots;
+        let classPlotInfo;
+        // list of graphs to display
         const filesList = [];
+        // list of terms that graphs are from
         const termsList = [];
+
+        // if looking for a specific term
         if (term !== "all") {
-            arr = coll.get(term);
-            if (!arr) {
+            allPlots = coll.get(term);
+            if (!allPlots) {
                 await ctx.interaction.reply({
                     content: `The term, **\`${term}\`** (Display \`${display}\`), could not be found. Try again.`,
                     ephemeral: true,
@@ -59,8 +63,8 @@ export default class GetOverallEnroll extends BaseCommand {
                 return -1;
             }
 
-            res = arr.find((x) => x.fileName === parsedCode);
-            if (!res) {
+            classPlotInfo = allPlots.find((x) => x.fileName === parsedCode);
+            if (!classPlotInfo) {
                 await ctx.interaction.reply({
                     content:
                         `The course, **\`${parsedCode}\`**, (term **\`${term}\`** & display \`${display}\`) could not` +
@@ -70,21 +74,23 @@ export default class GetOverallEnroll extends BaseCommand {
     
                 return -1;
             }
-            filesList.push(res);
+            filesList.push(classPlotInfo);
             termsList.push(term);
         }
+        // if searching thru all recent terms
         else {
             const terms = DataRegistry.CONFIG.ucsdInfo.githubTerms.map((x) => {
                 return { name: x.termName, value: x.term };
             });
 
-            for (const testTerm of terms.slice(0, 6)) {
-                arr = coll.get(testTerm.value);
-                if (arr) {
-                    const info = arr.find((x) => x.fileName === parsedCode);
+            // look through last 6 quarters for the class
+            for (const currTerm of terms.slice(0, 6)) {
+                allPlots = coll.get(currTerm.value);
+                if (allPlots) {
+                    const info = allPlots.find((x) => x.fileName === parsedCode);
                     if (info) {
                         filesList.push(info);
-                        termsList.push("- " + testTerm.name + "\n");
+                        termsList.push("- " + currTerm.name + "\n");
                     }
                 }
             }
