@@ -25,7 +25,7 @@ export default class GetOverallEnroll extends BaseCommand {
      */
     public async run(ctx: ICommandContext): Promise<number> {
         const code = ctx.interaction.options.getString("course_subj_num", true);
-        const term = ctx.interaction.options.getString("term", false) ?? "all";
+        const term = ctx.interaction.options.getString("term", false);
         const searchType = ctx.interaction.options.getString("search_type", false) ?? "norm";
 
         let coll: Readonly<Collection<string, IPlotInfo[]>>;
@@ -44,7 +44,6 @@ export default class GetOverallEnroll extends BaseCommand {
                 break;
         }
 
-        let allPlots;
         let classPlotInfo;
         // list of graphs to display
         const filesList = [];
@@ -52,8 +51,8 @@ export default class GetOverallEnroll extends BaseCommand {
         const termsList = [];
 
         // if looking for a specific term
-        if (term !== "all") {
-            allPlots = coll.get(term);
+        if (term) {
+            const allPlots = coll.get(term);
             if (!allPlots) {
                 await ctx.interaction.reply({
                     content: `The term, **\`${term}\`** (Display \`${display}\`), could not be found. Try again.`,
@@ -85,7 +84,7 @@ export default class GetOverallEnroll extends BaseCommand {
 
             // look through last 6 quarters for the class
             for (const currTerm of terms.slice(0, 6)) {
-                allPlots = coll.get(currTerm.value);
+                const allPlots = coll.get(currTerm.value);
                 if (allPlots) {
                     const info = allPlots.find((x) => x.fileName === parsedCode);
                     if (info) {
