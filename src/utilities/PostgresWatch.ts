@@ -100,16 +100,19 @@ export namespace PostgresWatch {
      * @param {string} user_id Discord user ID
      * @param {string} course class to alert for
      * @param {string} channel_id id of Discord channel to send in
+     * @returns  {Promise<boolean>} returns if insert was successful or not
      */
-    export async function insertClass(user_id: string, course: string, channel_id: string): Promise<void> {
+    export async function insertClass(user_id: string, course: string, channel_id: string): Promise<boolean> {
         try {
             const res = await pool.query("INSERT INTO rubot.watch VALUES ($1, $2, $3, $4);",
                 [user_id, course, channel_id, false]);
 
             GeneralUtilities.log(res, insertClass.name, "INFO");
+            return true;
         }
         catch (err) {
             GeneralUtilities.log(err, insertClass.name, "ERROR");
+            return false;
         }
     }
 

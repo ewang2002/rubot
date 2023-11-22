@@ -57,7 +57,7 @@ export const PLOT_ARGUMENTS: IArgumentInfo[] = [
             }),
         },
         desc: "The term to get the graph for.",
-        required: true,
+        required: false,
         example: ["SP22"],
     },
     {
