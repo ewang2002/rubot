@@ -93,6 +93,17 @@ export default class GetOverallEnroll extends BaseCommand {
                     }
                 }
             }
+
+            if (filesList.length === 0) {
+                await ctx.interaction.reply({
+                    content:
+                        `The course, **\`${parsedCode}\`**, could not` +
+                        " be found. Try again.",
+                    ephemeral: true,
+                });
+
+                return -1;
+            }
         }
 
         await ctx.interaction.deferReply();
