@@ -18,6 +18,9 @@ import padTimeDigit = TimeUtilities.padTimeDigit;
 import getTimeStr = TimeUtilities.getTimeStr;
 import WARNING_EMOJI = EmojiConstants.WARNING_EMOJI;
 
+/**
+ * Used for commands that require interacting with WebReg.
+ */
 export const TERM_ARGUMENTS: IArgumentInfo[] = [
     {
         displayName: "Term",
@@ -34,6 +37,10 @@ export const TERM_ARGUMENTS: IArgumentInfo[] = [
     },
 ];
 
+/**
+ * Used for commands that require interacting with WebReg and require a course
+ * input.
+ */
 export const LOOKUP_ARGUMENTS: IArgumentInfo[] = [
     ...TERM_ARGUMENTS,
     {
@@ -43,45 +50,6 @@ export const LOOKUP_ARGUMENTS: IArgumentInfo[] = [
         desc: "The course subject code.",
         required: true,
         example: ["CSE 100", "MATH100A"],
-    },
-];
-
-export const PLOT_ARGUMENTS: IArgumentInfo[] = [
-    {
-        displayName: "Term",
-        argName: "term",
-        type: ArgumentType.String,
-        restrictions: {
-            stringChoices: DataRegistry.CONFIG.ucsdInfo.githubTerms.map((x) => {
-                return { name: x.termName, value: x.term };
-            }),
-        },
-        desc: "The term to get the graph for.",
-        required: false,
-        example: ["SP22"],
-    },
-    {
-        displayName: "Course & Subject Code",
-        argName: "course_subj_num",
-        type: ArgumentType.String,
-        desc: "The course subject code.",
-        required: true,
-        example: ["CSE 100", "MATH100A"],
-    },
-    {
-        displayName: "Search Type",
-        argName: "search_type",
-        type: ArgumentType.String,
-        restrictions: {
-            stringChoices: [
-                { name: "Normal (1500 x 700)", value: "norm" },
-                { name: "Wide (6000 x 1500)", value: "wide" },
-                { name: "First/Second Pass Only (1500 x 700)", value: "fsp" },
-            ],
-        },
-        desc: "The plot type to get. Note that some plots may not be available for some terms.",
-        required: false,
-        example: ["Wide"],
     },
 ];
 
