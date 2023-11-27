@@ -1,6 +1,6 @@
 {
     "name": "rubot",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description": "A somewhat UCSD-oriented Discord bot named after a clown.",
     "main": "index.js",
     "scripts": {
@@ -16,12 +16,12 @@
         "@discordjs/rest": "^2.0.1",
         "axios": "^1.5.1",
         "discord.js": "^14.13.0",
-        "pg": "^8.11.3",
+        "sqlite3": "^5.1.6",
         "text-table": "^0.2.0"
     },
     "devDependencies": {
         "@types/node": "^20.7.1",
-        "@types/pg": "^8.10.3",
+        "@types/sqlite3": "^3.1.11",
         "@types/text-table": "^0.2.2",
         "@typescript-eslint/eslint-plugin": "^5.52.0",
         "@typescript-eslint/parser": "^5.52.0",
