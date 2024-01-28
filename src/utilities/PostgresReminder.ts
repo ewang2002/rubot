@@ -18,7 +18,6 @@ export namespace PostgresReminder {
         host: DataRegistry.CONFIG.postgresInfo.host,
         port: DataRegistry.CONFIG.postgresInfo.port,
         database: DataRegistry.CONFIG.postgresInfo.database,
-        ssl: DataRegistry.CONFIG.postgresInfo.ssl
     });
     
     /**
