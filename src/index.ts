@@ -20,8 +20,6 @@ DataRegistry.initStaticData(config);
 // Create instance of scraper.
 ScraperApiWrapper.getInstance();
 ScraperApiWrapper.init(config.ucsdInfo.apiBase, config.ucsdInfo.apiKey);
-import { PostgresReminder } from "./utilities/PostgresReminder";
-import { PostgresWatch } from "./utilities/PostgresWatch";
 
 (async () => {
     await DataRegistry.initEnrollmentData(config);
@@ -34,8 +32,4 @@ import { PostgresWatch } from "./utilities/PostgresWatch";
     else {
         await bot.login(config.discord.debugGuildIds);
     }
-
-    // starts loop to check if we need to remind anyone about classes/reminders
-    PostgresReminder.loop();
-    PostgresWatch.loop();
 })();
