@@ -370,44 +370,6 @@ export namespace DataRegistry {
                     }
                 }
             }
-
-            const allSectionTerms = await GeneralUtilities.tryExecuteAsync<string[]>(async () => {
-                const req = await DataRegistry.AXIOS.get<Buffer>(
-                    `https://raw.githubusercontent.com/${orgName}/${repoName}/main/all_sections.txt`,
-                    {
-                        responseType: "arraybuffer",
-                    }
-                );
-
-                return req.data
-                    .toString("utf16le")
-                    .split("\n")
-                    .map((x) => x.trim())
-                    .filter((x) => x.length > 0);
-            });
-
-            if (allSectionTerms) {
-                if (o.section.reg) {
-                    SECTION_ENROLL.set(term, []);
-                    for (const sec of allSectionTerms) {
-                        SECTION_ENROLL.get(term)!.push({
-                            fileName: sec,
-                            fileUrl: `https://raw.githubusercontent.com/${orgName}/${repoName}/main/plot_section/${sec}.png`,
-                        });
-                    }
-                }
-
-                if (o.section.wide) {
-                    // Section (wide)
-                    SECTION_ENROLL_WIDE.set(term, []);
-                    for (const sec of allSectionTerms) {
-                        SECTION_ENROLL_WIDE.get(term)!.push({
-                            fileName: sec,
-                            fileUrl: `https://raw.githubusercontent.com/${orgName}/${repoName}/main/plot_section_wide/${sec}.png`,
-                        });
-                    }
-                }
-            }
         }
     }
 

@@ -24,10 +24,6 @@ export interface IConfiguration {
                 reg: boolean;
                 wide: boolean;
             };
-            section: {
-                reg: boolean;
-                wide: boolean;
-            };
         }[];
         miscData: {
             capeData: {
