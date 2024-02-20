@@ -40,14 +40,6 @@ export interface IConfiguration {
             };
         };
     };
-    postgresInfo: {
-        user: string;
-        password: string;
-        host: string;
-        port: number;
-        ssl: boolean,
-        database: string;
-    };
 }
 
 
