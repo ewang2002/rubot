@@ -145,19 +145,25 @@ export async function requestFromWebRegApi(
     return json;
 }
 
+export type WebRegDisplayData = {
+    sections: WebRegSection[];
+    courseNotes?: string;
+    sectionNotes?: Record<string, string>;
+};
+
 /**
  * Displays WebReg data, allowing the user to use interactions to navigate between different pages, where each page
  * represents a section family and each page displays data about that section.
  *
  * @param {ICommandContext} ctx The command context.
- * @param {WebRegSection[]} sections The sections to display.
+ * @param {WebRegDisplayData} data The data to display.
  * @param {string} term The term for which the above sections apply for.
  * @param {string} parsedCode The parsed section code, e.g. CSE 100.
  * @param {boolean} live Whether this data was fetched from WebReg recently.
  */
 export async function displayInteractiveWebregData(
     ctx: ICommandContext,
-    sections: WebRegSection[],
+    data: WebRegDisplayData,
     term: string,
     parsedCode: string,
     live: boolean
@@ -166,11 +172,11 @@ export async function displayInteractiveWebregData(
     const map: Collection<string, WebRegSection[]> = new Collection<string, WebRegSection[]>();
     // Some sections have numerical section codes, e.g. instead of A01, you have 001. These sections generally
     // only have lectures (no discussion, no final).
-    if (sections[0].section_code.length > 0 && RegexConstants.ONLY_DIGITS_REGEX.test(sections[0].section_code[0])) {
-        map.set("0", sections);
+    if (data.sections[0].section_code.length > 0 && RegexConstants.ONLY_DIGITS_REGEX.test(data.sections[0].section_code[0])) {
+        map.set("0", data.sections);
     }
     else {
-        for (const entry of sections) {
+        for (const entry of data.sections) {
             if (!map.has(entry.section_code[0])) {
                 map.set(entry.section_code[0], []);
             }
@@ -274,19 +280,30 @@ export async function displayInteractiveWebregData(
         }
 
         const descSb = new StringBuilder()
-            .append(`Instructor: **\`${entries[0].all_instructors.join(" & ")}\`**`)
+            .append(`- Instructor: **\`${entries[0].all_instructors.join(" & ")}\`** ([CAPE Evaluations](${capeUrl}))`)
             .appendLine();
         if (sectionsAdded === entries.length) {
-            descSb.append(`Sections: **\`${entries.length}\`**`).appendLine();
+            descSb.append(`- Sections: **\`${entries.length}\`**`).appendLine();
         }
         else {
             descSb
                 .append(
-                    `Sections: **\`${entries.length}\`** (${WARNING_EMOJI} Only **\`${sectionsAdded}\`** Displayed)`
+                    `- Sections: **\`${entries.length}\`** (${WARNING_EMOJI} Only **\`${sectionsAdded}\`** Displayed)`
                 )
                 .appendLine();
         }
-        descSb.append(`Evaluations: Click [Here](${capeUrl})`).appendLine();
+
+        if (data.courseNotes) {
+            descSb.append("- Course Note:").appendLine()
+                .append(StringUtil.codifyString(data.courseNotes))
+                .appendLine();   
+        }
+
+        if (data.sectionNotes && sectionFamily in data.sectionNotes) {
+            descSb.append("- Section Note:").appendLine()
+                .append(StringUtil.codifyString(data.sectionNotes[sectionFamily]))
+                .appendLine();            
+        }
 
         if (commonMeetings.length > 0) {
             descSb

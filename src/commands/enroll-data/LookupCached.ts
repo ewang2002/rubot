@@ -59,7 +59,7 @@ export default class LookupCached extends BaseCommand {
 
         await displayInteractiveWebregData(
             ctx,
-            data,
+            { sections: data },
             DataRegistry.CONFIG.ucsdInfo.miscData.currentTermData.term,
             parsedCode,
             false

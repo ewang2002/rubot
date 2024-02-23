@@ -4,8 +4,10 @@ import {
     LOOKUP_ARGUMENTS,
     parseCourseSubjCode,
     requestFromWebRegApi,
+    WebRegDisplayData,
 } from "./helpers/Helper";
 import { DataRegistry } from "../../DataRegistry";
+import { ScraperApiWrapper } from "../../utilities";
 
 export default class LookupLive extends BaseCommand {
     public constructor() {
@@ -29,8 +31,8 @@ export default class LookupLive extends BaseCommand {
      * @inheritDoc
      */
     public async run(ctx: ICommandContext): Promise<number> {
-        const term =
-            ctx.interaction.options.getString("term", false) ?? DataRegistry.DEFAULT_TERM;
+        const term = ctx.interaction.options.getString("term", false) 
+            ?? DataRegistry.DEFAULT_TERM;
         const code = ctx.interaction.options.getString("course_subj_num", true);
 
         const json = await requestFromWebRegApi(ctx, term, code);
@@ -39,8 +41,28 @@ export default class LookupLive extends BaseCommand {
             return -1;
         }
 
+        // This code should be formatted properly since the above `requestFromWebRegApi`
+        // function checked that.
         const parsedCode = parseCourseSubjCode(code);
-        await displayInteractiveWebregData(ctx, json, term, parsedCode, true);
+        const [subj, num] = parsedCode.split(" ");
+        
+        const data: WebRegDisplayData = {
+            sections: json
+        };
+
+        const courseNote = await ScraperApiWrapper.getInstance()
+            .getCourseNoteForClass(term, subj, num);
+        if (ScraperApiWrapper.checkOkResponse(courseNote)) {
+            data.courseNotes = courseNote;
+        }
+
+        const sectionNote = await ScraperApiWrapper.getInstance()
+            .getSectionNoteForClass(term, subj, num);
+        if (ScraperApiWrapper.checkOkResponse(sectionNote)) {
+            data.sectionNotes = sectionNote;
+        }
+
+        await displayInteractiveWebregData(ctx, data, term, parsedCode, true);
         return 0;
     }
 }
