@@ -198,7 +198,7 @@ export async function displayInteractiveWebregData(
             .setFooter({
                 text:
                     (live
-                        ? "Data Fetched from WebReg. Powered by waffle being a clown. "
+                        ? "Data Fetched from WebReg. "
                         : "Cached Data. ") + `Page ${pageNum++}/${map.size}.`,
             })
             .setTimestamp();
