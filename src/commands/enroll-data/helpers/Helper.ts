@@ -294,21 +294,18 @@ export async function displayInteractiveWebregData(
         }
 
         if (data.courseNotes) {
-            descSb.append("- Course Note:").appendLine()
-                .append(StringUtil.codifyString(data.courseNotes))
-                .appendLine();   
-        }
-
-        if (data.sectionNotes && sectionFamily in data.sectionNotes) {
-            descSb.append("- Section Note:").appendLine()
-                .append(StringUtil.codifyString(data.sectionNotes[sectionFamily]))
-                .appendLine();            
+            descSb.append("- Course Note: ").append(data.courseNotes).appendLine();
         }
 
         if (commonMeetings.length > 0) {
             descSb
                 .append("__Common Meetings (All Sections)__")
-                .append(StringUtil.codifyString(commonMeetings.join("\n")));
+                .append(StringUtil.codifyString(commonMeetings.join("\n")))
+                .appendLine();
+        }
+        if (data.sectionNotes && sectionFamily in data.sectionNotes) {
+            descSb.append(`- Section ${sectionFamily} Note: `).append(data.sectionNotes[sectionFamily])
+                .appendLine();
         }
 
         embed.setDescription(descSb.toString());
