@@ -170,55 +170,74 @@ export async function displayInteractiveWebregData(
     live: boolean
 ): Promise<void> {
     const [subj, num] = parsedCode.split(" ");
-    const map: Collection<string, WebRegSection[]> = new Collection<string, WebRegSection[]>();
-    // Some sections have numerical section codes, e.g. instead of A01, you have 001. These sections generally
-    // only have lectures (no discussion, no final).
+    const secByFamilyMap: Collection<string, WebRegSection[]> = new Collection<string, WebRegSection[]>();
     if (data.sections[0].section_code.length > 0 && RegexConstants.ONLY_DIGITS_REGEX.test(data.sections[0].section_code[0])) {
-        map.set("0", data.sections);
+        // Some sections have numerical section codes, e.g., instead of A01, you have 001. 
+        // These sections generally only have lectures (no discussion, no final). So, we 
+        // can just put all the sections into the map with key being 0 (its section family) 
+        secByFamilyMap.set("0", data.sections);
     }
     else {
+        // Otherwise, we can sort each section into their section families (e.g., section A,
+        // section B, etc.)
         for (const entry of data.sections) {
-            if (!map.has(entry.section_code[0])) {
-                map.set(entry.section_code[0], []);
+            if (!secByFamilyMap.has(entry.section_code[0])) {
+                secByFamilyMap.set(entry.section_code[0], []);
             }
 
-            map.get(entry.section_code[0])!.push(entry);
+            secByFamilyMap.get(entry.section_code[0])!.push(entry);
         }
     }
 
-    // Create an embed for each page
+    // Create an embed for each page. 
     const embeds: EmbedBuilder[] = [];
     let pageNum = 1;
-    for (const [sectionFamily, entries] of map) {
-        const numEnrolled = entries.map((x) => x.enrolled_ct).reduce((p, c) => p + c, 0);
-        const total = entries.map((x) => x.total_seats).reduce((p, c) => p + c, 0);
 
-        const capeUrl = `https://cape.ucsd.edu/responses/Results.aspx?courseNumber=${subj}+${num}`;
+    // For each section family...
+    for (const [sectionFamily, sections] of secByFamilyMap) {
+        // Compute the total number of seats, and the total number of students enrolled.
+        const numEnrolled = sections.map((x) => x.enrolled_ct).reduce((p, c) => p + c, 0);
+        const total = sections.map((x) => x.total_seats).reduce((p, c) => p + c, 0);
+
+        // Create the base embed where we'll put the remaining data in
         const embed = new EmbedBuilder()
             .setTitle(`**${parsedCode}** Section **${sectionFamily}** (Term: ${term})`)
             .setFooter({
                 text:
                     (live
                         ? "Data Fetched from WebReg. "
-                        : "Cached Data. ") + `Page ${pageNum++}/${map.size}.`,
+                        : "Cached Data. ") + `Page ${pageNum++}/${secByFamilyMap.size}.`,
             })
             .setTimestamp();
 
         if (live) {
+            // If the data is live, then we'll set the color of the embed to be based on
+            // the percent of the class that is filled. The higher the percent (i.e., the 
+            // "fuller" the class, the redder the color).
             embed.setColor(getColorByPercent(numEnrolled / total));
         }
         else {
-            embed.setColor("Random");
+            // Otherwise, use blurple as the color.
+            embed.setColor("Blurple");
         }
 
+        // Create a list of all common meetings. A common meeting is one where all sections (e.g.,
+        // A01, A02, A03, ...) share the same meetings (like lectures, final exams).
         const commonMeetings: string[] = [];
 
-        // Find all common meetings only if there's more than 1 meeting
-        if (entries.length > 1) {
-            // Find all common meetings for this section
+        // If there are more than 1 section, then there might be potential common meetings. So, we'll
+        // need to find them here.
+        if (sections.length > 1) {
+            // We'll create a map, where the key is a meeting (represented in string form) and the value
+            // is a number representing the number of sections that have that same meeting.
             const meetingMap: { [m: string]: number } = {};
-            for (const section of entries) {
+
+            // For each section...
+            for (const section of sections) {
+                // For each meeting in that section (keep in mind that a section generally has
+                // e.g., a lecture, discussion, final exam, and so on)...
                 for (const meeting of section.meetings) {
+                    // See if that meeting has been "seen"
                     const s = meetingToString(meeting);
                     if (!meetingMap[s]) {
                         meetingMap[s] = 0;
@@ -228,12 +247,17 @@ export async function displayInteractiveWebregData(
                 }
             }
 
+            // Now, for each meeting (in string form)...
             for (const m in meetingMap) {
-                // If this is a common meeting
-                if (meetingMap[m] === entries.length) {
+                // If this is a common meeting (which we'll know if we've seen this meeting across
+                // every section)...
+                if (meetingMap[m] === sections.length) {
+                    // Add the meeting to the list of all common meetings.
                     commonMeetings.push(m);
-                    // Then remove this meeting from all the section meetings
-                    entries.forEach((section) => {
+                    // Then remove this meeting from every section object (note that this should remove
+                    // at most one meeting per operation, so we don't need to worry about this forEach loop
+                    // removing 2+ meetings).
+                    sections.forEach((section) => {
                         const idx = section.meetings.findIndex((x) => meetingToString(x) === m);
                         if (idx === -1) {
                             console.warn("this shouldn't be hit at all.");
@@ -246,32 +270,38 @@ export async function displayInteractiveWebregData(
             }
         }
 
+        // Now that we've computed all meetings, we'll go through each section once again...
         let sectionsAdded = 0;
-        for (const entry of entries) {
+        for (const section of sections) {
             let fieldTitle: string;
             if (live) {
+                // If this data is "live" then we'll display the enrolled count,
+                // waitlist count, and so on as the title for this section
                 fieldTitle = new StringBuilder()
                     .append(
-                        entry.available_seats === 0 || entry.waitlist_ct > 0
+                        section.available_seats === 0 || section.waitlist_ct > 0
                             ? EmojiConstants.RED_SQUARE_EMOJI
                             : EmojiConstants.GREEN_SQUARE_EMOJI
                     )
-                    .append(` [${entry.section_id}] ${entry.section_code} -`)
-                    .append(` ${entry.enrolled_ct} Enrolled / ${entry.total_seats} Total`)
-                    .append(` (${entry.waitlist_ct} WL)`)
+                    .append(` [${section.section_id}] ${section.section_code} -`)
+                    .append(` ${section.enrolled_ct} Enrolled / ${section.total_seats} Total`)
+                    .append(` (${section.waitlist_ct} WL)`)
                     .append(
-                        `   ${entry.is_visible ? EmojiConstants.EYE_EMOJI : EmojiConstants.GHOST_EMOJI
+                        `   ${section.is_visible ? EmojiConstants.EYE_EMOJI : EmojiConstants.GHOST_EMOJI
                         }`
                     )
                     .toString();
             }
             else {
-                fieldTitle = `[${entry.section_id}] Section ${entry.section_code}`;
+                // Otherwise, we just need to 
+                fieldTitle = `[${section.section_id}] Section ${section.section_code}`;
             }
 
-            const meetings = entry.meetings.map((x) => meetingToString(x)).join("\n");
+            // We'll now map each meeting to a string so that it can be displayed in the embed's fields
+            const meetings = section.meetings.map((x) => meetingToString(x)).join("\n");
             embed.addFields({ name: fieldTitle, value: StringUtil.codifyString(meetings.length > 0 ? meetings : "N/A") });
 
+            // If we have too many fields in the embed, or the embed has too much text, we'll remove a field.
             if (embedLength(embed.data) >= 5900 || (embed.data.fields?.length ?? 0) > 25) {
                 embed.data.fields?.pop();
                 break;
@@ -280,30 +310,41 @@ export async function displayInteractiveWebregData(
             sectionsAdded++;
         }
 
+        // Now we'll focus on creating the title for our embed. 
+        const capeUrl = `https://cape.ucsd.edu/responses/Results.aspx?courseNumber=${subj}+${num}`;
         const descSb = new StringBuilder()
-            .append(`- Instructor: **\`${entries[0].all_instructors.join(" & ")}\`** ([CAPE Evaluations](${capeUrl}))`)
+            .append(`- Instructor: **\`${sections[0].all_instructors.join(" & ")}\`** ([CAPE Evaluations](${capeUrl}))`)
             .appendLine();
-        if (sectionsAdded === entries.length) {
-            descSb.append(`- Sections: **\`${entries.length}\`**`).appendLine();
+
+        if (sectionsAdded === sections.length) {
+            // If we added the same exact number of sections to the field as the length of all the sections, then
+            // none of the sections got cut off due to too many fields
+            descSb.append(`- Sections: **\`${sections.length}\`**`).appendLine();
         }
         else {
+            // Otherwise, we need to notify the user that some of the sections were not displayed.
             descSb
                 .append(
-                    `- Sections: **\`${entries.length}\`** (${WARNING_EMOJI} Only **\`${sectionsAdded}\`** Displayed)`
+                    `- Sections: **\`${sections.length}\`** (${WARNING_EMOJI} Only **\`${sectionsAdded}\`** Displayed)`
                 )
                 .appendLine();
         }
 
+        // If there are any course notes, we'll also include this.
         if (data.courseNotes) {
+            // Note that the turndown method is used to convert any HTML to Markdown (which Discord can display)
             descSb.append("- Course Note: ").append(new TurndownService().turndown(data.courseNotes)).appendLine();
         }
 
+        // If there are any common meetings, then we'll show that
         if (commonMeetings.length > 0) {
             descSb
                 .append("__Common Meetings (All Sections)__")
                 .append(StringUtil.codifyString(commonMeetings.join("\n")))
                 .appendLine();
         }
+
+        // Finally, we'll show the section notes, if any.
         if (data.sectionNotes && sectionFamily in data.sectionNotes) {
             descSb.append(`- Section ${sectionFamily} Note: `).append(new TurndownService().turndown(data.sectionNotes[sectionFamily]))
                 .appendLine();
