@@ -17,6 +17,7 @@ import CAPE_DATA = DataRegistry.CAPE_DATA;
 import padTimeDigit = TimeUtilities.padTimeDigit;
 import getTimeStr = TimeUtilities.getTimeStr;
 import WARNING_EMOJI = EmojiConstants.WARNING_EMOJI;
+import TurndownService = require("turndown");
 
 export const TERM_ARGUMENTS: IArgumentInfo[] = [
     {
@@ -294,7 +295,7 @@ export async function displayInteractiveWebregData(
         }
 
         if (data.courseNotes) {
-            descSb.append("- Course Note: ").append(data.courseNotes).appendLine();
+            descSb.append("- Course Note: ").append(new TurndownService().turndown(data.courseNotes)).appendLine();
         }
 
         if (commonMeetings.length > 0) {
@@ -304,7 +305,7 @@ export async function displayInteractiveWebregData(
                 .appendLine();
         }
         if (data.sectionNotes && sectionFamily in data.sectionNotes) {
-            descSb.append(`- Section ${sectionFamily} Note: `).append(data.sectionNotes[sectionFamily])
+            descSb.append(`- Section ${sectionFamily} Note: `).append(new TurndownService().turndown(data.sectionNotes[sectionFamily]))
                 .appendLine();
         }
 
