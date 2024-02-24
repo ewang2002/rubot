@@ -11,7 +11,7 @@ export default class GetCape extends BaseCommand {
         super({
             cmdCode: "GET_CAPE",
             formalCommandName: "Lookup CAPE",
-            botCommandName: "getcape",
+            botCommandName: "cape",
             description: "Looks up CAPE information for a course and/or instructor.",
             generalPermissions: [],
             botPermissions: [],
