@@ -12,5 +12,8 @@ Rubot does contain a variety of commands that UCSD students may find useful. For
 The live data and enrollment history plots come from [UCSDHistEnrollData](https://github.com/ewang2002/UCSDHistEnrollData)
 and [webreg_scraper](https://github.com/ewang2002/webreg_scraper).
 
+## Postgres Features
+- For Postgres features like setting class reminders for when seats open, please use [this repo](https://github.com/mr4tt/bots)
+
 ## License
 Unless otherwise specified, all files in this repository here are listed under the **MIT** license.
