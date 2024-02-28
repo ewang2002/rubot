@@ -82,7 +82,7 @@ export namespace CommandRegistry {
             );
         }
         else {
-            client.application?.commands.set(jsonCommands);
+            await client.application?.commands.set(jsonCommands);
         }
     }
 
