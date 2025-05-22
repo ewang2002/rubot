@@ -8,12 +8,11 @@ import {
     Meeting,
     WebRegSection
 } from "./definitions";
-import { createReadStream } from "fs";
-import { createInterface } from "readline";
 import * as path from "path";
 import { GeneralUtilities, TimeUtilities } from "./utilities";
 import axios, { AxiosInstance } from "axios";
 import { RegexConstants } from "./Constants";
+import { open } from "fs/promises";
 
 /**
  * A namespace containing a lot of data that the bot will be using.
@@ -27,26 +26,27 @@ export namespace DataRegistry {
     export const AXIOS: AxiosInstance = axios.create();
 
     /**
-     * Initializes all static data, i.e., data from files. This will not initialize any data that
-     * needs to be requested from the internet.
+     * Initializes all data.
      *
      * @param {IConfiguration} config The configuration information from the configuration file.
      */
-    export function initStaticData(config: IConfiguration): void {
+    export async function initEverything(config: IConfiguration): Promise<void> {
         CONFIG = config;
         DEFAULT_TERM = config.ucsdInfo.currentWebRegTerms[0].term;
 
         if (config.ucsdInfo.miscData.currentTermData.fileName) {
-            initSectionData(config.ucsdInfo.miscData.currentTermData.fileName);
+            await initSectionData(config.ucsdInfo.miscData.currentTermData.fileName);
         }
 
         if (config.ucsdInfo.miscData.capeData.fileName) {
-            initCapeData(config.ucsdInfo.miscData.capeData.fileName);
+            await initCapeData(config.ucsdInfo.miscData.capeData.fileName);
         }
 
         if (config.ucsdInfo.miscData.courseList.fileName) {
-            initCourseListing(config.ucsdInfo.miscData.courseList.fileName);
+            await initCourseListing(config.ucsdInfo.miscData.courseList.fileName);
         }
+
+        await initEnrollmentData(config);
     }
 
     export let CONFIG: IConfiguration;
@@ -66,14 +66,6 @@ export namespace DataRegistry {
         string,
         IPlotInfo[]
     >();
-    export const SECTION_ENROLL: Collection<string, IPlotInfo[]> = new Collection<
-        string,
-        IPlotInfo[]
-    >();
-    export const SECTION_ENROLL_WIDE: Collection<string, IPlotInfo[]> = new Collection<
-        string,
-        IPlotInfo[]
-    >();
     export const CAPE_DATA: ICapeRow[] = [];
     export const SECTION_TERM_DATA: WebRegSection[] = [];
     export const COURSE_LISTING: ListedCourse[] = [];
@@ -85,15 +77,14 @@ export namespace DataRegistry {
      * Adds the section data to the above array.
      * @param {string} fileName The file containing the section data.
      */
-    function initSectionData(fileName: string): void {
+    async function initSectionData(fileName: string): Promise<void> {
         const pathToRead = path.join(__dirname, "..", fileName);
-        const readStream = createReadStream(pathToRead);
-        const rl = createInterface(readStream);
+        const file = await open(pathToRead);
         let firstLinePassed = false;
-        rl.on("line", (line) => {
+        for await (const line of file.readLines()) {
             if (!firstLinePassed) {
                 firstLinePassed = true;
-                return;
+                continue;
             }
 
             const rawData = line.split("\t");
@@ -101,7 +92,7 @@ export namespace DataRegistry {
                 console.error(
                     `Bad line read for section data; got ${rawData.length} but expected 5.`
                 );
-                return;
+                continue;
             }
 
             const [subjCourseId, sectionCode, sectionId, instructor, totalSeats, meetings] =
@@ -173,73 +164,68 @@ export namespace DataRegistry {
                 waitlist_ct: -1,
                 is_visible: false,
             });
-        });
+        }
 
-        rl.on("close", () => {
-            console.info(`Done reading SECTION. Data length: ${CAPE_DATA.length}`);
+        console.info(`Done reading SECTION. Data length: ${SECTION_TERM_DATA.length}`);
+        ALL_IN_PERSON_COURSES = SECTION_TERM_DATA.flatMap((x) =>
+            x.meetings.map((m) => {
+                return {
+                    location: `${m.building} ${m.room}`,
+                    startTime: m.start_hr * 100 + m.start_min,
+                    endTime: m.end_hr * 100 + m.end_min,
+                    // This should never be null since, in the cached file, it's already defined as "n/a"
+                    day: (typeof m.meeting_days === "string"
+                        ? [m.meeting_days]
+                        : m.meeting_days) as string[],
+                    subjCourseId: x.subj_course_id,
+                    meetingType: m.meeting_type,
+                    startHr: m.start_hr,
+                    sectionFamily: RegexConstants.ONLY_DIGITS_REGEX.test(x.section_code)
+                        ? x.section_code.substring(x.section_code.length - 2)
+                        : x.section_code[0],
+                    startMin: m.start_min,
+                    endHr: m.end_hr,
+                    endMin: m.end_min,
+                    instructor: x.all_instructors,
+                };
+            })
+        ).filter((x) => {
+            if (x.location.trim() === "") {
+                return false;
+            }
 
-            ALL_IN_PERSON_COURSES = SECTION_TERM_DATA.flatMap((x) =>
-                x.meetings.map((m) => {
-                    return {
-                        location: `${m.building} ${m.room}`,
-                        startTime: m.start_hr * 100 + m.start_min,
-                        endTime: m.end_hr * 100 + m.end_min,
-                        // This should never be null since, in the cached file, it's already defined as "n/a"
-                        day: (typeof m.meeting_days === "string"
-                            ? [m.meeting_days]
-                            : m.meeting_days) as string[],
-                        subjCourseId: x.subj_course_id,
-                        meetingType: m.meeting_type,
-                        startHr: m.start_hr,
-                        sectionFamily: RegexConstants.ONLY_DIGITS_REGEX.test(x.section_code)
-                            ? x.section_code.substring(x.section_code.length - 2)
-                            : x.section_code[0],
-                        startMin: m.start_min,
-                        endHr: m.end_hr,
-                        endMin: m.end_min,
-                        instructor: x.all_instructors,
-                    };
-                })
-            ).filter((x) => {
-                if (x.location.trim() === "") {
-                    return false;
-                }
+            // If start/end time is 0, then invalid section
+            if (x.startTime === 0 || x.endTime === 0) {
+                return false;
+            }
 
-                // If start/end time is 0, then invalid section
-                if (x.startTime === 0 || x.endTime === 0) {
-                    return false;
-                }
+            // If day of week, must have at least one day.
+            // If it is a date, must not be empty string
+            if (x.day.length === 0 || (x.day.length === 1 && x.day[0].trim().length === 0)) {
+                return false;
+            }
 
-                // If day of week, must have at least one day.
-                // If it is a date, must not be empty string
-                if (x.day.length === 0 || (x.day.length === 1 && x.day[0].trim().length === 0)) {
-                    return false;
-                }
+            const [building] = x.location.split(" ");
+            return building !== "RCLAS" && building !== "TBA";
+        }).sort((a, b) => a.location.localeCompare(b.location));
 
-                const [building] = x.location.split(" ");
-                return building !== "RCLAS" && building !== "TBA";
-            }).sort((a, b) => a.location.localeCompare(b.location));
-
-            ALL_CLASSROOMS = Array.from(
-                new Set(ALL_IN_PERSON_COURSES.map((x) => x.location))
-            );
-        });
+        ALL_CLASSROOMS = Array.from(
+            new Set(ALL_IN_PERSON_COURSES.map((x) => x.location))
+        );
     }
 
     /**
      * Adds the CAPE data to the above array.
      * @param {string} capeFileName The file name corresponding to the file containing CAPE data.
      */
-    function initCapeData(capeFileName: string): void {
+    async function initCapeData(capeFileName: string): Promise<void> {
         const pathToRead = path.join(__dirname, "..", capeFileName);
-        const readStream = createReadStream(pathToRead);
-        const rl = createInterface(readStream);
-
+        const file = await open(pathToRead);
         let firstLinePassed = false;
-        rl.on("line", (line) => {
+        for await (const line of file.readLines()) {
             if (!firstLinePassed) {
                 firstLinePassed = true;
-                return;
+                continue;
             }
 
             const rawData = line.split("\t");
@@ -247,7 +233,7 @@ export namespace DataRegistry {
                 console.error(
                     `Bad line read for CAPE data; got ${rawData.length} but expected 11.`
                 );
-                return;
+                continue;
             }
 
             const [
@@ -277,27 +263,23 @@ export namespace DataRegistry {
                 averageGradeExp: Number.parseFloat(avgGradeExp),
                 averageGradeRec: Number.parseFloat(avgGradeRec),
             });
-        });
+        }
 
-        rl.on("close", () => {
-            console.info(`Done reading CAPEs. Data length: ${CAPE_DATA.length}`);
-        });
+        console.info(`Done reading CAPEs. Data length: ${CAPE_DATA.length}`);
     }
 
     /**
      * Adds the course listing data to the above array.
      * @param {string} courseListName The file containing the course listing.
      */
-    function initCourseListing(courseListName: string): void {
+    async function initCourseListing(courseListName: string): Promise<void> {
         const pathToRead = path.join(__dirname, "..", courseListName);
-        const readStream = createReadStream(pathToRead);
-        const rl = createInterface(readStream);
-
+        const file = await open(pathToRead);
         let firstLinePassed = false;
-        rl.on("line", (line) => {
+        for await (const line of file.readLines()) {
             if (!firstLinePassed) {
                 firstLinePassed = true;
-                return;
+                continue;
             }
 
             const rawData = line.split("\t");
@@ -305,7 +287,7 @@ export namespace DataRegistry {
                 console.error(
                     `Bad line read for course listing data; got ${rawData.length} but expected 5.`
                 );
-                return;
+                continue;
             }
 
             const [department, subjCourse, courseName, units, description] = rawData;
@@ -317,18 +299,16 @@ export namespace DataRegistry {
                 units,
                 description,
             });
-        });
+        }
 
-        rl.on("close", () => {
-            console.info(`Done reading course listing. Data length: ${COURSE_LISTING.length}`);
-        });
+        console.info(`Done reading course listing. Data length: ${COURSE_LISTING.length}`);
     }
 
     /**
      * Adds the enrollment graph data to the above collections.
      * @param {IConfiguration} config The configuration information.
      */
-    export async function initEnrollmentData(config: IConfiguration): Promise<void> {
+    async function initEnrollmentData(config: IConfiguration): Promise<void> {
         const ucsdInfo = config.ucsdInfo;
         const orgName = ucsdInfo.enrollDataOrgName;
 
@@ -366,44 +346,6 @@ export namespace DataRegistry {
                         OVERALL_ENROLL_WIDE.get(term)!.push({
                             fileName: course,
                             fileUrl: `https://raw.githubusercontent.com/${orgName}/${repoName}/main/plot_overall_wide/${course}.png`,
-                        });
-                    }
-                }
-            }
-
-            const allSectionTerms = await GeneralUtilities.tryExecuteAsync<string[]>(async () => {
-                const req = await DataRegistry.AXIOS.get<Buffer>(
-                    `https://raw.githubusercontent.com/${orgName}/${repoName}/main/all_sections.txt`,
-                    {
-                        responseType: "arraybuffer",
-                    }
-                );
-
-                return req.data
-                    .toString("utf16le")
-                    .split("\n")
-                    .map((x) => x.trim())
-                    .filter((x) => x.length > 0);
-            });
-
-            if (allSectionTerms) {
-                if (o.section.reg) {
-                    SECTION_ENROLL.set(term, []);
-                    for (const sec of allSectionTerms) {
-                        SECTION_ENROLL.get(term)!.push({
-                            fileName: sec,
-                            fileUrl: `https://raw.githubusercontent.com/${orgName}/${repoName}/main/plot_section/${sec}.png`,
-                        });
-                    }
-                }
-
-                if (o.section.wide) {
-                    // Section (wide)
-                    SECTION_ENROLL_WIDE.set(term, []);
-                    for (const sec of allSectionTerms) {
-                        SECTION_ENROLL_WIDE.get(term)!.push({
-                            fileName: sec,
-                            fileUrl: `https://raw.githubusercontent.com/${orgName}/${repoName}/main/plot_section_wide/${sec}.png`,
                         });
                     }
                 }

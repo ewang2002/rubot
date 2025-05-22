@@ -8,13 +8,12 @@ export interface IConfiguration {
         botOwnerIds: string[];
         debugGuildIds: string[];
     };
-    ucsdInfo: {
+    ucsdInfo: IApiInfo & {
         enrollDataOrgName: string;
-        apiBase: string;
-        apiKey?: string;
         currentWebRegTerms: {
             term: string;
             termName: string;
+            apiOverride?: IApiInfo;
         }[];
         githubTerms: {
             term: string;
@@ -24,7 +23,7 @@ export interface IConfiguration {
                 reg: boolean;
                 wide: boolean;
             };
-            section: {
+            section?: {
                 reg: boolean;
                 wide: boolean;
             };
@@ -57,4 +56,9 @@ export interface IConfiguration {
 
 export interface ICategoryConf {
     categoryName: string;
+}
+
+export interface IApiInfo {
+    apiBase: string;
+    apiKey: string;
 }

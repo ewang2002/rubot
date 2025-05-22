@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from "axios";
-import { ISearchQuery, IWebRegSearchResult, PrerequisiteInfo, ScraperTimeStatInfo, WebRegSection } from "../definitions";
+import { IApiInfo, ISearchQuery, IWebRegSearchResult, PrerequisiteInfo, ScraperTimeStatInfo, WebRegSection } from "../definitions";
 import { GeneralUtilities } from "./GeneralUtilities";
 
 export type ScraperResponse<T> = T | { error: string; } | null;
@@ -8,12 +8,15 @@ export class ScraperApiWrapper {
     private static _instance: ScraperApiWrapper | null = null;
 
     private _apiBase: string;
-    private _apiKey?: string;
+    private _apiKey: string;
+    private _overrides: { [term: string]: IApiInfo; };
+
     private _axios: AxiosInstance;
 
-    private constructor() {
+    private constructor(overrides: { [term: string]: IApiInfo; } = {}) {
         this._apiBase = "";
         this._apiKey = "";
+        this._overrides = overrides;
         this._axios = axios.create();
     }
 
@@ -35,16 +38,31 @@ export class ScraperApiWrapper {
      *
      * @param {string} apiBase The base URL for the API.
      * @param {string} apiKey The API key, if any.
+     * @param {object} overrides Any base URL / API key override on a per-term basis.
      * @throws {Error} If this function is called before initialization.
      */
-    public static init(apiBase: string, apiKey?: string): void {
+    public static init(apiBase: string, apiKey: string, overrides: { [term: string]: IApiInfo; } = {}): void {
         if (ScraperApiWrapper._instance === null) {
             throw new Error("this should be initialized before being used.");
         }
         else {
             ScraperApiWrapper._instance._apiBase = apiBase;
             ScraperApiWrapper._instance._apiKey = apiKey;
+            ScraperApiWrapper._instance._overrides = overrides;
         }
+    }
+
+    /**
+     * Gets either the API URL/key meant for a specific term, or the general scraper
+     * API URL/key if no override is specified.
+     * 
+     * @param term The term.
+     * @returns The API URL and key to use for this term.
+     */
+    private getApiUrlAndKey(term: string): IApiInfo {
+        return term in this._overrides
+            ? this._overrides[term]
+            : { apiBase: this._apiBase, apiKey: this._apiKey };
     }
 
     /**
@@ -61,12 +79,13 @@ export class ScraperApiWrapper {
         subject: string,
         number: string
     ): Promise<ScraperResponse<PrerequisiteInfo>> {
+        const { apiBase, apiKey } = this.getApiUrlAndKey(term);
         return GeneralUtilities.tryExecuteAsync<PrerequisiteInfo>(async () => {
             return this._axios.get(
-                `${this._apiBase}/live/${term}/prerequisites?subject=${subject}&number=${number}`,
+                `${apiBase}/live/${term}/prerequisites?subject=${subject}&number=${number}`,
                 {
                     headers: {
-                        Authorization: `Bearer ${this._apiKey}`
+                        Authorization: `Bearer ${apiKey}`
                     }
                 }
             ).then(r => r.data);
@@ -87,12 +106,13 @@ export class ScraperApiWrapper {
         subject: string,
         number: string
     ): Promise<ScraperResponse<WebRegSection[]>> {
+        const { apiBase, apiKey } = this.getApiUrlAndKey(term);
         return GeneralUtilities.tryExecuteAsync<WebRegSection[]>(async () => {
             return this._axios.get(
-                `${this._apiBase}/live/${term}/course_info?subject=${subject}&number=${number}`,
+                `${apiBase}/live/${term}/course_info?subject=${subject}&number=${number}`,
                 {
                     headers: {
-                        Authorization: `Bearer ${this._apiKey}`
+                        Authorization: `Bearer ${apiKey}`
                     }
                 }
             ).then(r => r.data);
@@ -111,12 +131,13 @@ export class ScraperApiWrapper {
         term: string,
         query: ISearchQuery
     ): Promise<ScraperResponse<IWebRegSearchResult[]>> {
+        const { apiBase, apiKey } = this.getApiUrlAndKey(term);
         return GeneralUtilities.tryExecuteAsync<IWebRegSearchResult[]>(async () => {
             return this._axios.get(
-                `${this._apiBase}/live/${term}/search`,
+                `${apiBase}/live/${term}/search`,
                 {
                     headers: {
-                        Authorization: `Bearer ${this._apiKey}`
+                        Authorization: `Bearer ${apiKey}`
                     },
                     data: query
                 }
@@ -172,12 +193,13 @@ export class ScraperApiWrapper {
      * the specified term. Some other options include an object with an error key or `null`.
      */
     public async getRequestStatsForTerm(term: string): Promise<ScraperResponse<ScraperTimeStatInfo>> {
+        const { apiBase, apiKey } = this.getApiUrlAndKey(term);
         return GeneralUtilities.tryExecuteAsync<ScraperTimeStatInfo>(async () => {
             return this._axios.get(
-                `${this._apiBase}/timing/${term}`,
+                `${apiBase}/timing/${term}`,
                 {
                     headers: {
-                        Authorization: `Bearer ${this._apiKey}`
+                        Authorization: `Bearer ${apiKey}`
                     }
                 }
             ).then(r => r.data);
