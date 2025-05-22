@@ -24,10 +24,6 @@ export interface IConfiguration {
                 reg: boolean;
                 wide: boolean;
             };
-            section: {
-                reg: boolean;
-                wide: boolean;
-            };
         }[];
         miscData: {
             capeData: {
@@ -43,14 +39,6 @@ export interface IConfiguration {
                 term: string;
             };
         };
-    };
-    postgresInfo: {
-        user: string;
-        password: string;
-        host: string;
-        port: number;
-        ssl: boolean,
-        database: string;
     };
 }
 

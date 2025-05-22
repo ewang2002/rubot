@@ -65,20 +65,6 @@ export default class Status extends BaseCommand {
                 ])
             )
         });
-        statusEmbed.addFields({
-            name: "Enrollment Graphs: Section",
-            value: StringUtil.codifyString(
-                table([
-                    ["Term", "General", "Wide"],
-                    ...DataRegistry.CONFIG.ucsdInfo.githubTerms.map((x) => {
-                        const general = DataRegistry.SECTION_ENROLL.get(x.term)?.length ?? 0;
-                        const wide = DataRegistry.SECTION_ENROLL_WIDE.get(x.term)?.length ?? 0;
-
-                        return [x.term, general, wide];
-                    }),
-                ])
-            )
-        });
 
         await ctx.interaction.editReply({
             embeds: [statusEmbed],

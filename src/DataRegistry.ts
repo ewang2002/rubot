@@ -75,10 +75,14 @@ export namespace DataRegistry {
         IPlotInfo[]
     >();
     export const CAPE_DATA: ICapeRow[] = [];
-    export const SECTION_TERM_DATA: WebRegSection[] = [];
     export const COURSE_LISTING: ListedCourse[] = [];
 
-    let ALL_IN_PERSON_COURSES: IInternalCourseData[] = [];
+    // All sections offered for the current term. The response object mimics how 
+    // the scraper returns section data. 
+    export const SECTION_TERM_DATA: WebRegSection[] = [];
+
+    // All in-person *meetings*. 
+    let ALL_IN_PERSON_MEETINGS: IInternalCourseData[] = [];
     let ALL_CLASSROOMS: string[] = [];
 
     /**
@@ -90,6 +94,12 @@ export namespace DataRegistry {
         const readStream = createReadStream(pathToRead);
         const rl = createInterface(readStream);
         let firstLinePassed = false;
+
+        // For each entry in the TSV file, we're going to extract data like the
+        // subject, course ID (e.g., CSE 100), the section code (e.g., A01), the
+        // section ID (e.g., A01), the instructor, total seats. and the meetings.
+        //
+        // At the end, we'll create the section object for each section. 
         rl.on("line", (line) => {
             if (!firstLinePassed) {
                 firstLinePassed = true;
@@ -107,6 +117,8 @@ export namespace DataRegistry {
             const [subjCourseId, sectionCode, sectionId, instructor, totalSeats, meetings] =
                 rawData;
 
+            // For the meetings in particular, we're going to deserialize the representation
+            // stored in the TSV file into a `Meeting` object.
             const allMeetings: (Meeting | null)[] = meetings.split("|").map((x) => {
                 const meeting = x.split(",");
                 if (meeting.length !== 4) {
@@ -175,10 +187,13 @@ export namespace DataRegistry {
             });
         });
 
+        // For each section, we're going to map them to individual meeting objects
+        // and also filter out invalid or remote meetings. This will be used for finding
+        // free rooms.
         rl.on("close", () => {
             console.info(`Done reading SECTION. Data length: ${CAPE_DATA.length}`);
 
-            ALL_IN_PERSON_COURSES = SECTION_TERM_DATA.flatMap((x) =>
+            ALL_IN_PERSON_MEETINGS = SECTION_TERM_DATA.flatMap((x) =>
                 x.meetings.map((m) => {
                     return {
                         location: `${m.building} ${m.room}`,
@@ -186,7 +201,7 @@ export namespace DataRegistry {
                         endTime: m.end_hr * 100 + m.end_min,
                         // This should never be null since, in the cached file, it's already defined as "n/a"
                         day: (typeof m.meeting_days === "string"
-                            ? [m.meeting_days]
+                            ? [m.meeting_days.trim()]
                             : m.meeting_days) as string[],
                         subjCourseId: x.subj_course_id,
                         meetingType: m.meeting_type,
@@ -201,27 +216,38 @@ export namespace DataRegistry {
                     };
                 })
             ).filter((x) => {
+                // No location means the location hasn't been specified, so we can ignore this
+                // meeting.
                 if (x.location.trim() === "") {
                     return false;
                 }
 
-                // If start/end time is 0, then invalid section
+                // If start/end time is 0, then invalid meeting (meeting might not have been
+                // defined).
                 if (x.startTime === 0 || x.endTime === 0) {
                     return false;
                 }
 
-                // If day of week, must have at least one day.
-                // If it is a date, must not be empty string
-                if (x.day.length === 0 || (x.day.length === 1 && x.day[0].trim().length === 0)) {
+                // If day of week (represented as array of days (e.g., [M, W, F])), must have at least one day.
+                // If it is a date (represented as array with one date (e.g., [2024-01-02])), must not be empty string
+                if (x.day.length === 0 || (x.day.length === 1 && x.day[0].length === 0)) {
                     return false;
                 }
 
-                const [building] = x.location.split(" ");
-                return building !== "RCLAS" && building !== "TBA";
+                // The location should be of the form "<BUILDING> <ROOM NUMBER>" (e.g., "CENTR 101")
+                const locSplit = x.location.split(" ");
+                // If we do not have two entries in the array, then there is a problem with the formatting of
+                // the meeting location.
+                if (locSplit.length !== 2) {
+                    return false;
+                }
+
+                // The building not be RCLAS or undefined room, since we only want in-person classes.
+                return locSplit[0] !== "RCLAS" && locSplit[0] !== "TBA";
             }).sort((a, b) => a.location.localeCompare(b.location));
 
             ALL_CLASSROOMS = Array.from(
-                new Set(ALL_IN_PERSON_COURSES.map((x) => x.location))
+                new Set(ALL_IN_PERSON_MEETINGS.map((x) => x.location))
             );
         });
     }
@@ -370,52 +396,15 @@ export namespace DataRegistry {
                     }
                 }
             }
-
-            const allSectionTerms = await GeneralUtilities.tryExecuteAsync<string[]>(async () => {
-                const req = await DataRegistry.AXIOS.get<Buffer>(
-                    `https://raw.githubusercontent.com/${orgName}/${repoName}/main/all_sections.txt`,
-                    {
-                        responseType: "arraybuffer",
-                    }
-                );
-
-                return req.data
-                    .toString("utf16le")
-                    .split("\n")
-                    .map((x) => x.trim())
-                    .filter((x) => x.length > 0);
-            });
-
-            if (allSectionTerms) {
-                if (o.section.reg) {
-                    SECTION_ENROLL.set(term, []);
-                    for (const sec of allSectionTerms) {
-                        SECTION_ENROLL.get(term)!.push({
-                            fileName: sec,
-                            fileUrl: `https://raw.githubusercontent.com/${orgName}/${repoName}/main/plot_section/${sec}.png`,
-                        });
-                    }
-                }
-
-                if (o.section.wide) {
-                    // Section (wide)
-                    SECTION_ENROLL_WIDE.set(term, []);
-                    for (const sec of allSectionTerms) {
-                        SECTION_ENROLL_WIDE.get(term)!.push({
-                            fileName: sec,
-                            fileUrl: `https://raw.githubusercontent.com/${orgName}/${repoName}/main/plot_section_wide/${sec}.png`,
-                        });
-                    }
-                }
-            }
         }
     }
 
     /**
-     * Gets all in-person courses and classrooms.
+     * Gets all in-person meetings and classrooms. Each classroom is guaranteed to be valid (has a building 
+     * and room number separated by a single space)
      * @returns {[IInternalCourseData[], string[]]} The in-person courses and classrooms.
      */
-    export function getCoursesAndClassrooms(): [IInternalCourseData[], string[]] {
-        return [ALL_IN_PERSON_COURSES, ALL_CLASSROOMS];
+    export function getInPersonSectionsAndClassrooms(): [IInternalCourseData[], string[]] {
+        return [ALL_IN_PERSON_MEETINGS, ALL_CLASSROOMS];
     }
 }

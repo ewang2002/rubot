@@ -55,21 +55,21 @@ export default class CheckRoom extends BaseCommand {
     public async run(ctx: ICommandContext): Promise<number> {
         await ctx.interaction.deferReply();
         const roomToCheck = ctx.interaction.options.getString("room", true).toUpperCase().trim();
-        const [allCourses, classrooms] = DataRegistry.getCoursesAndClassrooms();
+        const [allCourses, classrooms] = DataRegistry.getInPersonSectionsAndClassrooms();
 
+        // Get all classrooms from WebReg and look for the room number that matches the number the user
+        // requested. For example, if the user provides '101', then we should end up with, e.g., 
+        // [CENTR 101, NIERN 101, SSB 101, SUMNR 101]
         const roomsToConsider: string[] = [];
         for (const c of classrooms) {
-            const split = c.split(" ");
-            if (split.length < 2) {
-                continue;
-            }
-
-            const [, roomCode] = split;
+            const [, roomCode] = c.split(" ");
             if (roomCode === roomToCheck) {
                 roomsToConsider.push(c);
             }
         }
 
+        // If we cannot find the room number in question (for example, the user provided a room number that
+        // doesn't exist in WebReg), then notify them.
         if (roomsToConsider.length === 0) {
             await ctx.interaction.editReply({
                 content:
@@ -81,13 +81,16 @@ export default class CheckRoom extends BaseCommand {
             return -1;
         }
 
-        // Get the classroom that we'll use
-        const uniqueId = `${Date.now()}_${ctx.user.id}_${Math.random()}`;
+        // Now that we have an array of possible rooms (building + room), we can ask the user what room they want
+        // to use. 
+        const uniqueId = StringUtil.generateRandomString(15);
         const classroomToUse = await new Promise<string | null>(async (resolve) => {
+            // If there's only one classroom that matches the room number, then we don't need to ask the user.
             if (roomsToConsider.length === 1) {
                 return resolve(roomsToConsider[0]);
             }
 
+            // Otherwise, we need to ask the user which room they want to pick. 
             const possibleRooms: StringSelectMenuBuilder[] = ArrayUtilities.breakArrayIntoSubsets(
                 roomsToConsider.map((x) => {
                     const [building] = x.split(" ");
@@ -145,6 +148,8 @@ export default class CheckRoom extends BaseCommand {
             return resolve(interact.values[0]);
         });
 
+        // If the user did NOT select a room, then we'll assume that they canceled the process
+        // or the process timed out.
         if (!classroomToUse) {
             await ctx.interaction.editReply({
                 content: "This process has either been canceled or has timed out.",
