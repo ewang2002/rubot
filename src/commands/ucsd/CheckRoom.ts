@@ -55,7 +55,7 @@ export default class CheckRoom extends BaseCommand {
     public async run(ctx: ICommandContext): Promise<number> {
         await ctx.interaction.deferReply();
         const roomToCheck = ctx.interaction.options.getString("room", true).toUpperCase().trim();
-        const [allCourses, classrooms] = DataRegistry.getInPersonSectionsAndClassrooms();
+        const [allCourses, classrooms] = DataRegistry.getCoursesAndClassrooms();
 
         // Get all classrooms from WebReg and look for the room number that matches the number the user
         // requested. For example, if the user provides '101', then we should end up with, e.g., 

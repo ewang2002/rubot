@@ -124,7 +124,7 @@ export const getSelectMenusFromBuildings = (
  * @returns {ClassroomSection} All classrooms and their status.
  */
 export function getUsedClassrooms(cDateTime: Date, nextTime: number): ClassroomSection {
-    const [allCourses, classrooms] = DataRegistry.getInPersonSectionsAndClassrooms();
+    const [allCourses, classrooms] = DataRegistry.getCoursesAndClassrooms();
     const currTimeNum = cDateTime.getHours() * 100 + cDateTime.getMinutes();
     const currDayOfWk = GeneralConstants.DAYS_OF_WEEK[cDateTime.getDay()];
     const currDateStr = getWebRegDateStr(cDateTime);

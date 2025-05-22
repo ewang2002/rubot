@@ -17,7 +17,7 @@ import CAPE_DATA = DataRegistry.CAPE_DATA;
 import padTimeDigit = TimeUtilities.padTimeDigit;
 import getTimeStr = TimeUtilities.getTimeStr;
 import WARNING_EMOJI = EmojiConstants.WARNING_EMOJI;
-import TurndownService = require("turndown");
+import * as TurndownService from "turndown";
 
 export const TERM_ARGUMENTS: IArgumentInfo[] = [
     {
