@@ -1,7 +1,7 @@
 import { exec as execute } from "child_process";
-import { AttachmentBuilder } from "discord.js";
+import { AttachmentBuilder, EmbedBuilder } from "discord.js";
 import { promisify } from "util";
-import { EmojiConstants } from "../../Constants";
+import { EmojiConstants, GeneralConstants } from "../../Constants";
 import { StringUtil } from "../../utilities";
 import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
 
@@ -43,38 +43,58 @@ export default class Exec extends BaseCommand {
 
         const exec = promisify(execute);
         await ctx.interaction.deferReply();
+
+        const embed = new EmbedBuilder()
+            .setTitle(`${EmojiConstants.GEAR_EMOJI} Execution Result`)
+            .setDescription("Command Executed:\n" + StringUtil.codifyString(rawCmd))
+            .setTimestamp();
+        const files: AttachmentBuilder[] = [];
+
+        const addToEmbedAndArrays = (output: string, title: string, fileName: string) => {
+            if (output.length === 0) {
+                output = "<No Output Produced>";
+            }
+
+            if (output.length < GeneralConstants.FIELD_MAX_LEN - 8) {
+                embed.addFields({
+                    name: title,
+                    value: StringUtil.codifyString(output),
+                });
+            }
+            else {
+                embed.addFields({
+                    name: title,
+                    value: `See the corresponding \`${fileName}\` file for the full output.\n` 
+                        + StringUtil.codifyString(output.substring(0, GeneralConstants.FIELD_MAX_LEN - 128) + "..."),
+                });
+
+                files.push(new AttachmentBuilder(Buffer.from(output, "utf8"), { name: fileName }));
+            }
+        };
+
         try {
             const { stdout, stderr } = await exec(cmdToRun, { timeout: 60 * 1000 });
-
-            await ctx.interaction.editReply({
-                files: [
-                    new AttachmentBuilder(Buffer.from(stdout, "utf8"), { name: "stdout.txt" }),
-                    new AttachmentBuilder(Buffer.from(stderr, "utf8"), { name: "stderr.txt" }),
-                ],
-                content: `Command Executed: ${StringUtil.codifyString(rawCmd)}`,
-            });
+            addToEmbedAndArrays(stdout, "Standard Output", "stdout.txt");
+            addToEmbedAndArrays(stderr, "Standard Error", "stderr.txt");
+            embed.setColor("Green");
         }
         catch (e) {
             if (typeof e === "object" && e && "stdout" in e && "stderr" in e) {
                 const { stdout, stderr } = e as { stdout: string; stderr: string };
-                await ctx.interaction.editReply({
-                    files: [
-                        new AttachmentBuilder(Buffer.from(stdout, "utf8"), { name: "stdout.txt" }),
-                        new AttachmentBuilder(Buffer.from(stderr, "utf8"), { name: "stderr.txt" }),
-                        new AttachmentBuilder(Buffer.from(e + "", "utf8"), { name: "error.txt" }),
-                    ],
-                    content: `${
-                        EmojiConstants.WARNING_EMOJI
-                    } Command Executed: ${StringUtil.codifyString(rawCmd)}`,
-                });
+                addToEmbedAndArrays(stdout, "Standard Output", "stdout.txt");
+                addToEmbedAndArrays(stderr, "Standard Error", "stderr.txt");
+                addToEmbedAndArrays(e + "", "Error", "error.txt");
+                embed.setColor("Red");
             }
             else {
-                await ctx.interaction.editReply({
-                    files: [new AttachmentBuilder(Buffer.from(e + "", "utf8"), { name: "error.txt" })],
-                    content: `Command Executed: ${StringUtil.codifyString(rawCmd)}`,
-                });
+                addToEmbedAndArrays(e + "", "Error", "error.txt");
             }
         }
+
+        await ctx.interaction.editReply({
+            files,
+            embeds: [embed],
+        });
 
         return 0;
     }

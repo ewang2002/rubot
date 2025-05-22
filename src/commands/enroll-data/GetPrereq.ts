@@ -11,7 +11,7 @@ export default class GetPrereq extends BaseCommand {
         super({
             cmdCode: "GET_PREREQ",
             formalCommandName: "Get Course Prerequisites",
-            botCommandName: "getprereqs",
+            botCommandName: "prereq",
             description: "Gets the prerequisites for a course straight from WebReg.",
             generalPermissions: [],
             botPermissions: [],

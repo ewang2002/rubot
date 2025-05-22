@@ -1,6 +1,5 @@
 import { Client, GatewayIntentBits, Interaction, Partials } from "discord.js";
 import { onErrorEvent, onInteractionEvent, onReadyEvent } from "./events";
-import { REST } from "@discordjs/rest";
 import { CommandRegistry } from "./commands";
 
 export class Bot {
@@ -9,11 +8,6 @@ export class Bot {
      * @type {Bot}
      */
     public static BotInstance: Bot;
-
-    /**
-     * The REST client used to make requests to Discord's API.
-     */
-    public static Rest: REST;
 
     /**
      * When the bot was started.
@@ -36,7 +30,6 @@ export class Bot {
     public constructor(clientId: string, token: string) {
         this._token = token;
         this._clientId = clientId;
-        Bot.Rest = new REST({ version: "10" }).setToken(token);
         Bot.BotInstance = this;
         this.instanceStarted = new Date();
         this._bot = new Client({
@@ -79,7 +72,7 @@ export class Bot {
         }
 
         await CommandRegistry.loadCommands();
-        await CommandRegistry.registerCommands(Bot.Rest, this._clientId, guildIds);
         await this._bot.login(this._token);
+        await CommandRegistry.registerCommands(this._bot, guildIds);
     }
 }

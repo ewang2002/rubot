@@ -3,6 +3,7 @@ export namespace GeneralConstants {
     export const CONFIG_JS_FILE: string = "_.js";
     export const DAYS_OF_WEEK: string[] = ["Su", "M", "Tu", "W", "Th", "F", "Sa"];
     export const WEEK_TO_MS: number = 6.048e+8;
+    export const FIELD_MAX_LEN: number = 1024;
 }
 
 
@@ -165,4 +166,6 @@ export namespace EmojiConstants {
 
     export const DATE_EMOJI: string = "📅";
     export const TIME_EMOJI: string = "🕰️";
+
+    export const GEAR_EMOJI: string = "⚙️";
 }

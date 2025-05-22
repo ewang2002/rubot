@@ -1,4 +1,4 @@
-import { Collection, REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from "discord.js";
+import { Client, Collection, RESTPostAPIChatInputApplicationCommandsJSONBody } from "discord.js";
 import BaseCommand from "./BaseCommand";
 
 import * as fsp from "fs/promises";
@@ -63,13 +63,12 @@ export namespace CommandRegistry {
     /**
      * Calls Discord's API to register these commands through Discord's API.
      *
-     * @param {REST} rest An instance of the endpoint manager for Discord's API.
-     * @param {string} clientId The client ID.
+     * @param {Client} client The client. It is assumed that the client is already logged in.
      * @param {string[]} [guildIds] The guild IDs. If this is provided, then commands will be loaded ONLY
      *                              for those guilds. If it's not provided, or it's empty, then commands
      *                              will be loaded globally.
      */
-    export async function registerCommands(rest: REST, clientId: string, guildIds?: string[]) {
+    export async function registerCommands(client: Client, guildIds?: string[]) {
         const jsonCommands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
         for (const command of NAME_TO_COMMAND.values()) {
             jsonCommands.push(command.data.toJSON());
@@ -77,18 +76,13 @@ export namespace CommandRegistry {
 
         if (guildIds && guildIds.length > 0) {
             await Promise.all(
-                guildIds.map(async (guild) => {
-                    await rest.put(
-                        Routes.applicationGuildCommands(clientId, guild),
-                        { body: jsonCommands }
-                    );
+                client.guilds.cache.map(async (guild) => {
+                    await guild.commands.set(jsonCommands);
                 })
             );
         }
         else {
-            await rest.put(Routes.applicationCommands(clientId), {
-                body: jsonCommands
-            });
+            await client.application?.commands.set(jsonCommands);
         }
     }
 
