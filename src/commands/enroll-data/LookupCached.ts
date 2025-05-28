@@ -26,6 +26,7 @@ export default class LookupCached extends BaseCommand {
             ],
             guildOnly: false,
             botOwnerOnly: false,
+            botModeratorIds: false
         });
     }
 

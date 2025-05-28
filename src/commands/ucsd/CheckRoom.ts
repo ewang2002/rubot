@@ -46,6 +46,7 @@ export default class CheckRoom extends BaseCommand {
             ],
             guildOnly: false,
             botOwnerOnly: false,
+            botModeratorIds: false
         });
     }
 

@@ -13,6 +13,7 @@ export default class Ping extends BaseCommand {
             argumentInfo: [],
             guildOnly: false,
             botOwnerOnly: false,
+            botModeratorIds: false
         });
     }
 

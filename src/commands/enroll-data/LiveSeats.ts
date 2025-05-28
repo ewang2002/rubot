@@ -22,6 +22,7 @@ export default class LiveSeats extends BaseCommand {
             argumentInfo: LOOKUP_ARGUMENTS,
             guildOnly: false,
             botOwnerOnly: false,
+            botModeratorIds: false
         });
     }
 

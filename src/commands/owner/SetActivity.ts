@@ -37,7 +37,8 @@ export default class SetActivity extends BaseCommand {
             ],
             botPermissions: [],
             guildOnly: false,
-            botOwnerOnly: true
+            botOwnerOnly: true,
+            botModeratorIds: true
         };
 
         super(cmi);

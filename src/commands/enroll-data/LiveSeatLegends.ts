@@ -14,6 +14,7 @@ export default class LiveSeatLegends extends BaseCommand {
             argumentInfo: [],
             guildOnly: false,
             botOwnerOnly: false,
+            botModeratorIds: false
         });
     }
 

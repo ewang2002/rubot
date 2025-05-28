@@ -24,6 +24,7 @@ export default class LookupLive extends BaseCommand {
             argumentInfo: LOOKUP_ARGUMENTS,
             guildOnly: false,
             botOwnerOnly: false,
+            botModeratorIds: false
         });
     }
 

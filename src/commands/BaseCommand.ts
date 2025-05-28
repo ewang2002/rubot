@@ -272,8 +272,17 @@ export default abstract class BaseCommand {
 
         // If the command is bot owner only and the person isn't a bot owner, then this person can't run this command.
         if (
-            this.commandInfo.botOwnerOnly &&
-            !DataRegistry.CONFIG.discord.botOwnerIds.includes(userToTest.id)
+            this.commandInfo.botOwnerOnly 
+            && !DataRegistry.CONFIG.discord.botOwnerIds.includes(userToTest.id)
+        ) {
+            return results;
+        }
+
+        // If the command is moderator only and the operson isn't a moderator or owner, then deny permission
+        if (
+            this.commandInfo.botModeratorIds
+            && !DataRegistry.CONFIG.discord.botModeratorIds.includes(userToTest.id)
+            && !DataRegistry.CONFIG.discord.botOwnerIds.includes(userToTest.id)
         ) {
             return results;
         }
@@ -405,6 +414,12 @@ export interface ICommandConf {
      * Whether the command is for the bot owner only.
      */
     botOwnerOnly: boolean;
+
+    /**
+     * Whether the command is for the bot owner or bot moderator
+     * users only.
+     */
+    botModeratorIds: boolean;
 }
 
 export interface IArgumentInfo {

@@ -27,6 +27,7 @@ export default class Exec extends BaseCommand {
             ],
             guildOnly: false,
             botOwnerOnly: true,
+            botModeratorIds: false
         });
     }
 

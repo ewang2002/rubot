@@ -125,6 +125,7 @@ export default class SearchCourse extends BaseCommand {
             ]),
             guildOnly: false,
             botOwnerOnly: false,
+            botModeratorIds: false
         });
     }
 

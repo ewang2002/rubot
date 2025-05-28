@@ -41,6 +41,7 @@ export default class ViewAllClassrooms extends BaseCommand {
             ],
             guildOnly: false,
             botOwnerOnly: false,
+            botModeratorIds: false
         });
     }
 

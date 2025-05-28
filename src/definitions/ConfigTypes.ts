@@ -6,6 +6,7 @@ export interface IConfiguration {
         token: string;
         clientId: string;
         botOwnerIds: string[];
+        botModeratorIds: string[];
         debugGuildIds: string[];
     };
     ucsdInfo: IApiInfo & {

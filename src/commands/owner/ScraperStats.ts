@@ -18,6 +18,7 @@ export default class LoginScriptStats extends BaseCommand {
             argumentInfo: [],
             guildOnly: false,
             botOwnerOnly: true,
+            botModeratorIds: true
         });
     }
 

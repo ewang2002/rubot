@@ -27,6 +27,7 @@ export default class Waitz extends BaseCommand {
             argumentInfo: [],
             guildOnly: false,
             botOwnerOnly: false,
+            botModeratorIds: false
         });
     }
 

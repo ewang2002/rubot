@@ -25,6 +25,7 @@ export default class Help extends BaseCommand {
             commandCooldown: 4 * 1000,
             guildOnly: false,
             botOwnerOnly: false,
+            botModeratorIds: false
         };
 
         super(cmi);

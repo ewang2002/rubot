@@ -44,6 +44,7 @@ export default class GetCape extends BaseCommand {
             ],
             guildOnly: false,
             botOwnerOnly: false,
+            botModeratorIds: false
         });
     }
 

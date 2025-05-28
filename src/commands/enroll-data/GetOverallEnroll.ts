@@ -17,6 +17,7 @@ export default class GetOverallEnroll extends BaseCommand {
             argumentInfo: PLOT_ARGUMENTS,
             guildOnly: false,
             botOwnerOnly: false,
+            botModeratorIds: false
         });
     }
 
