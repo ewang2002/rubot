@@ -1,5 +1,5 @@
 import { EmbedBuilder } from "discord.js";
-import BaseCommand, { ICommandContext } from "../BaseCommand";
+import BaseCommand, { ICommandContext, RequiredElevatedPermission } from "../BaseCommand";
 import { LOOKUP_ARGUMENTS, parseCourseSubjCode } from "./helpers/Helper";
 import { PrerequisiteInfo } from "../../definitions";
 import { ArrayUtilities, ScraperApiWrapper, ScraperResponse, StringUtil } from "../../utilities";
@@ -18,8 +18,7 @@ export default class GetPrereq extends BaseCommand {
             commandCooldown: 5 * 1000,
             argumentInfo: LOOKUP_ARGUMENTS,
             guildOnly: false,
-            botOwnerOnly: false,
-            botModeratorIds: false
+            elevatedPermReq: RequiredElevatedPermission.None
         });
     }
 

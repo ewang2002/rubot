@@ -1,4 +1,4 @@
-import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ArgumentType, ICommandContext, RequiredElevatedPermission } from "../BaseCommand";
 import {
     ButtonBuilder,
     ButtonStyle,
@@ -45,8 +45,7 @@ export default class CheckRoom extends BaseCommand {
                 },
             ],
             guildOnly: false,
-            botOwnerOnly: false,
-            botModeratorIds: false
+            elevatedPermReq: RequiredElevatedPermission.None
         });
     }
 

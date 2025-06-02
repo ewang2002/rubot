@@ -1,4 +1,4 @@
-import BaseCommand, { ICommandContext } from "../BaseCommand";
+import BaseCommand, { ICommandContext, RequiredElevatedPermission } from "../BaseCommand";
 
 export default class Ping extends BaseCommand {
     public constructor() {
@@ -12,8 +12,7 @@ export default class Ping extends BaseCommand {
             commandCooldown: 3 * 1000,
             argumentInfo: [],
             guildOnly: false,
-            botOwnerOnly: false,
-            botModeratorIds: false
+            elevatedPermReq: RequiredElevatedPermission.None
         });
     }
 

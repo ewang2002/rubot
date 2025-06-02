@@ -1,4 +1,4 @@
-import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ArgumentType, ICommandContext, RequiredElevatedPermission } from "../BaseCommand";
 import { EmbedBuilder } from "discord.js";
 import { ArrayUtilities, StringUtil } from "../../utilities";
 import { parseCourseSubjCode } from "../enroll-data/helpers/Helper";
@@ -28,8 +28,7 @@ export default class CourseInfo extends BaseCommand {
                 },
             ],
             guildOnly: false,
-            botOwnerOnly: false,
-            botModeratorIds: false
+            elevatedPermReq: RequiredElevatedPermission.None
         });
     }
 

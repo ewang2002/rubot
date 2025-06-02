@@ -1,4 +1,4 @@
-import BaseCommand, { ArgumentType, IArgumentInfo, ICommandConf, ICommandContext, } from "../BaseCommand";
+import BaseCommand, { ArgumentType, IArgumentInfo, ICommandConf, ICommandContext, RequiredElevatedPermission, } from "../BaseCommand";
 
 import { ArrayUtilities, GeneralUtilities, StringBuilder, StringUtil } from "../../utilities";
 import { CommandRegistry } from "..";
@@ -24,8 +24,7 @@ export default class Help extends BaseCommand {
             ],
             commandCooldown: 4 * 1000,
             guildOnly: false,
-            botOwnerOnly: false,
-            botModeratorIds: false
+            elevatedPermReq: RequiredElevatedPermission.None
         };
 
         super(cmi);
@@ -41,6 +40,20 @@ export default class Help extends BaseCommand {
         if (cmdName) {
             const command = CommandRegistry.getCommandByName(cmdName);
             if (command) {
+                let elevatedPerm: string;
+                if (command.commandInfo.elevatedPermReq === RequiredElevatedPermission.None) {
+                    elevatedPerm = "None";
+                }
+                else if (command.commandInfo.elevatedPermReq === RequiredElevatedPermission.ModOrOwner) {
+                    elevatedPerm = "Bot Moderator or Bot Owner";
+                }
+                else if (command.commandInfo.elevatedPermReq === RequiredElevatedPermission.OwnerOnly) {
+                    elevatedPerm = "Bot Owner Only";
+                }
+                else {
+                    elevatedPerm = "Unknown";
+                }
+
                 const cmdHelpEmbed = GeneralUtilities.generateBlankEmbed(ctx.user, "Green")
                     .setTitle(`Command Help: **${command.commandInfo.formalCommandName}**`)
                     .setFooter({
@@ -57,8 +70,8 @@ export default class Help extends BaseCommand {
                         inline: true
                     })
                     .addFields({
-                        name: "Bot Owner Only?",
-                        value: StringUtil.codifyString(command.commandInfo.botOwnerOnly ? "Yes" : "No"),
+                        name: "Elevated Permission Required?",
+                        value: StringUtil.codifyString(elevatedPerm),
                         inline: true
                     })
                     .addFields({

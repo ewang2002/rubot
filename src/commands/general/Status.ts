@@ -1,4 +1,4 @@
-import BaseCommand, { ICommandContext } from "../BaseCommand";
+import BaseCommand, { ICommandContext, RequiredElevatedPermission } from "../BaseCommand";
 import { EmbedBuilder } from "discord.js";
 import { StringUtil, TimeUtilities } from "../../utilities";
 import { Bot } from "../../Bot";
@@ -17,8 +17,7 @@ export default class Status extends BaseCommand {
             commandCooldown: 3 * 1000,
             argumentInfo: [],
             guildOnly: false,
-            botOwnerOnly: false,
-            botModeratorIds: false
+            elevatedPermReq: RequiredElevatedPermission.None
         });
     }
 

@@ -1,4 +1,4 @@
-import BaseCommand, { ICommandContext } from "../BaseCommand";
+import BaseCommand, { ICommandContext, RequiredElevatedPermission } from "../BaseCommand";
 import { DataRegistry } from "../../DataRegistry";
 import { parseCourseSubjCode, PLOT_ARGUMENTS } from "./helpers/Helper";
 import { Collection } from "discord.js";
@@ -16,8 +16,7 @@ export default class GetOverallEnroll extends BaseCommand {
             commandCooldown: 5 * 1000,
             argumentInfo: PLOT_ARGUMENTS,
             guildOnly: false,
-            botOwnerOnly: false,
-            botModeratorIds: false
+            elevatedPermReq: RequiredElevatedPermission.None
         });
     }
 
