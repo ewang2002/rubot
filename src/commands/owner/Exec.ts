@@ -3,7 +3,7 @@ import { AttachmentBuilder, EmbedBuilder } from "discord.js";
 import { promisify } from "util";
 import { EmojiConstants, GeneralConstants } from "../../Constants";
 import { StringUtil } from "../../utilities";
-import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ArgumentType, ICommandContext, RequiredElevatedPermission } from "../BaseCommand";
 
 export default class Exec extends BaseCommand {
     public constructor() {
@@ -26,7 +26,7 @@ export default class Exec extends BaseCommand {
                 },
             ],
             guildOnly: false,
-            botOwnerOnly: true,
+            elevatedPermReq: RequiredElevatedPermission.OwnerOnly
         });
     }
 

@@ -1,4 +1,4 @@
-import BaseCommand, { ICommandContext } from "../BaseCommand";
+import BaseCommand, { ICommandContext, RequiredElevatedPermission } from "../BaseCommand";
 import { ScraperApiWrapper, StringUtil, TimestampType, TimeUtilities } from "../../utilities";
 import { DataRegistry } from "../../DataRegistry";
 import { EmbedBuilder } from "discord.js";
@@ -17,7 +17,7 @@ export default class LoginScriptStats extends BaseCommand {
             commandCooldown: 3 * 1000,
             argumentInfo: [],
             guildOnly: false,
-            botOwnerOnly: true,
+            elevatedPermReq: RequiredElevatedPermission.ModOrOwner
         });
     }
 

@@ -138,6 +138,12 @@ function addArgument(scb: SlashCommandBuilder, argInfo: IArgumentInfo): void {
     }
 }
 
+export enum RequiredElevatedPermission {
+    None,
+    ModOrOwner,
+    OwnerOnly
+}
+
 export default abstract class BaseCommand {
     /**
      * The command info object.
@@ -270,10 +276,17 @@ export default abstract class BaseCommand {
             reason: "",
         };
 
-        // If the command is bot owner only and the person isn't a bot owner, then this person can't run this command.
         if (
-            this.commandInfo.botOwnerOnly &&
-            !DataRegistry.CONFIG.discord.botOwnerIds.includes(userToTest.id)
+            this.commandInfo.elevatedPermReq === RequiredElevatedPermission.ModOrOwner 
+            && !DataRegistry.CONFIG.discord.botModeratorIds.includes(userToTest.id)
+            && !DataRegistry.CONFIG.discord.botOwnerIds.includes(userToTest.id)
+        ) {
+            return results;
+        }
+
+        if (
+            this.commandInfo.elevatedPermReq === RequiredElevatedPermission.OwnerOnly
+            && !DataRegistry.CONFIG.discord.botOwnerIds.includes(userToTest.id)
         ) {
             return results;
         }
@@ -402,9 +415,10 @@ export interface ICommandConf {
     guildOnly: boolean;
 
     /**
-     * Whether the command is for the bot owner only.
+     * Determines whether a user requires a certain elevated bot permission to run
+     * this command.
      */
-    botOwnerOnly: boolean;
+    elevatedPermReq: RequiredElevatedPermission;
 }
 
 export interface IArgumentInfo {

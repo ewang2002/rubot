@@ -1,4 +1,4 @@
-import BaseCommand, { ICommandContext } from "../BaseCommand";
+import BaseCommand, { ICommandContext, RequiredElevatedPermission } from "../BaseCommand";
 import {
     displayInteractiveWebregData,
     LOOKUP_ARGUMENTS,
@@ -23,7 +23,7 @@ export default class LookupLive extends BaseCommand {
             commandCooldown: 5 * 1000,
             argumentInfo: LOOKUP_ARGUMENTS,
             guildOnly: false,
-            botOwnerOnly: false,
+            elevatedPermReq: RequiredElevatedPermission.None
         });
     }
 

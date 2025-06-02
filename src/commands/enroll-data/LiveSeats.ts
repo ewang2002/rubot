@@ -1,4 +1,4 @@
-import BaseCommand, { ICommandContext } from "../BaseCommand";
+import BaseCommand, { ICommandContext, RequiredElevatedPermission } from "../BaseCommand";
 import { getColorByPercent, LOOKUP_ARGUMENTS, parseCourseSubjCode, requestFromWebRegApi, } from "./helpers/Helper";
 import { EmojiConstants, GeneralConstants } from "../../Constants";
 import { ArrayUtilities, ScraperApiWrapper, ScraperResponse, StringBuilder, StringUtil } from "../../utilities";
@@ -21,7 +21,7 @@ export default class LiveSeats extends BaseCommand {
             commandCooldown: 5 * 1000,
             argumentInfo: LOOKUP_ARGUMENTS,
             guildOnly: false,
-            botOwnerOnly: false,
+            elevatedPermReq: RequiredElevatedPermission.None
         });
     }
 

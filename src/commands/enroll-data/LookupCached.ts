@@ -1,4 +1,4 @@
-import BaseCommand, { ArgumentType, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ArgumentType, ICommandContext, RequiredElevatedPermission } from "../BaseCommand";
 import { displayInteractiveWebregData, parseCourseSubjCode } from "./helpers/Helper";
 import { DataRegistry } from "../../DataRegistry";
 
@@ -25,7 +25,7 @@ export default class LookupCached extends BaseCommand {
                 },
             ],
             guildOnly: false,
-            botOwnerOnly: false,
+            elevatedPermReq: RequiredElevatedPermission.None
         });
     }
 

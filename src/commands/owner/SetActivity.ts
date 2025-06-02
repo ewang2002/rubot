@@ -1,4 +1,4 @@
-import BaseCommand, { ArgumentType, ICommandConf, ICommandContext } from "../BaseCommand";
+import BaseCommand, { ArgumentType, ICommandConf, ICommandContext, RequiredElevatedPermission } from "../BaseCommand";
 import { ActivitiesOptions, ActivityType, PresenceData } from "discord.js";
 
 export default class SetActivity extends BaseCommand {
@@ -37,7 +37,7 @@ export default class SetActivity extends BaseCommand {
             ],
             botPermissions: [],
             guildOnly: false,
-            botOwnerOnly: true
+            elevatedPermReq: RequiredElevatedPermission.ModOrOwner
         };
 
         super(cmi);

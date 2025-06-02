@@ -1,5 +1,5 @@
 import { GeneralUtilities } from "../../utilities";
-import BaseCommand, { ICommandContext } from "../BaseCommand";
+import BaseCommand, { ICommandContext, RequiredElevatedPermission } from "../BaseCommand";
 
 export default class LiveSeatLegends extends BaseCommand {
     public constructor() {
@@ -13,7 +13,7 @@ export default class LiveSeatLegends extends BaseCommand {
             commandCooldown: 5 * 1000,
             argumentInfo: [],
             guildOnly: false,
-            botOwnerOnly: false,
+            elevatedPermReq: RequiredElevatedPermission.None
         });
     }
 
